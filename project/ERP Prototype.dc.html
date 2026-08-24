@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #f3f0e9; }
+  body { font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #26231f; -webkit-font-smoothing: antialiased; }
+  a { color: #0f766e; text-decoration: none; }
+  a:hover { color: #0b5b55; text-decoration: underline; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #dcd5c8; border-radius: 8px; border: 3px solid #f3f0e9; }
+  ::-webkit-scrollbar-track { background: transparent; }
+</style>
+</helmet>
+
+<sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
+<div style="height:100vh;display:grid;grid-template-columns:1.05fr 1fr;background:#f3f0e9">
+  <div style="padding:56px 60px;display:flex;flex-direction:column;justify-content:space-between;background:#26231f;color:#f3f0e9">
+    <div style="display:flex;align-items:center;gap:11px">
+      <div style="width:30px;height:30px;border-radius:8px;background:#0f766e;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fffdf9">N</div>
+      <div style="font-size:15px;font-weight:600;letter-spacing:-0.01em">Nexus ERP</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:22px;max-width:420px">
+      <div style="font-size:38px;line-height:1.12;font-weight:600;letter-spacing:-0.025em;text-wrap:pretty">Your books keep working when the network doesn't.</div>
+      <div style="font-size:14px;line-height:1.65;color:#a8a196;text-wrap:pretty">All operational data lives in the local database on this device. Firebase is contacted only for licensing and configuration — never for your transactions.</div>
+      <div style="display:flex;flex-direction:column;gap:9px;margin-top:6px">
+        <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:#cfc9bd"><span style="width:5px;height:5px;border-radius:50%;background:#4ea882"></span>Local SQLite / Drift · 1,284 invoices on device</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:#cfc9bd"><span style="width:5px;height:5px;border-radius:50%;background:#4ea882"></span>Last encrypted Drive backup · today 04:00</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:#cfc9bd"><span style="width:5px;height:5px;border-radius:50%;background:#d99a2b"></span>License revalidation due in 21 days</div>
+      </div>
+    </div>
+    <div style="font-family:'IBM Plex Mono', monospace;font-size:11px;color:#7a736a">v2.4.0 · build 2411 · device WIN-MUM-04</div>
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:center;padding:40px">
+    <div style="width:100%;max-width:372px;display:flex;flex-direction:column;gap:22px">
+      <div>
+        <div style="font-size:24px;font-weight:600;letter-spacing:-0.02em">Sign in</div>
+        <div style="font-size:13px;color:#7a736a;margin-top:6px">Nexus Traders Pvt Ltd · Mumbai HQ</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:11.5px;font-weight:600;letter-spacing:0.05em;color:#7a736a">USERNAME</div>
+          <div style="height:42px;border:1px solid #ddd6c8;border-radius:8px;background:#fffdf9;display:flex;align-items:center;padding:0 13px;font-size:14px">r.deshmukh</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:11.5px;font-weight:600;letter-spacing:0.05em;color:#7a736a">PASSWORD</div>
+          <div style="height:42px;border:1px solid #ddd6c8;border-radius:8px;background:#fffdf9;display:flex;align-items:center;padding:0 13px;font-size:16px;letter-spacing:3px;color:#7a736a">••••••••••</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;font-size:12.5px;color:#7a736a">
+          <div style="display:flex;align-items:center;gap:8px"><span style="width:15px;height:15px;border-radius:4px;border:1px solid #c9c1b1;background:#0f766e"></span>Keep me signed in on this device</div>
+          <div style="color:#0f766e;font-weight:500">Use PIN</div>
+        </div>
+        <div onClick="{{ signIn }}" style="height:44px;border-radius:8px;background:#0f766e;color:#fffdf9;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;cursor:pointer;margin-top:4px" style-hover="background:#0b5b55">Sign in offline</div>
+      </div>
+      <div style="border-top:1px solid #e4dfd4;padding-top:16px;display:flex;flex-direction:column;gap:8px">
+        <div style="font-family:'IBM Plex Mono', monospace;font-size:11px;color:#9a9287">features/auth · users · Argon2id hash · verified locally</div>
+        <div style="font-size:12px;color:#7a736a;line-height:1.55;text-wrap:pretty">Credentials are checked against the local user table. No network round-trip is required after client activation.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isApp }}" hint-placeholder-val="{{ true }}">
+<div style="height:100vh;display:flex;overflow:hidden;background:#f3f0e9">
+
+  <div style="width:236px;flex:none;background:#26231f;display:flex;flex-direction:column;overflow:hidden">
+    <div style="padding:15px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #37332d">
+      <div style="width:26px;height:26px;border-radius:7px;background:#0f766e;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fffdf9">N</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12.5px;font-weight:600;color:#f3f0e9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Nexus Traders</div>
+        <div style="font-size:10.5px;color:#8a8377">Mumbai HQ · FY 26-27</div>
+      </div>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:10px 8px 16px">
+      <sc-for list="{{ navGroups }}" as="group" hint-placeholder-count="6">
+        <div style="margin-bottom:12px">
+          <div style="font-family:'IBM Plex Mono', monospace;font-size:9.5px;letter-spacing:0.13em;color:#6d675d;padding:6px 9px 4px">{{ group.label }}</div>
+          <sc-for list="{{ group.items }}" as="item" hint-placeholder-count="3">
+            <div onClick="{{ item.go }}" style="display:flex;align-items:center;gap:9px;height:29px;padding:0 9px;border-radius:6px;cursor:pointer;font-size:12.5px;background:{{ item.bg }};color:{{ item.fg }};font-weight:{{ item.weight }}" style-hover="background:#332f29">
+              <span style="width:4px;height:4px;border-radius:50%;flex:none;background:{{ item.dot }}"></span>
+              <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ item.n }}</span>
+              <sc-if value="{{ item.badge }}" hint-placeholder-val="{{ false }}"><span style="font-family:'IBM Plex Mono', monospace;font-size:10px;color:#8a8377">{{ item.badge }}</span></sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="padding:11px 14px;border-top:1px solid #37332d;display:flex;flex-direction:column;gap:7px">
+      <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:#a8a196"><span style="width:6px;height:6px;border-radius:50%;background:{{ syncDot }}"></span>{{ syncLabel }}</div>
+      <div style="font-family:'IBM Plex Mono', monospace;font-size:10px;color:#6d675d">local db 84.2 MB · backup 04:00</div>
+    </div>
+  </div>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+
+    <sc-if value="{{ offline }}" hint-placeholder-val="{{ true }}">
+    <div style="height:32px;flex:none;background:#f6e8cd;border-bottom:1px solid #e6d3ab;display:flex;align-items:center;gap:14px;padding:0 20px;font-size:12px;color:#7a5606">
+      <span style="font-weight:600">Working offline</span>
+      <span style="color:#94743a">{{ queuedLabel }}</span>
+      <span style="margin-left:auto;font-family:'IBM Plex Mono', monospace;font-size:11px;color:#94743a">grace period · 21 d remaining</span>
+    </div>
+    </sc-if>
+
+    <div style="height:52px;flex:none;background:#fffdf9;border-bottom:1px solid #e4dfd4;display:flex;align-items:center;gap:12px;padding:0 20px">
+      <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+        <div style="font-family:'IBM Plex Mono', monospace;font-size:10px;letter-spacing:0.08em;color:#a09889">{{ crumb }}</div>
+        <div style="font-size:14.5px;font-weight:600;letter-spacing:-0.01em;white-space:nowrap">{{ title }}</div>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:9px">
+        <div style="height:31px;width:220px;border:1px solid #e0d9cb;border-radius:7px;background:#faf7f0;display:flex;align-items:center;padding:0 10px;gap:8px;font-size:12.5px;color:#9a9287">
+          <span>Search records</span>
+          <span style="margin-left:auto;font-family:'IBM Plex Mono', monospace;font-size:10.5px;border:1px solid #e0d9cb;border-radius:4px;padding:1px 5px;background:#fffdf9">⌘K</span>
+        </div>
+        <div style="height:31px;border:1px solid #e0d9cb;border-radius:7px;display:flex;align-items:center;padding:0 11px;font-size:12.5px;background:#fffdf9;cursor:pointer">Mumbai HQ ▾</div>
+        <div style="height:31px;border:1px solid #e0d9cb;border-radius:7px;display:flex;align-items:center;padding:0 11px;font-size:12.5px;background:#fffdf9;cursor:pointer">FY 2026-27 ▾</div>
+        <div onClick="{{ signOut }}" style="display:flex;align-items:center;gap:8px;cursor:pointer;padding-left:5px">
+          <div style="width:27px;height:27px;border-radius:50%;background:#e3f0ed;color:#0f766e;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:600">RD</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:20px 20px 40px">
+
+      <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:14px;max-width:1320px">
+        <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:12px">
+          <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+            <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;padding:14px 15px;display:flex;flex-direction:column;gap:9px">
+              <div style="font-size:11.5px;font-weight:600;letter-spacing:0.04em;color:#7a736a">{{ k.label }}</div>
+              <div style="font-family:'IBM Plex Mono', monospace;font-size:23px;font-weight:600;letter-spacing:-0.02em">{{ k.value }}</div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:11.5px"><span style="color:{{ k.tone }};font-weight:600">{{ k.delta }}</span><span style="color:#9a9287">{{ k.sub }}</span></div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.55fr 1fr;gap:12px;align-items:start">
+          <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;overflow:hidden">
+            <div style="padding:13px 15px;border-bottom:1px solid #eee9df;display:flex;align-items:center;gap:10px">
+              <div style="font-size:13px;font-weight:600">Sales, last 14 days</div>
+              <div style="font-family:'IBM Plex Mono', monospace;font-size:10.5px;color:#a09889;margin-left:auto">aggregated on device</div>
+            </div>
+            <div style="padding:18px 15px 12px;display:flex;align-items:flex-end;gap:6px;height:172px">
+              <sc-for list="{{ bars }}" as="b" hint-placeholder-count="14">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;justify-content:flex-end">
+                  <div style="width:100%;border-radius:4px 4px 2px 2px;background:{{ b.color }};height:{{ b.h }}"></div>
+                  <div style="font-family:'IBM Plex Mono', monospace;font-size:9.5px;color:#a09889">{{ b.d }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;padding:14px 15px;display:flex;flex-direction:column;gap:11px">
+              <div style="font-size:13px;font-weight:600">GST position · Aug 2026</div>
+              <sc-for list="{{ gstRows }}" as="g" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:12.5px">
+                  <span style="color:#6b645b">{{ g.l }}</span>
+                  <span style="font-family:'IBM Plex Mono', monospace;font-weight:{{ g.w }};color:{{ g.c }}">{{ g.v }}</span>
+                </div>
+              </sc-for>
+              <div style="height:1px;background:#eee9df"></div>
+              <div style="font-size:11.5px;color:#8a8377;line-height:1.5">GSTR-3B due 20 Sep · computed from local tax ledger.</div>
+            </div>
+
+            <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;padding:14px 15px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;gap:8px"><div style="font-size:13px;font-weight:600">Reorder alerts</div><div style="font-family:'IBM Plex Mono', monospace;font-size:10.5px;background:#fdf0dc;color:#8a5a08;padding:2px 7px;border-radius:999px;margin-left:auto">7</div></div>
+              <sc-for list="{{ alerts }}" as="a" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12.5px">
+                  <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ a.n }}</span>
+                  <span style="font-family:'IBM Plex Mono', monospace;font-size:11.5px;color:#a03828;flex:none">{{ a.v }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start">
+          <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;padding:14px 15px;display:flex;flex-direction:column;gap:12px">
+            <div style="font-size:13px;font-weight:600">Data integrity &amp; device health</div>
+            <sc-for list="{{ health }}" as="h" hint-placeholder-count="4">
+              <div style="display:flex;align-items:flex-start;gap:10px">
+                <span style="width:7px;height:7px;border-radius:50%;background:{{ h.dot }};margin-top:5px;flex:none"></span>
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <div style="font-size:12.5px;font-weight:500">{{ h.t }}</div>
+                  <div style="font-family:'IBM Plex Mono', monospace;font-size:10.5px;color:#9a9287">{{ h.s }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;padding:14px 15px;display:flex;flex-direction:column;gap:11px">
+            <div style="font-size:13px;font-weight:600">Pending approvals</div>
+            <sc-for list="{{ approvals }}" as="p" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:11px;padding:9px 11px;border:1px solid #eee9df;border-radius:8px;background:#faf7f0">
+                <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                  <div style="font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.t }}</div>
+                  <div style="font-family:'IBM Plex Mono', monospace;font-size:10.5px;color:#9a9287">{{ p.s }}</div>
+                </div>
+                <div style="margin-left:auto;display:flex;gap:6px;flex:none">
+                  <div style="height:26px;padding:0 11px;border-radius:6px;background:#0f766e;color:#fffdf9;font-size:11.5px;font-weight:600;display:flex;align-items:center;cursor:pointer">Approve</div>
+                  <div style="height:26px;padding:0 10px;border-radius:6px;border:1px solid #e0d9cb;font-size:11.5px;display:flex;align-items:center;cursor:pointer;background:#fffdf9">Review</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ table }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:12px;max-width:1320px">
+        <div style="display:flex;align-items:flex-start;gap:14px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:19px;font-weight:600;letter-spacing:-0.02em">{{ table.title }}</div>
+            <div style="font-size:12.5px;color:#7a736a">{{ table.subtitle }}</div>
+          </div>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+            <div style="height:32px;padding:0 12px;border:1px solid #e0d9cb;border-radius:7px;background:#fffdf9;display:flex;align-items:center;font-size:12.5px;cursor:pointer">Export</div>
+            <div style="height:32px;padding:0 12px;border:1px solid #e0d9cb;border-radius:7px;background:#fffdf9;display:flex;align-items:center;font-size:12.5px;cursor:pointer">Print</div>
+            <div onClick="{{ table.action }}" style="height:32px;padding:0 14px;border-radius:7px;background:#0f766e;color:#fffdf9;display:flex;align-items:center;font-size:12.5px;font-weight:600;cursor:pointer" style-hover="background:#0b5b55">{{ table.cta }}</div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <sc-for list="{{ table.filters }}" as="f" hint-placeholder-count="4">
+            <div style="height:30px;padding:0 11px;border:1px solid #e0d9cb;border-radius:999px;background:#fffdf9;display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer">
+              <span style="color:#9a9287">{{ f.l }}</span><span style="font-weight:500">{{ f.v }}</span><span style="color:#b5ada0">▾</span>
+            </div>
+          </sc-for>
+          <sc-if value="{{ table.devNote }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-left:auto;font-family:'IBM Plex Mono', monospace;font-size:10.5px;color:#a09889;background:#eeeae0;border-radius:6px;padding:5px 9px">{{ table.devNote }}</div>
+          </sc-if>
+        </div>
+
+        <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;overflow:hidden">
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+              <thead>
+                <tr style="background:#faf7f0">
+                  <sc-for list="{{ table.columns }}" as="col" hint-placeholder-count="6">
+                    <th style="height:36px;padding:0 14px;text-align:{{ col.align }};font-size:11px;font-weight:600;letter-spacing:0.05em;color:#7a736a;border-bottom:1px solid #e4dfd4;white-space:nowrap">{{ col.label }}</th>
+                  </sc-for>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{ table.rows }}" as="row" hint-placeholder-count="8">
+                  <tr style="height:{{ rowH }}" style-hover="background:#faf7f0">
+                    <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="6">
+                      <td style="padding:0 14px;border-bottom:1px solid #f1ece2;white-space:nowrap;text-align:{{ cell.align }};color:{{ cell.color }};font-family:{{ cell.font }};font-weight:{{ cell.weight }}">
+                        <sc-if value="{{ cell.plain }}" hint-placeholder-val="{{ true }}">{{ cell.v }}</sc-if>
+                        <sc-if value="{{ cell.pill }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600;background:{{ cell.bg }};color:{{ cell.fg }}">{{ cell.v }}</span></sc-if>
+                      </td>
+                    </sc-for>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+          <div style="height:41px;display:flex;align-items:center;padding:0 14px;gap:10px;background:#faf7f0;border-top:1px solid #e4dfd4">
+            <div style="font-family:'IBM Plex Mono', monospace;font-size:11px;color:#8a8377">{{ table.count }}</div>
+            <div style="margin-left:auto;display:flex;gap:6px">
+              <div style="height:26px;padding:0 10px;border:1px solid #e0d9cb;border-radius:6px;background:#fffdf9;font-size:11.5px;display:flex;align-items:center;cursor:pointer;color:#9a9287">Prev</div>
+              <div style="height:26px;padding:0 10px;border:1px solid #e0d9cb;border-radius:6px;background:#fffdf9;font-size:11.5px;display:flex;align-items:center;cursor:pointer">Next</div>
+            </div>
+          </div>
+        </div>
+
+        <sc-if value="{{ table.note }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12px;color:#8a8377;line-height:1.6;max-width:760px;text-wrap:pretty">{{ table.note }}</div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isInvoiceNew }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:12px;max-width:1320px">
+        <div style="display:flex;align-items:center;gap:14px">
+          <div onClick="{{ backToInvoices }}" style="font-size:12.5px;color:#0f766e;cursor:pointer;font-weight:500">← Sales Invoices</div>
+          <div style="margin-left:auto;display:flex;gap:8px">
+            <div style="height:32px;padding:0 12px;border:1px solid #e0d9cb;border-radius:7px;background:#fffdf9;display:flex;align-items:center;font-size:12.5px;cursor:pointer">Save draft</div>
+            <div style="height:32px;padding:0 14px;border-radius:7px;background:#0f766e;color:#fffdf9;display:flex;align-items:center;font-size:12.5px;font-weight:600;cursor:pointer" style-hover="background:#0b5b55">Post invoice</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 352px;gap:12px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;padding:16px">
+              <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:13px">
+                <sc-for list="{{ invoiceFields }}" as="f" hint-placeholder-count="8">
+                  <div style="display:flex;flex-direction:column;gap:5px">
+                    <div style="font-size:10.5px;font-weight:600;letter-spacing:0.06em;color:#8a8377">{{ f.l }}</div>
+                    <div style="height:34px;border:1px solid #ddd6c8;border-radius:7px;background:#faf7f0;display:flex;align-items:center;padding:0 10px;font-size:12.5px;font-family:{{ f.font }}">{{ f.v }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;overflow:hidden">
+              <div style="padding:12px 15px;border-bottom:1px solid #eee9df;display:flex;align-items:center;gap:10px">
+                <div style="font-size:13px;font-weight:600">Line items</div>
+                <div style="font-family:'IBM Plex Mono', monospace;font-size:10.5px;color:#a09889;margin-left:auto">sales_invoice_items · stock reserved on post</div>
+              </div>
+              <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+                <thead>
+                  <tr style="background:#faf7f0">
+                    <sc-for list="{{ lineCols }}" as="col" hint-placeholder-count="7">
+                      <th style="height:34px;padding:0 12px;text-align:{{ col.align }};font-size:10.5px;font-weight:600;letter-spacing:0.05em;color:#7a736a;border-bottom:1px solid #e4dfd4;white-space:nowrap">{{ col.label }}</th>
+                    </sc-for>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ lines }}" as="row" hint-placeholder-count="3">
+                    <tr style="height:40px">
+                      <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="7">
+                        <td style="padding:0 12px;border-bottom:1px solid #f1ece2;white-space:nowrap;text-align:{{ cell.align }};color:{{ cell.color }};font-family:{{ cell.font }};font-weight:{{ cell.weight }}">{{ cell.v }}</td>
+                      </sc-for>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+              <div style="padding:10px 15px;border-top:1px solid #eee9df;background:#faf7f0;display:flex;align-items:center;gap:9px">
+                <div style="height:27px;padding:0 11px;border:1px dashed #c9c1b1;border-radius:6px;font-size:11.5px;display:flex;align-items:center;cursor:pointer;color:#6b645b;background:#fffdf9">+ Add line</div>
+                <div style="height:27px;padding:0 11px;border:1px dashed #c9c1b1;border-radius:6px;font-size:11.5px;display:flex;align-items:center;cursor:pointer;color:#6b645b;background:#fffdf9">Scan barcode</div>
+              </div>
+            </div>
+
+            <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;overflow:hidden">
+              <div style="padding:12px 15px;border-bottom:1px solid #eee9df;display:flex;align-items:center;gap:10px">
+                <div style="font-size:13px;font-weight:600">Posting preview</div>
+                <div style="font-family:'IBM Plex Mono', monospace;font-size:10.5px;color:#a09889;margin-left:auto">single transaction · all-or-nothing</div>
+              </div>
+              <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+                <tbody>
+                  <sc-for list="{{ journal }}" as="row" hint-placeholder-count="6">
+                    <tr style="height:34px">
+                      <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="4">
+                        <td style="padding:0 15px;border-bottom:1px solid #f1ece2;white-space:nowrap;text-align:{{ cell.align }};color:{{ cell.color }};font-family:{{ cell.font }};font-weight:{{ cell.weight }}">{{ cell.v }}</td>
+                      </sc-for>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+              <div style="padding:11px 15px;background:#faf7f0;border-top:1px solid #e4dfd4;font-size:11.5px;color:#7a736a;line-height:1.55;text-wrap:pretty">Invoice, items, stock movement, customer balance and journal are written in one database transaction. If any step fails, nothing is committed.</div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px;position:sticky;top:0">
+            <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;padding:15px;display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:13px;font-weight:600;margin-bottom:2px">Totals</div>
+              <sc-for list="{{ totals }}" as="t" hint-placeholder-count="5">
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:{{ t.size }}">
+                  <span style="color:{{ t.lc }};font-weight:{{ t.w }}">{{ t.l }}</span>
+                  <span style="font-family:'IBM Plex Mono', monospace;font-weight:{{ t.w }}">{{ t.v }}</span>
+                </div>
+              </sc-for>
+              <div style="height:1px;background:#eee9df;margin:2px 0"></div>
+              <div style="font-size:11.5px;color:#8a8377;line-height:1.5">{{ taxNote }}</div>
+            </div>
+
+            <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;padding:15px;display:flex;flex-direction:column;gap:11px">
+              <div style="font-size:13px;font-weight:600">Customer</div>
+              <div style="font-size:13px;font-weight:600;letter-spacing:-0.01em">Kaveri Retail LLP</div>
+              <sc-for list="{{ customerMeta }}" as="m" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px">
+                  <span style="color:#8a8377">{{ m.l }}</span>
+                  <span style="font-family:'IBM Plex Mono', monospace;color:{{ m.c }}">{{ m.v }}</span>
+                </div>
+              </sc-for>
+              <div style="padding:9px 11px;border-radius:7px;background:#fdf0dc;color:#7a5606;font-size:11.5px;line-height:1.5">This invoice takes the customer to 92% of their credit limit. Approval required above 100%.</div>
+            </div>
+
+            <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;padding:15px;display:flex;flex-direction:column;gap:9px">
+              <div style="font-size:13px;font-weight:600">Fulfilment</div>
+              <sc-for list="{{ fulfilment }}" as="m" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px">
+                  <span style="color:#8a8377">{{ m.l }}</span>
+                  <span style="font-family:'IBM Plex Mono', monospace;color:{{ m.c }}">{{ m.v }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isReports }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:16px;max-width:1320px">
+        <div style="display:flex;align-items:flex-start;gap:14px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:19px;font-weight:600;letter-spacing:-0.02em">Reports</div>
+            <div style="font-size:12.5px;color:#7a736a">One reporting framework · every report accepts date, company, branch and warehouse filters</div>
+          </div>
+          <div style="margin-left:auto;font-family:'IBM Plex Mono', monospace;font-size:10.5px;color:#a09889;background:#eeeae0;border-radius:6px;padding:6px 10px">features/reports · ReportDefinition · PDF · XLSX</div>
+        </div>
+        <sc-for list="{{ reportGroups }}" as="g" hint-placeholder-count="4">
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <div style="font-family:'IBM Plex Mono', monospace;font-size:10.5px;letter-spacing:0.1em;color:#a09889">{{ g.label }}</div>
+            <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:10px">
+              <sc-for list="{{ g.items }}" as="r" hint-placeholder-count="4">
+                <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:9px;padding:13px 14px;display:flex;flex-direction:column;gap:6px;cursor:pointer" style-hover="border-color:#0f766e">
+                  <div style="font-size:12.5px;font-weight:600">{{ r.n }}</div>
+                  <div style="font-size:11.5px;color:#8a8377;line-height:1.5">{{ r.d }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isCompany }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:1080px;align-items:start">
+        <sc-for list="{{ settingSections }}" as="s" hint-placeholder-count="4">
+          <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;overflow:hidden">
+            <div style="padding:13px 15px;border-bottom:1px solid #eee9df;display:flex;align-items:center;gap:10px">
+              <div style="font-size:13px;font-weight:600">{{ s.title }}</div>
+              <div style="font-family:'IBM Plex Mono', monospace;font-size:10px;color:#a09889;margin-left:auto">{{ s.table }}</div>
+            </div>
+            <div style="padding:6px 15px 13px">
+              <sc-for list="{{ s.rows }}" as="r" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid #f4f0e7;font-size:12.5px">
+                  <span style="color:#7a736a">{{ r.l }}</span>
+                  <span style="font-family:{{ r.font }};font-weight:500;text-align:right">{{ r.v }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isLicense }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:12px;max-width:1080px">
+        <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;padding:16px;display:grid;grid-template-columns:1.1fr 1fr;gap:20px">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;gap:9px">
+              <span style="display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600;background:#e6f2ec;color:#1f6b47">ACTIVE</span>
+              <span style="font-family:'IBM Plex Mono', monospace;font-size:11.5px;color:#8a8377">NXS-IN-4471-9930-KLQ</span>
+            </div>
+            <sc-for list="{{ licenseRows }}" as="r" hint-placeholder-count="6">
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:12.5px;padding-bottom:7px;border-bottom:1px solid #f4f0e7">
+                <span style="color:#7a736a">{{ r.l }}</span>
+                <span style="font-family:'IBM Plex Mono', monospace;font-weight:500;color:{{ r.c }}">{{ r.v }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <div style="font-size:13px;font-weight:600">Enabled modules</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ modules }}" as="m" hint-placeholder-count="8">
+                <div style="padding:4px 10px;border-radius:999px;font-size:11.5px;background:{{ m.bg }};color:{{ m.fg }};border:1px solid {{ m.bd }}">{{ m.n }}</div>
+              </sc-for>
+            </div>
+            <div style="padding:11px 12px;border-radius:8px;background:#faf7f0;border:1px solid #eee9df;font-size:11.5px;color:#7a736a;line-height:1.6;text-wrap:pretty">Feature flags are pulled from the control plane at activation and cached locally. Disabling a module in Super Admin takes effect at the next successful revalidation — never mid-session.</div>
+          </div>
+        </div>
+
+        <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;overflow:hidden">
+          <div style="padding:13px 15px;border-bottom:1px solid #eee9df;display:flex;align-items:center;gap:10px">
+            <div style="font-size:13px;font-weight:600">Registered devices</div>
+            <div style="font-family:'IBM Plex Mono', monospace;font-size:10.5px;color:#a09889">3 of 5 seats used</div>
+            <div style="margin-left:auto;height:29px;padding:0 12px;border:1px solid #e0d9cb;border-radius:7px;background:#faf7f0;display:flex;align-items:center;font-size:12px;cursor:pointer">Revalidate now</div>
+          </div>
+          <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+            <thead>
+              <tr style="background:#faf7f0">
+                <sc-for list="{{ deviceCols }}" as="col" hint-placeholder-count="5">
+                  <th style="height:34px;padding:0 15px;text-align:{{ col.align }};font-size:10.5px;font-weight:600;letter-spacing:0.05em;color:#7a736a;border-bottom:1px solid #e4dfd4;white-space:nowrap">{{ col.label }}</th>
+                </sc-for>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ devices }}" as="row" hint-placeholder-count="3">
+                <tr style="height:40px">
+                  <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5">
+                    <td style="padding:0 15px;border-bottom:1px solid #f1ece2;white-space:nowrap;text-align:{{ cell.align }};color:{{ cell.color }};font-family:{{ cell.font }};font-weight:{{ cell.weight }}">
+                      <sc-if value="{{ cell.plain }}" hint-placeholder-val="{{ true }}">{{ cell.v }}</sc-if>
+                      <sc-if value="{{ cell.pill }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600;background:{{ cell.bg }};color:{{ cell.fg }}">{{ cell.v }}</span></sc-if>
+                    </td>
+                  </sc-for>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="background:#fffdf9;border:1px solid #e4dfd4;border-radius:10px;padding:15px;display:grid;grid-template-columns:repeat(3, 1fr);gap:14px">
+          <sc-for list="{{ backupCards }}" as="b" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <div style="font-size:11.5px;font-weight:600;letter-spacing:0.04em;color:#7a736a">{{ b.l }}</div>
+              <div style="font-family:'IBM Plex Mono', monospace;font-size:15px;font-weight:600">{{ b.v }}</div>
+              <div style="font-size:11.5px;color:#9a9287;line-height:1.5">{{ b.s }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:940},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Balanced&quot;,&quot;Compact&quot;],&quot;default&quot;:&quot;Balanced&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;offline&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;State&quot;},&quot;taxRegime&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Intra-state · CGST + SGST&quot;,&quot;Inter-state · IGST&quot;],&quot;default&quot;:&quot;Intra-state · CGST + SGST&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;State&quot;}}">
+const SANS = "'IBM Plex Sans', sans-serif";
+const MONO = "'IBM Plex Mono', monospace";
+const INK = "#26231f";
+const MUTED = "#7a736a";
+
+function T(v, o) {
+  o = o || {};
+  return { v: v, plain: true, pill: false, align: o.a || "left", color: o.c || INK, font: o.m ? MONO : SANS, weight: o.w || 400 };
+}
+function N(v, o) {
+  o = o || {};
+  return T(v, { a: "right", m: true, c: o.c, w: o.w });
+}
+function P(v, bg, fg) {
+  return { v: v, plain: false, pill: true, bg: bg, fg: fg, align: "left", color: INK, font: SANS, weight: 400 };
+}
+function R(cells) { return { cells: cells }; }
+function C(label, align) { return { label: label, align: align || "left" }; }
+
+const TONE = {
+  paid: ["#e6f2ec", "#1f6b47"],
+  posted: ["#e3f0ed", "#0f766e"],
+  draft: ["#f1ede4", "#7a736a"],
+  late: ["#fbe9e5", "#a03828"],
+  warn: ["#fdf0dc", "#8a5a08"]
+};
+function pill(kind, label) { return P(label, TONE[kind][0], TONE[kind][1]); }
+
+const NAV = [
+  ["OVERVIEW", [["dashboard", "Dashboard", ""]]],
+  ["SALES", [["invoices", "Sales Invoices", "3"], ["quotations", "Quotations", ""], ["receipts", "Customer Receipts", ""]]],
+  ["PURCHASING", [["po", "Purchase Orders", "2"], ["grn", "Goods Receipt", ""], ["suppay", "Supplier Payments", ""]]],
+  ["INVENTORY", [["stock", "Stock on Hand", "7"], ["transfers", "Stock Transfers", ""], ["adjust", "Adjustments", ""]]],
+  ["MASTER DATA", [["customers", "Customers", ""], ["suppliers", "Suppliers", ""], ["products", "Products", ""]]],
+  ["FINANCE", [["coa", "Chart of Accounts", ""], ["ledger", "General Ledger", ""], ["tb", "Trial Balance", ""]]],
+  ["TAX · GST", [["gst", "GST Summary", ""], ["gstr1", "GSTR-1 Filing", ""]]],
+  ["PEOPLE", [["employees", "Employees", ""], ["payroll", "Payroll Runs", ""]]],
+  ["SYSTEM", [["reports", "Reports", ""], ["company", "Company Setup", ""], ["license", "License & Devices", ""], ["audit", "Audit Log", ""]]]
+];
+
+const CRUMB = {
+  dashboard: "HOME", invoices: "SALES", quotations: "SALES", receipts: "SALES",
+  "invoice-new": "SALES / INVOICES", po: "PURCHASING", grn: "PURCHASING", suppay: "PURCHASING",
+  stock: "INVENTORY", transfers: "INVENTORY", adjust: "INVENTORY",
+  customers: "MASTER DATA", suppliers: "MASTER DATA", products: "MASTER DATA",
+  coa: "FINANCE", ledger: "FINANCE", tb: "FINANCE", gst: "TAX", gstr1: "TAX",
+  employees: "PEOPLE", payroll: "PEOPLE", reports: "SYSTEM", company: "SYSTEM",
+  license: "SYSTEM", audit: "SYSTEM"
+};
+
+const TITLES = {
+  dashboard: "Dashboard", invoices: "Sales Invoices", quotations: "Quotations",
+  receipts: "Customer Receipts", "invoice-new": "New Sales Invoice", po: "Purchase Orders",
+  grn: "Goods Receipt", suppay: "Supplier Payments", stock: "Stock on Hand",
+  transfers: "Stock Transfers", adjust: "Stock Adjustments", customers: "Customers",
+  suppliers: "Suppliers", products: "Products", coa: "Chart of Accounts",
+  ledger: "General Ledger", tb: "Trial Balance", gst: "GST Summary", gstr1: "GSTR-1 Filing",
+  employees: "Employees", payroll: "Payroll Runs", reports: "Reports",
+  company: "Company Setup", license: "License & Devices", audit: "Audit Log"
+};
+
+class Component extends DCLogic {
+  state = { screen: "dashboard", authed: true };
+
+  go = (k) => { this.setState({ screen: k }); };
+  signIn = () => { this.setState({ authed: true, screen: "dashboard" }); };
+  signOut = () => { this.setState({ authed: false }); };
+
+  tables(dense) {
+    const t = {};
+
+    t.invoices = {
+      title: "Sales Invoices", subtitle: "Posted and draft invoices for FY 2026-27 · Mumbai HQ",
+      cta: "New invoice", action: () => this.go("invoice-new"),
+      devNote: "features/sales · sales_invoices · SalesInvoiceRepository",
+      filters: [{ l: "Status", v: "All" }, { l: "Period", v: "Aug 2026" }, { l: "Branch", v: "Mumbai HQ" }, { l: "Customer", v: "Any" }],
+      columns: [C("INVOICE #"), C("DATE"), C("CUSTOMER"), C("GSTIN"), C("PLACE OF SUPPLY"), C("TAXABLE", "right"), C("GST", "right"), C("TOTAL", "right"), C("BALANCE", "right"), C("STATUS")],
+      rows: [
+        R([T("INV/26-27/0412", { m: true, w: 500 }), T("24 Aug 2026", { m: true, c: MUTED }), T("Kaveri Retail LLP"), T("27AACCK1234M1Z8", { m: true, c: MUTED }), T("Maharashtra (27)", { c: MUTED }), N("2,48,500"), N("44,730"), N("2,93,230", { w: 600 }), N("2,93,230", { c: "#a03828" }), pill("draft", "Draft")]),
+        R([T("INV/26-27/0411", { m: true, w: 500 }), T("23 Aug 2026", { m: true, c: MUTED }), T("Suryodaya Distributors"), T("29AAFCS8821K1ZP", { m: true, c: MUTED }), T("Karnataka (29)", { c: MUTED }), N("6,12,000"), N("1,10,160"), N("7,22,160", { w: 600 }), N("7,22,160", { c: "#a03828" }), pill("posted", "Posted")]),
+        R([T("INV/26-27/0410", { m: true, w: 500 }), T("22 Aug 2026", { m: true, c: MUTED }), T("Bhagyashree Stores"), T("27AAGCB4410L1ZR", { m: true, c: MUTED }), T("Maharashtra (27)", { c: MUTED }), N("87,400"), N("15,732"), N("1,03,132", { w: 600 }), N("0", { c: MUTED }), pill("paid", "Paid")]),
+        R([T("INV/26-27/0409", { m: true, w: 500 }), T("21 Aug 2026", { m: true, c: MUTED }), T("Nandan Traders"), T("24AAECN9017P1Z2", { m: true, c: MUTED }), T("Gujarat (24)", { c: MUTED }), N("3,41,900"), N("61,542"), N("4,03,442", { w: 600 }), N("1,50,000", { c: "#a03828" }), pill("posted", "Part paid")]),
+        R([T("INV/26-27/0408", { m: true, w: 500 }), T("19 Aug 2026", { m: true, c: MUTED }), T("Chandrika Enterprises"), T("27AABCC3390J1ZK", { m: true, c: MUTED }), T("Maharashtra (27)", { c: MUTED }), N("1,19,250"), N("21,465"), N("1,40,715", { w: 600 }), N("1,40,715", { c: "#a03828" }), pill("late", "Overdue 6 d")]),
+        R([T("INV/26-27/0407", { m: true, w: 500 }), T("18 Aug 2026", { m: true, c: MUTED }), T("Kaveri Retail LLP"), T("27AACCK1234M1Z8", { m: true, c: MUTED }), T("Maharashtra (27)", { c: MUTED }), N("94,000"), N("16,920"), N("1,10,920", { w: 600 }), N("0", { c: MUTED }), pill("paid", "Paid")]),
+        R([T("INV/26-27/0406", { m: true, w: 500 }), T("17 Aug 2026", { m: true, c: MUTED }), T("Meghdoot Wholesale"), T("27AADCM6612H1ZQ", { m: true, c: MUTED }), T("Maharashtra (27)", { c: MUTED }), N("5,08,750"), N("91,575"), N("6,00,325", { w: 600 }), N("2,00,000", { c: "#a03828" }), pill("posted", "Part paid")]),
+        R([T("INV/26-27/0405", { m: true, w: 500 }), T("16 Aug 2026", { m: true, c: MUTED }), T("Ratnagiri Agencies"), T("27AAJCR5502F1ZD", { m: true, c: MUTED }), T("Maharashtra (27)", { c: MUTED }), N("62,300"), N("11,214"), N("73,514", { w: 600 }), N("0", { c: MUTED }), pill("paid", "Paid")]),
+        R([T("INV/26-27/0404", { m: true, w: 500 }), T("14 Aug 2026", { m: true, c: MUTED }), T("Suryodaya Distributors"), T("29AAFCS8821K1ZP", { m: true, c: MUTED }), T("Karnataka (29)", { c: MUTED }), N("2,77,600"), N("49,968"), N("3,27,568", { w: 600 }), N("0", { c: MUTED }), pill("paid", "Paid")]),
+        R([T("INV/26-27/0403", { m: true, w: 500 }), T("13 Aug 2026", { m: true, c: MUTED }), T("Bhagyashree Stores"), T("27AAGCB4410L1ZR", { m: true, c: MUTED }), T("Maharashtra (27)", { c: MUTED }), N("41,850"), N("7,533"), N("49,383", { w: 600 }), N("49,383", { c: "#a03828" }), pill("late", "Overdue 11 d")])
+      ],
+      count: "1 – 10 of 1,284 · queried with LIMIT/OFFSET, never loaded whole",
+      note: "Editing a posted invoice creates a reversing journal and a new audit-log entry rather than mutating history."
+    };
+
+    t.quotations = {
+      title: "Quotations", subtitle: "Open quotes and their conversion state",
+      cta: "New quotation", devNote: "features/sales · quotations · convert → sales_orders",
+      filters: [{ l: "Status", v: "Open" }, { l: "Period", v: "Last 60 days" }, { l: "Owner", v: "Anyone" }],
+      columns: [C("QUOTE #"), C("DATE"), C("CUSTOMER"), C("VALID TILL"), C("AMOUNT", "right"), C("CONVERTED"), C("STATUS")],
+      rows: [
+        R([T("QTN/0188", { m: true, w: 500 }), T("22 Aug 2026", { m: true, c: MUTED }), T("Meghdoot Wholesale"), T("05 Sep 2026", { m: true, c: MUTED }), N("8,40,000"), T("—", { c: MUTED }), pill("posted", "Sent")]),
+        R([T("QTN/0187", { m: true, w: 500 }), T("20 Aug 2026", { m: true, c: MUTED }), T("Nandan Traders"), T("03 Sep 2026", { m: true, c: MUTED }), N("1,26,500"), T("SO/0341", { m: true }), pill("paid", "Won")]),
+        R([T("QTN/0186", { m: true, w: 500 }), T("18 Aug 2026", { m: true, c: MUTED }), T("Kaveri Retail LLP"), T("01 Sep 2026", { m: true, c: MUTED }), N("2,48,500"), T("SO/0339", { m: true }), pill("paid", "Won")]),
+        R([T("QTN/0185", { m: true, w: 500 }), T("15 Aug 2026", { m: true, c: MUTED }), T("Chandrika Enterprises"), T("29 Aug 2026", { m: true, c: MUTED }), N("74,200"), T("—", { c: MUTED }), pill("draft", "Draft")]),
+        R([T("QTN/0184", { m: true, w: 500 }), T("12 Aug 2026", { m: true, c: MUTED }), T("Ratnagiri Agencies"), T("26 Aug 2026", { m: true, c: MUTED }), N("3,15,000"), T("—", { c: MUTED }), pill("late", "Lost")])
+      ],
+      count: "1 – 5 of 42"
+    };
+
+    t.receipts = {
+      title: "Customer Receipts", subtitle: "Money in, with allocation against open invoices",
+      cta: "Record receipt", devNote: "features/sales · receipt_vouchers · allocations",
+      filters: [{ l: "Method", v: "All" }, { l: "Period", v: "Aug 2026" }, { l: "Bank", v: "All accounts" }],
+      columns: [C("VOUCHER"), C("DATE"), C("CUSTOMER"), C("METHOD"), C("REFERENCE"), C("ALLOCATED", "right"), C("UNALLOCATED", "right"), C("STATUS")],
+      rows: [
+        R([T("RCP/0902", { m: true, w: 500 }), T("24 Aug 2026", { m: true, c: MUTED }), T("Bhagyashree Stores"), T("UPI"), T("4471998210", { m: true, c: MUTED }), N("1,03,132"), N("0", { c: MUTED }), pill("posted", "Posted")]),
+        R([T("RCP/0901", { m: true, w: 500 }), T("23 Aug 2026", { m: true, c: MUTED }), T("Nandan Traders"), T("NEFT"), T("HDFC0004471", { m: true, c: MUTED }), N("1,50,000"), N("0", { c: MUTED }), pill("posted", "Posted")]),
+        R([T("RCP/0900", { m: true, w: 500 }), T("22 Aug 2026", { m: true, c: MUTED }), T("Meghdoot Wholesale"), T("Cheque"), T("882104", { m: true, c: MUTED }), N("2,00,000"), N("0", { c: MUTED }), pill("warn", "Uncleared")]),
+        R([T("RCP/0899", { m: true, w: 500 }), T("21 Aug 2026", { m: true, c: MUTED }), T("Kaveri Retail LLP"), T("Cash"), T("—", { c: MUTED }), N("90,000"), N("20,920"), pill("posted", "Posted")])
+      ],
+      count: "1 – 4 of 318"
+    };
+
+    t.po = {
+      title: "Purchase Orders", subtitle: "Committed orders and their receipt progress",
+      cta: "New purchase order", devNote: "features/purchasing · purchase_orders · goods_receipts",
+      filters: [{ l: "Status", v: "Open" }, { l: "Supplier", v: "Any" }, { l: "Warehouse", v: "All" }],
+      columns: [C("PO #"), C("DATE"), C("SUPPLIER"), C("WAREHOUSE"), C("ORDERED", "right"), C("RECEIVED", "right"), C("VALUE", "right"), C("STATUS")],
+      rows: [
+        R([T("PO/26-27/0177", { m: true, w: 500 }), T("23 Aug 2026", { m: true, c: MUTED }), T("Sahyadri Polymers"), T("Bhiwandi WH-1"), N("1,200"), N("0"), N("9,84,000", { w: 600 }), pill("posted", "Approved")]),
+        R([T("PO/26-27/0176", { m: true, w: 500 }), T("21 Aug 2026", { m: true, c: MUTED }), T("Konkan Steel Co"), T("Bhiwandi WH-1"), N("340"), N("340"), N("4,12,600", { w: 600 }), pill("paid", "Received")]),
+        R([T("PO/26-27/0175", { m: true, w: 500 }), T("19 Aug 2026", { m: true, c: MUTED }), T("Deccan Packaging"), T("Mumbai WH-2"), N("5,000"), N("2,500"), N("1,75,000", { w: 600 }), pill("warn", "Part received")]),
+        R([T("PO/26-27/0174", { m: true, w: 500 }), T("17 Aug 2026", { m: true, c: MUTED }), T("Godavari Chemicals"), T("Bhiwandi WH-1"), N("80"), N("80"), N("2,64,000", { w: 600 }), pill("paid", "Received")]),
+        R([T("PO/26-27/0173", { m: true, w: 500 }), T("14 Aug 2026", { m: true, c: MUTED }), T("Sahyadri Polymers"), T("Mumbai WH-2"), N("900"), N("0"), N("7,38,000", { w: 600 }), pill("draft", "Awaiting approval")])
+      ],
+      count: "1 – 5 of 177"
+    };
+
+    t.grn = {
+      title: "Goods Receipt", subtitle: "Inbound receipts against purchase orders",
+      cta: "New receipt", devNote: "features/purchasing · goods_receipts · stock_movements (IN)",
+      filters: [{ l: "Warehouse", v: "All" }, { l: "Period", v: "Aug 2026" }, { l: "PO", v: "Any" }],
+      columns: [C("GRN #"), C("DATE"), C("SUPPLIER"), C("AGAINST PO"), C("QTY", "right"), C("VALUE", "right"), C("QC"), C("STATUS")],
+      rows: [
+        R([T("GRN/0431", { m: true, w: 500 }), T("22 Aug 2026", { m: true, c: MUTED }), T("Konkan Steel Co"), T("PO/26-27/0176", { m: true }), N("340"), N("4,12,600"), pill("paid", "Passed"), pill("posted", "Posted")]),
+        R([T("GRN/0430", { m: true, w: 500 }), T("20 Aug 2026", { m: true, c: MUTED }), T("Deccan Packaging"), T("PO/26-27/0175", { m: true }), N("2,500"), N("87,500"), pill("warn", "Partial hold"), pill("posted", "Posted")]),
+        R([T("GRN/0429", { m: true, w: 500 }), T("18 Aug 2026", { m: true, c: MUTED }), T("Godavari Chemicals"), T("PO/26-27/0174", { m: true }), N("80"), N("2,64,000"), pill("paid", "Passed"), pill("posted", "Posted")])
+      ],
+      count: "1 – 3 of 431"
+    };
+
+    t.suppay = {
+      title: "Supplier Payments", subtitle: "Outgoing payments and aging",
+      cta: "New payment", devNote: "features/purchasing · payment_vouchers · accounts_payable",
+      filters: [{ l: "Status", v: "All" }, { l: "Period", v: "Aug 2026" }],
+      columns: [C("VOUCHER"), C("DATE"), C("SUPPLIER"), C("METHOD"), C("AMOUNT", "right"), C("OPEN BALANCE", "right"), C("STATUS")],
+      rows: [
+        R([T("PMT/0611", { m: true, w: 500 }), T("23 Aug 2026", { m: true, c: MUTED }), T("Konkan Steel Co"), T("NEFT"), N("4,12,600"), N("0", { c: MUTED }), pill("posted", "Posted")]),
+        R([T("PMT/0610", { m: true, w: 500 }), T("21 Aug 2026", { m: true, c: MUTED }), T("Deccan Packaging"), T("RTGS"), N("50,000"), N("37,500", { c: "#a03828" }), pill("posted", "Posted")]),
+        R([T("PMT/0609", { m: true, w: 500 }), T("18 Aug 2026", { m: true, c: MUTED }), T("Sahyadri Polymers"), T("Cheque"), N("3,00,000"), N("6,84,000", { c: "#a03828" }), pill("warn", "Uncleared")])
+      ],
+      count: "1 – 3 of 611"
+    };
+
+    t.stock = {
+      title: "Stock on Hand", subtitle: "Live quantities across warehouses, valued at moving average",
+      cta: "New adjustment", devNote: "features/inventory · stock_movements · running balance view",
+      filters: [{ l: "Warehouse", v: "All" }, { l: "Category", v: "All" }, { l: "Below reorder", v: "Only" }],
+      columns: [C("SKU"), C("PRODUCT"), C("HSN"), C("WAREHOUSE"), C("BATCH"), C("ON HAND", "right"), C("RESERVED", "right"), C("REORDER", "right"), C("AVG COST", "right"), C("VALUE", "right")],
+      rows: [
+        R([T("PLY-3410", { m: true, w: 500 }), T("HDPE Granules 25 kg"), T("39012000", { m: true, c: MUTED }), T("Bhiwandi WH-1"), T("B-2608-A", { m: true, c: MUTED }), N("18", { c: "#a03828", w: 600 }), N("12"), N("60"), N("820"), N("14,760")]),
+        R([T("STL-1180", { m: true, w: 500 }), T("MS Angle 50×50×6"), T("72161000", { m: true, c: MUTED }), T("Bhiwandi WH-1"), T("—", { c: MUTED }), N("412"), N("40"), N("150"), N("1,214"), N("5,00,168")]),
+        R([T("PKG-0902", { m: true, w: 500 }), T("Corrugated Box 12×9×6"), T("48191010", { m: true, c: MUTED }), T("Mumbai WH-2"), T("—", { c: MUTED }), N("2,500"), N("300"), N("1,000"), N("35"), N("87,500")]),
+        R([T("CHM-7741", { m: true, w: 500 }), T("Isopropyl Alcohol 20 L"), T("29051220", { m: true, c: MUTED }), T("Bhiwandi WH-1"), T("B-2607-C", { m: true, c: MUTED }), N("22", { c: "#a03828", w: 600 }), N("8"), N("40"), N("3,300"), N("72,600")]),
+        R([T("PLY-3411", { m: true, w: 500 }), T("LDPE Granules 25 kg"), T("39011010", { m: true, c: MUTED }), T("Mumbai WH-2"), T("B-2605-B", { m: true, c: MUTED }), N("144"), N("0"), N("60"), N("795"), N("1,14,480")]),
+        R([T("STL-1181", { m: true, w: 500 }), T("MS Flat 40×6"), T("72149910", { m: true, c: MUTED }), T("Bhiwandi WH-1"), T("—", { c: MUTED }), N("96"), N("24"), N("120"), N("1,088"), N("1,04,448")]),
+        R([T("PKG-0903", { m: true, w: 500 }), T("Stretch Film 500 mm"), T("39232990", { m: true, c: MUTED }), T("Mumbai WH-2"), T("—", { c: MUTED }), N("310"), N("60"), N("200"), N("162"), N("50,220")])
+      ],
+      count: "1 – 7 of 3,942 · indexed on (product_id, warehouse_id)",
+      note: "Batch and expiry tracking is enabled per product, so non-batched items simply carry a null batch — no separate schema."
+    };
+
+    t.transfers = {
+      title: "Stock Transfers", subtitle: "Movements between warehouses, in transit and settled",
+      cta: "New transfer", devNote: "features/inventory · stock_transfers · paired OUT/IN movements",
+      filters: [{ l: "Status", v: "All" }, { l: "From", v: "Any" }, { l: "To", v: "Any" }],
+      columns: [C("TRANSFER"), C("DATE"), C("FROM"), C("TO"), C("LINES", "right"), C("QTY", "right"), C("VALUE", "right"), C("STATUS")],
+      rows: [
+        R([T("TRF/0212", { m: true, w: 500 }), T("23 Aug 2026", { m: true, c: MUTED }), T("Bhiwandi WH-1"), T("Mumbai WH-2"), N("4"), N("640"), N("2,18,400"), pill("warn", "In transit")]),
+        R([T("TRF/0211", { m: true, w: 500 }), T("20 Aug 2026", { m: true, c: MUTED }), T("Mumbai WH-2"), T("Pune WH-3"), N("2"), N("180"), N("64,800"), pill("paid", "Received")]),
+        R([T("TRF/0210", { m: true, w: 500 }), T("16 Aug 2026", { m: true, c: MUTED }), T("Bhiwandi WH-1"), T("Pune WH-3"), N("6"), N("1,020"), N("3,91,000"), pill("paid", "Received")])
+      ],
+      count: "1 – 3 of 212"
+    };
+
+    t.adjust = {
+      title: "Stock Adjustments", subtitle: "Every quantity correction, with reason and approver",
+      cta: "New adjustment", devNote: "features/inventory · stock_adjustments · audit_logs",
+      filters: [{ l: "Reason", v: "All" }, { l: "Warehouse", v: "All" }, { l: "Period", v: "Aug 2026" }],
+      columns: [C("REF"), C("DATE"), C("SKU"), C("WAREHOUSE"), C("REASON"), C("DELTA", "right"), C("VALUE IMPACT", "right"), C("APPROVED BY")],
+      rows: [
+        R([T("ADJ/0087", { m: true, w: 500 }), T("22 Aug 2026", { m: true, c: MUTED }), T("PKG-0902", { m: true }), T("Mumbai WH-2"), T("Damage in handling"), N("-24", { c: "#a03828" }), N("-840", { c: "#a03828" }), T("R. Deshmukh", { c: MUTED })]),
+        R([T("ADJ/0086", { m: true, w: 500 }), T("19 Aug 2026", { m: true, c: MUTED }), T("PLY-3410", { m: true }), T("Bhiwandi WH-1"), T("Cycle count variance"), N("+6", { c: "#1f6b47" }), N("+4,920", { c: "#1f6b47" }), T("S. Iyer", { c: MUTED })]),
+        R([T("ADJ/0085", { m: true, w: 500 }), T("15 Aug 2026", { m: true, c: MUTED }), T("CHM-7741", { m: true }), T("Bhiwandi WH-1"), T("Expiry write-off"), N("-4", { c: "#a03828" }), N("-13,200", { c: "#a03828" }), T("S. Iyer", { c: MUTED })])
+      ],
+      count: "1 – 3 of 87"
+    };
+
+    t.customers = {
+      title: "Customers", subtitle: "Accounts, credit exposure and GST registration",
+      cta: "New customer", devNote: "features/customers · customers · customer_balances view",
+      filters: [{ l: "Group", v: "All" }, { l: "State", v: "All" }, { l: "Over limit", v: "No" }],
+      columns: [C("CODE"), C("NAME"), C("GROUP"), C("GSTIN"), C("STATE"), C("CREDIT LIMIT", "right"), C("OUTSTANDING", "right"), C("OVERDUE", "right"), C("STATUS")],
+      rows: [
+        R([T("C-0041", { m: true, w: 500 }), T("Kaveri Retail LLP"), T("Retail", { c: MUTED }), T("27AACCK1234M1Z8", { m: true, c: MUTED }), T("Maharashtra", { c: MUTED }), N("5,00,000"), N("4,04,150"), N("0", { c: MUTED }), pill("warn", "92% of limit")]),
+        R([T("C-0038", { m: true, w: 500 }), T("Suryodaya Distributors"), T("Distributor", { c: MUTED }), T("29AAFCS8821K1ZP", { m: true, c: MUTED }), T("Karnataka", { c: MUTED }), N("15,00,000"), N("7,22,160"), N("0", { c: MUTED }), pill("paid", "Good")]),
+        R([T("C-0033", { m: true, w: 500 }), T("Meghdoot Wholesale"), T("Wholesale", { c: MUTED }), T("27AADCM6612H1ZQ", { m: true, c: MUTED }), T("Maharashtra", { c: MUTED }), N("10,00,000"), N("4,00,325"), N("0", { c: MUTED }), pill("paid", "Good")]),
+        R([T("C-0029", { m: true, w: 500 }), T("Chandrika Enterprises"), T("Retail", { c: MUTED }), T("27AABCC3390J1ZK", { m: true, c: MUTED }), T("Maharashtra", { c: MUTED }), N("2,00,000"), N("1,40,715"), N("1,40,715", { c: "#a03828" }), pill("late", "On hold")]),
+        R([T("C-0022", { m: true, w: 500 }), T("Nandan Traders"), T("Distributor", { c: MUTED }), T("24AAECN9017P1Z2", { m: true, c: MUTED }), T("Gujarat", { c: MUTED }), N("8,00,000"), N("2,53,442"), N("0", { c: MUTED }), pill("paid", "Good")]),
+        R([T("C-0014", { m: true, w: 500 }), T("Bhagyashree Stores"), T("Retail", { c: MUTED }), T("27AAGCB4410L1ZR", { m: true, c: MUTED }), T("Maharashtra", { c: MUTED }), N("1,50,000"), N("49,383"), N("49,383", { c: "#a03828" }), pill("warn", "Overdue")]),
+        R([T("C-0009", { m: true, w: 500 }), T("Ratnagiri Agencies"), T("Wholesale", { c: MUTED }), T("27AAJCR5502F1ZD", { m: true, c: MUTED }), T("Maharashtra", { c: MUTED }), N("6,00,000"), N("0"), N("0", { c: MUTED }), pill("paid", "Good")])
+      ],
+      count: "1 – 7 of 486"
+    };
+
+    t.suppliers = {
+      title: "Suppliers", subtitle: "Vendor accounts, payment terms and open payables",
+      cta: "New supplier", devNote: "features/suppliers · suppliers · supplier_balances view",
+      filters: [{ l: "Group", v: "All" }, { l: "State", v: "All" }, { l: "Terms", v: "Any" }],
+      columns: [C("CODE"), C("NAME"), C("CATEGORY"), C("GSTIN"), C("TERMS"), C("PAYABLE", "right"), C("OVERDUE", "right"), C("STATUS")],
+      rows: [
+        R([T("S-0018", { m: true, w: 500 }), T("Sahyadri Polymers"), T("Raw material", { c: MUTED }), T("27AAECS7712N1ZV", { m: true, c: MUTED }), T("Net 45", { m: true, c: MUTED }), N("6,84,000"), N("0", { c: MUTED }), pill("paid", "Active")]),
+        R([T("S-0015", { m: true, w: 500 }), T("Konkan Steel Co"), T("Raw material", { c: MUTED }), T("27AAFCK3301B1ZH", { m: true, c: MUTED }), T("Net 30", { m: true, c: MUTED }), N("0"), N("0", { c: MUTED }), pill("paid", "Active")]),
+        R([T("S-0011", { m: true, w: 500 }), T("Deccan Packaging"), T("Packaging", { c: MUTED }), T("27AAGCD9920R1ZT", { m: true, c: MUTED }), T("Net 15", { m: true, c: MUTED }), N("37,500"), N("37,500", { c: "#a03828" }), pill("warn", "Overdue")]),
+        R([T("S-0007", { m: true, w: 500 }), T("Godavari Chemicals"), T("Consumables", { c: MUTED }), T("27AAJCG1180M1ZF", { m: true, c: MUTED }), T("Advance", { m: true, c: MUTED }), N("0"), N("0", { c: MUTED }), pill("paid", "Active")])
+      ],
+      count: "1 – 4 of 132"
+    };
+
+    t.products = {
+      title: "Products", subtitle: "Catalogue with pricing, tax class and reorder policy",
+      cta: "New product", devNote: "features/products · products · variants · barcodes",
+      filters: [{ l: "Category", v: "All" }, { l: "Brand", v: "All" }, { l: "Tax", v: "18%" }],
+      columns: [C("SKU"), C("PRODUCT"), C("CATEGORY"), C("UOM"), C("HSN"), C("PURCHASE", "right"), C("SELLING", "right"), C("GST", "right"), C("MARGIN", "right"), C("STATUS")],
+      rows: [
+        R([T("PLY-3410", { m: true, w: 500 }), T("HDPE Granules 25 kg"), T("Polymers", { c: MUTED }), T("BAG", { m: true, c: MUTED }), T("39012000", { m: true, c: MUTED }), N("820"), N("1,050"), N("18%"), N("21.9%", { c: "#1f6b47" }), pill("paid", "Active")]),
+        R([T("PLY-3411", { m: true, w: 500 }), T("LDPE Granules 25 kg"), T("Polymers", { c: MUTED }), T("BAG", { m: true, c: MUTED }), T("39011010", { m: true, c: MUTED }), N("795"), N("990"), N("18%"), N("19.7%", { c: "#1f6b47" }), pill("paid", "Active")]),
+        R([T("STL-1180", { m: true, w: 500 }), T("MS Angle 50×50×6"), T("Steel", { c: MUTED }), T("PCS", { m: true, c: MUTED }), T("72161000", { m: true, c: MUTED }), N("1,214"), N("1,480"), N("18%"), N("18.0%", { c: "#1f6b47" }), pill("paid", "Active")]),
+        R([T("PKG-0902", { m: true, w: 500 }), T("Corrugated Box 12×9×6"), T("Packaging", { c: MUTED }), T("PCS", { m: true, c: MUTED }), T("48191010", { m: true, c: MUTED }), N("35"), N("46"), N("12%"), N("23.9%", { c: "#1f6b47" }), pill("paid", "Active")]),
+        R([T("CHM-7741", { m: true, w: 500 }), T("Isopropyl Alcohol 20 L"), T("Chemicals", { c: MUTED }), T("CAN", { m: true, c: MUTED }), T("29051220", { m: true, c: MUTED }), N("3,300"), N("3,850"), N("18%"), N("14.3%", { c: "#8a5a08" }), pill("paid", "Active")]),
+        R([T("PKG-0903", { m: true, w: 500 }), T("Stretch Film 500 mm"), T("Packaging", { c: MUTED }), T("ROLL", { m: true, c: MUTED }), T("39232990", { m: true, c: MUTED }), N("162"), N("205"), N("18%"), N("21.0%", { c: "#1f6b47" }), pill("draft", "Discontinued")])
+      ],
+      count: "1 – 6 of 1,047"
+    };
+
+    t.coa = {
+      title: "Chart of Accounts", subtitle: "Account tree with group, type and current balance",
+      cta: "New account", devNote: "features/accounting · accounts · parent_id tree",
+      filters: [{ l: "Type", v: "All" }, { l: "Group", v: "All" }, { l: "Zero balance", v: "Hide" }],
+      columns: [C("CODE"), C("ACCOUNT"), C("GROUP"), C("TYPE"), C("NATURE"), C("BALANCE", "right")],
+      rows: [
+        R([T("1000", { m: true, w: 500 }), T("Cash in Hand"), T("Current Assets", { c: MUTED }), T("Asset", { c: MUTED }), T("Debit", { c: MUTED }), N("1,42,300")]),
+        R([T("1010", { m: true, w: 500 }), T("HDFC Current A/c ···4471"), T("Bank Accounts", { c: MUTED }), T("Asset", { c: MUTED }), T("Debit", { c: MUTED }), N("18,64,920")]),
+        R([T("1200", { m: true, w: 500 }), T("Accounts Receivable"), T("Current Assets", { c: MUTED }), T("Asset", { c: MUTED }), T("Debit", { c: MUTED }), N("19,70,175")]),
+        R([T("1400", { m: true, w: 500 }), T("Inventory — Trading Goods"), T("Current Assets", { c: MUTED }), T("Asset", { c: MUTED }), T("Debit", { c: MUTED }), N("42,18,660")]),
+        R([T("2100", { m: true, w: 500 }), T("Accounts Payable"), T("Current Liabilities", { c: MUTED }), T("Liability", { c: MUTED }), T("Credit", { c: MUTED }), N("7,21,500")]),
+        R([T("2210", { m: true, w: 500 }), T("Output CGST"), T("Duties &amp; Taxes", { c: MUTED }), T("Liability", { c: MUTED }), T("Credit", { c: MUTED }), N("3,84,210")]),
+        R([T("2211", { m: true, w: 500 }), T("Output SGST"), T("Duties &amp; Taxes", { c: MUTED }), T("Liability", { c: MUTED }), T("Credit", { c: MUTED }), N("3,84,210")]),
+        R([T("2212", { m: true, w: 500 }), T("Output IGST"), T("Duties &amp; Taxes", { c: MUTED }), T("Liability", { c: MUTED }), T("Credit", { c: MUTED }), N("1,60,128")]),
+        R([T("4000", { m: true, w: 500 }), T("Sales — Trading Goods"), T("Revenue", { c: MUTED }), T("Income", { c: MUTED }), T("Credit", { c: MUTED }), N("2,64,18,400")]),
+        R([T("5000", { m: true, w: 500 }), T("Cost of Goods Sold"), T("Direct Costs", { c: MUTED }), T("Expense", { c: MUTED }), T("Debit", { c: MUTED }), N("2,01,92,700")])
+      ],
+      count: "1 – 10 of 214"
+    };
+
+    t.ledger = {
+      title: "General Ledger", subtitle: "Accounts Receivable · 01 Aug – 24 Aug 2026",
+      cta: "Export ledger", devNote: "features/accounting · journal_lines · running balance",
+      filters: [{ l: "Account", v: "1200 Accounts Receivable" }, { l: "Period", v: "Aug 2026" }, { l: "Branch", v: "Mumbai HQ" }],
+      columns: [C("DATE"), C("VOUCHER"), C("PARTICULARS"), C("REF"), C("DEBIT", "right"), C("CREDIT", "right"), C("BALANCE", "right")],
+      rows: [
+        R([T("01 Aug", { m: true, c: MUTED }), T("—", { c: MUTED }), T("Opening balance", { w: 500 }), T("—", { c: MUTED }), N("—", { c: MUTED }), N("—", { c: MUTED }), N("14,82,090", { w: 600 })]),
+        R([T("13 Aug", { m: true, c: MUTED }), T("JV/1188", { m: true }), T("Bhagyashree Stores — invoice"), T("INV/0403", { m: true, c: MUTED }), N("49,383"), N("—", { c: MUTED }), N("15,31,473")]),
+        R([T("14 Aug", { m: true, c: MUTED }), T("JV/1191", { m: true }), T("Suryodaya Distributors — invoice"), T("INV/0404", { m: true, c: MUTED }), N("3,27,568"), N("—", { c: MUTED }), N("18,59,041")]),
+        R([T("18 Aug", { m: true, c: MUTED }), T("JV/1196", { m: true }), T("Suryodaya — receipt"), T("RCP/0896", { m: true, c: MUTED }), N("—", { c: MUTED }), N("3,27,568"), N("15,31,473")]),
+        R([T("21 Aug", { m: true, c: MUTED }), T("JV/1202", { m: true }), T("Nandan Traders — invoice"), T("INV/0409", { m: true, c: MUTED }), N("4,03,442"), N("—", { c: MUTED }), N("19,34,915")]),
+        R([T("23 Aug", { m: true, c: MUTED }), T("JV/1207", { m: true }), T("Nandan Traders — receipt"), T("RCP/0901", { m: true, c: MUTED }), N("—", { c: MUTED }), N("1,50,000"), N("17,84,915")]),
+        R([T("23 Aug", { m: true, c: MUTED }), T("JV/1208", { m: true }), T("Suryodaya Distributors — invoice"), T("INV/0411", { m: true, c: MUTED }), N("7,22,160"), N("—", { c: MUTED }), N("25,07,075")]),
+        R([T("24 Aug", { m: true, c: MUTED }), T("JV/1211", { m: true }), T("Bhagyashree — receipt"), T("RCP/0902", { m: true, c: MUTED }), N("—", { c: MUTED }), N("1,03,132"), N("24,03,943")])
+      ],
+      count: "8 entries · closing 24,03,943 Dr"
+    };
+
+    t.tb = {
+      title: "Trial Balance", subtitle: "As at 24 Aug 2026 · debits and credits agree",
+      cta: "Export", devNote: "features/accounting · aggregate over journal_lines",
+      filters: [{ l: "As at", v: "24 Aug 2026" }, { l: "Company", v: "Nexus Traders" }, { l: "Level", v: "Ledger" }],
+      columns: [C("CODE"), C("ACCOUNT"), C("GROUP"), C("DEBIT", "right"), C("CREDIT", "right")],
+      rows: [
+        R([T("1000", { m: true }), T("Cash in Hand"), T("Current Assets", { c: MUTED }), N("1,42,300"), N("—", { c: MUTED })]),
+        R([T("1010", { m: true }), T("HDFC Current A/c ···4471"), T("Bank Accounts", { c: MUTED }), N("18,64,920"), N("—", { c: MUTED })]),
+        R([T("1200", { m: true }), T("Accounts Receivable"), T("Current Assets", { c: MUTED }), N("24,03,943"), N("—", { c: MUTED })]),
+        R([T("1400", { m: true }), T("Inventory — Trading Goods"), T("Current Assets", { c: MUTED }), N("42,18,660"), N("—", { c: MUTED })]),
+        R([T("2100", { m: true }), T("Accounts Payable"), T("Current Liabilities", { c: MUTED }), N("—", { c: MUTED }), N("7,21,500")]),
+        R([T("2210", { m: true }), T("Output CGST"), T("Duties &amp; Taxes", { c: MUTED }), N("—", { c: MUTED }), N("3,84,210")]),
+        R([T("2211", { m: true }), T("Output SGST"), T("Duties &amp; Taxes", { c: MUTED }), N("—", { c: MUTED }), N("3,84,210")]),
+        R([T("3000", { m: true }), T("Share Capital"), T("Equity", { c: MUTED }), N("—", { c: MUTED }), N("25,00,000")]),
+        R([T("4000", { m: true }), T("Sales — Trading Goods"), T("Revenue", { c: MUTED }), N("—", { c: MUTED }), N("2,64,18,400")]),
+        R([T("5000", { m: true }), T("Cost of Goods Sold"), T("Direct Costs", { c: MUTED }), N("2,01,92,700"), N("—", { c: MUTED })]),
+        R([T("6100", { m: true }), T("Salaries &amp; Wages"), T("Operating Expenses", { c: MUTED }), N("14,82,000"), N("—", { c: MUTED })]),
+        R([T("", { m: true }), T("TOTAL", { w: 600 }), T("", { c: MUTED }), N("3,04,08,320", { w: 600 }), N("3,04,08,320", { w: 600 })])
+      ],
+      count: "Difference 0.00 · assertion enforced before any journal commits"
+    };
+
+    t.gst = {
+      title: "GST Summary", subtitle: "Aug 2026 · output tax, input credit and net payable",
+      cta: "Generate GSTR-3B", devNote: "features/taxation · tax_lines · configurable per region",
+      filters: [{ l: "Period", v: "Aug 2026" }, { l: "GSTIN", v: "27AAECN1180K1Z5" }, { l: "Type", v: "Regular" }],
+      columns: [C("HEAD"), C("TAXABLE VALUE", "right"), C("CGST", "right"), C("SGST", "right"), C("IGST", "right"), C("TOTAL TAX", "right")],
+      rows: [
+        R([T("Outward — intra-state (B2B)", { w: 500 }), N("42,68,300"), N("3,84,147"), N("3,84,147"), N("—", { c: MUTED }), N("7,68,294")]),
+        R([T("Outward — inter-state (B2B)", { w: 500 }), N("8,89,600"), N("—", { c: MUTED }), N("—", { c: MUTED }), N("1,60,128"), N("1,60,128")]),
+        R([T("Outward — B2C small", { w: 500 }), N("1,20,400"), N("10,836"), N("10,836"), N("—", { c: MUTED }), N("21,672")]),
+        R([T("Inward — eligible ITC", { w: 500 }), N("31,04,700"), N("2,79,423"), N("2,79,423"), N("42,180"), N("6,01,026")]),
+        R([T("Inward — ineligible / blocked", { w: 500 }), N("48,000"), N("4,320"), N("4,320"), N("—", { c: MUTED }), N("8,640")]),
+        R([T("NET PAYABLE", { w: 600 }), N("—", { c: MUTED }), N("1,15,560", { w: 600 }), N("1,15,560", { w: 600 }), N("1,17,948", { w: 600 }), N("3,49,068", { w: 600 })])
+      ],
+      count: "Computed on device · GSTR-3B due 20 Sep 2026",
+      note: "Tax heads, rate slabs and inclusive/exclusive behaviour come from the tax configuration table — no country logic is compiled into the modules."
+    };
+
+    t.gstr1 = {
+      title: "GSTR-1 Filing",
+      subtitle: "Invoice-level outward supply return · validation before export",
+      cta: "Export JSON", devNote: "features/taxation · gstr1_export · validation ruleset",
+      filters: [{ l: "Period", v: "Jul 2026" }, { l: "Section", v: "B2B" }, { l: "Errors", v: "Only" }],
+      columns: [C("SECTION"), C("INVOICES", "right"), C("TAXABLE VALUE", "right"), C("TAX", "right"), C("VALIDATION"), C("STATUS")],
+      rows: [
+        R([T("B2B — 4A", { m: true, w: 500 }), N("284"), N("41,90,200"), N("7,54,236"), T("Clean", { c: "#1f6b47" }), pill("paid", "Ready")]),
+        R([T("B2CS — 7", { m: true, w: 500 }), N("118"), N("1,20,400"), N("21,672"), T("Clean", { c: "#1f6b47" }), pill("paid", "Ready")]),
+        R([T("CDNR — 9B", { m: true, w: 500 }), N("11"), N("-92,400"), N("-16,632"), T("Clean", { c: "#1f6b47" }), pill("paid", "Ready")]),
+        R([T("HSN summary — 12", { m: true, w: 500 }), N("46"), N("42,18,200"), N("7,59,276"), T("2 missing HSN", { c: "#a03828" }), pill("late", "Blocked")]),
+        R([T("Documents — 13", { m: true, w: 500 }), N("6"), N("—", { c: MUTED }), N("—", { c: MUTED }), T("Clean", { c: "#1f6b47" }), pill("paid", "Ready")])
+      ],
+      count: "5 sections · export blocked until validation passes"
+    };
+
+    t.employees = {
+      title: "Employees", subtitle: "Active roster with designation, department and salary structure",
+      cta: "New employee", devNote: "features/hr · employees · salary_structures",
+      filters: [{ l: "Department", v: "All" }, { l: "Status", v: "Active" }, { l: "Branch", v: "Mumbai HQ" }],
+      columns: [C("CODE"), C("NAME"), C("DESIGNATION"), C("DEPARTMENT"), C("JOINED"), C("CTC / MONTH", "right"), C("LEAVE BAL", "right"), C("STATUS")],
+      rows: [
+        R([T("E-014", { m: true, w: 500 }), T("Rohit Deshmukh"), T("Accounts Manager", { c: MUTED }), T("Finance", { c: MUTED }), T("11 Apr 2021", { m: true, c: MUTED }), N("92,000"), N("11.5"), pill("paid", "Active")]),
+        R([T("E-021", { m: true, w: 500 }), T("Sneha Iyer"), T("Warehouse Supervisor", { c: MUTED }), T("Operations", { c: MUTED }), T("02 Aug 2022", { m: true, c: MUTED }), N("64,000"), N("6.0"), pill("paid", "Active")]),
+        R([T("E-029", { m: true, w: 500 }), T("Arun Patil"), T("Sales Executive", { c: MUTED }), T("Sales", { c: MUTED }), T("19 Jan 2024", { m: true, c: MUTED }), N("48,500"), N("3.5"), pill("paid", "Active")]),
+        R([T("E-033", { m: true, w: 500 }), T("Meera Shetty"), T("Billing Clerk", { c: MUTED }), T("Finance", { c: MUTED }), T("05 Jun 2025", { m: true, c: MUTED }), N("34,000"), N("8.0"), pill("warn", "On leave")]),
+        R([T("E-036", { m: true, w: 500 }), T("Imran Sheikh"), T("Store Keeper", { c: MUTED }), T("Operations", { c: MUTED }), T("14 Feb 2026", { m: true, c: MUTED }), N("28,000"), N("2.0"), pill("paid", "Active")])
+      ],
+      count: "1 – 5 of 48"
+    };
+
+    t.payroll = {
+      title: "Payroll Runs", subtitle: "Monthly cycles, statutory deductions and posting state",
+      cta: "New payroll run", devNote: "features/payroll · payroll_runs · posts to journal on approval",
+      filters: [{ l: "Year", v: "FY 2026-27" }, { l: "Status", v: "All" }, { l: "Branch", v: "All" }],
+      columns: [C("PERIOD"), C("HEADCOUNT", "right"), C("GROSS", "right"), C("PF", "right"), C("ESI", "right"), C("TDS", "right"), C("NET PAYABLE", "right"), C("STATUS")],
+      rows: [
+        R([T("Aug 2026", { w: 500 }), N("48"), N("24,86,000"), N("1,49,160"), N("38,420"), N("1,92,400"), N("21,06,020", { w: 600 }), pill("draft", "Draft")]),
+        R([T("Jul 2026", { w: 500 }), N("47"), N("24,12,000"), N("1,44,720"), N("37,180"), N("1,86,900"), N("20,43,200", { w: 600 }), pill("posted", "Posted")]),
+        R([T("Jun 2026", { w: 500 }), N("47"), N("24,12,000"), N("1,44,720"), N("37,180"), N("1,86,900"), N("20,43,200", { w: 600 }), pill("paid", "Paid")]),
+        R([T("May 2026", { w: 500 }), N("46"), N("23,48,000"), N("1,40,880"), N("36,050"), N("1,80,600"), N("19,90,470", { w: 600 }), pill("paid", "Paid")])
+      ],
+      count: "1 – 4 of 17"
+    };
+
+    t.audit = {
+      title: "Audit Log", subtitle: "Every sensitive operation, retained locally and readable offline",
+      cta: "Export log", devNote: "features/audit · audit_logs · old_value / new_value JSON",
+      filters: [{ l: "Module", v: "All" }, { l: "User", v: "Anyone" }, { l: "Period", v: "Last 7 days" }],
+      columns: [C("TIMESTAMP"), C("USER"), C("MODULE"), C("ACTION"), C("RECORD"), C("OLD → NEW"), C("DEVICE")],
+      rows: [
+        R([T("24 Aug 11:42", { m: true, c: MUTED }), T("r.deshmukh"), T("Sales", { c: MUTED }), T("invoice.created", { m: true, w: 500 }), T("INV/26-27/0412", { m: true }), T("— → draft", { c: MUTED }), T("WIN-MUM-04", { m: true, c: MUTED })]),
+        R([T("24 Aug 10:18", { m: true, c: MUTED }), T("s.iyer"), T("Inventory", { c: MUTED }), T("stock.adjusted", { m: true, w: 500 }), T("PKG-0902", { m: true }), T("2,524 → 2,500", { c: MUTED }), T("AND-WH-11", { m: true, c: MUTED })]),
+        R([T("23 Aug 18:05", { m: true, c: MUTED }), T("r.deshmukh"), T("Products", { c: MUTED }), T("price.changed", { m: true, w: 500 }), T("CHM-7741", { m: true }), T("3,700 → 3,850", { c: MUTED }), T("WIN-MUM-04", { m: true, c: MUTED })]),
+        R([T("23 Aug 16:31", { m: true, c: MUTED }), T("admin"), T("Users", { c: MUTED }), T("permission.granted", { m: true, w: 500 }), T("a.patil", { m: true }), T("sales.read → sales.write", { c: MUTED }), T("WIN-MUM-01", { m: true, c: MUTED })]),
+        R([T("22 Aug 04:00", { m: true, c: MUTED }), T("system"), T("Backup", { c: MUTED }), T("backup.completed", { m: true, w: 500 }), T("bkp_20260822_0400", { m: true }), T("— → verified", { c: MUTED }), T("WIN-MUM-04", { m: true, c: MUTED })]),
+        R([T("21 Aug 09:12", { m: true, c: MUTED }), T("r.deshmukh"), T("Sales", { c: MUTED }), T("invoice.voided", { m: true, w: 500 }), T("INV/26-27/0398", { m: true }), T("posted → voided", { c: MUTED }), T("WIN-MUM-04", { m: true, c: MUTED })])
+      ],
+      count: "1 – 6 of 24,118 · append-only, soft-delete never removes rows"
+    };
+
+    return t;
+  }
+
+  renderVals() {
+    const p = this.props || {};
+    const dense = (p.density || "Balanced") === "Compact";
+    const offline = p.offline === undefined ? true : p.offline;
+    const inter = (p.taxRegime || "Intra-state · CGST + SGST").indexOf("Inter") === 0;
+    const screen = this.state.screen;
+
+    const navGroups = NAV.map((g) => ({
+      label: g[0],
+      items: g[1].map((it) => {
+        const active = it[0] === screen || (screen === "invoice-new" && it[0] === "invoices");
+        return {
+          n: it[1], badge: it[2] || false, go: () => this.go(it[0]),
+          bg: active ? "#0f766e" : "transparent",
+          fg: active ? "#fffdf9" : "#bdb6aa",
+          weight: active ? 600 : 400,
+          dot: active ? "#8fd6c6" : "#4d4841"
+        };
+      })
+    }));
+
+    const tables = this.tables(dense);
+    const table = tables[screen] || false;
+
+    const bars = [
+      ["11", 38], ["12", 52], ["13", 34], ["14", 61], ["15", 22], ["16", 44], ["17", 78],
+      ["18", 56], ["19", 41], ["20", 88], ["21", 67], ["22", 49], ["23", 94], ["24", 72]
+    ].map((b, i) => ({ d: b[0], h: b[1] + "%", color: i === 13 ? "#0f766e" : "#cfe3de" }));
+
+    const gstNet = inter ? "44,730" : "22,365";
+
+    return {
+      isLogin: !this.state.authed,
+      isApp: this.state.authed,
+      isDashboard: screen === "dashboard",
+      isInvoiceNew: screen === "invoice-new",
+      isReports: screen === "reports",
+      isCompany: screen === "company",
+      isLicense: screen === "license",
+      navGroups: navGroups,
+      table: table,
+      rowH: dense ? "34px" : "40px",
+      offline: offline,
+      queuedLabel: "4 documents queued for backup · all ERP data is already committed locally",
+      syncDot: offline ? "#d99a2b" : "#4ea882",
+      syncLabel: offline ? "Offline · local data authoritative" : "Online · license validated 2 min ago",
+      crumb: CRUMB[screen] || "HOME",
+      title: TITLES[screen] || "Dashboard",
+      signIn: this.signIn,
+      signOut: this.signOut,
+      backToInvoices: () => this.go("invoices"),
+
+      kpis: [
+        { label: "SALES THIS MONTH", value: "₹52.7 L", delta: "+14.2%", sub: "vs Jul 2026", tone: "#1f6b47" },
+        { label: "RECEIVABLES OUTSTANDING", value: "₹24.0 L", delta: "₹1.9 L overdue", sub: "3 accounts", tone: "#a03828" },
+        { label: "STOCK VALUE", value: "₹42.2 L", delta: "7 below reorder", sub: "3 warehouses", tone: "#8a5a08" },
+        { label: "GST NET PAYABLE", value: "₹3.49 L", delta: "due 20 Sep", sub: "GSTR-3B", tone: MUTED }
+      ],
+      bars: bars,
+      gstRows: [
+        { l: "Output tax", v: "₹9,50,094", w: 400, c: INK },
+        { l: "Eligible input credit", v: "− ₹6,01,026", w: 400, c: "#1f6b47" },
+        { l: "Ineligible ITC", v: "₹8,640", w: 400, c: MUTED },
+        { l: "Net payable", v: "₹3,49,068", w: 600, c: INK }
+      ],
+      alerts: [
+        { n: "HDPE Granules 25 kg", v: "18 / 60" },
+        { n: "Isopropyl Alcohol 20 L", v: "22 / 40" },
+        { n: "MS Flat 40×6", v: "96 / 120" },
+        { n: "Corrugated Box 12×9×6", v: "2,500 / 1,000" }
+      ],
+      health: [
+        { dot: "#4ea882", t: "Encrypted Drive backup verified", s: "today 04:00 · 84.2 MB · AES-256-GCM · restore tested 18 Aug" },
+        { dot: "#4ea882", t: "Trial balance in agreement", s: "debits = credits · checked after every journal commit" },
+        { dot: "#d99a2b", t: "License revalidation pending", s: "offline grace 21 d remaining · last check 03 Aug 09:14" },
+        { dot: "#4ea882", t: "Schema at migration 41", s: "no pending migrations · 1.28 M rows on device" }
+      ],
+      approvals: [
+        { t: "Purchase order PO/26-27/0173 · ₹7,38,000", s: "Sahyadri Polymers · above ₹5 L threshold" },
+        { t: "Credit limit breach · Chandrika Enterprises", s: "invoice would exceed limit by ₹40,715" },
+        { t: "Stock write-off ADJ/0088 · ₹13,200", s: "expiry · requires finance approval" }
+      ],
+
+      invoiceFields: [
+        { l: "INVOICE NO", v: "INV/26-27/0412", font: MONO },
+        { l: "INVOICE DATE", v: "24 Aug 2026", font: MONO },
+        { l: "CUSTOMER", v: "Kaveri Retail LLP", font: SANS },
+        { l: "GSTIN", v: "27AACCK1234M1Z8", font: MONO },
+        { l: "PLACE OF SUPPLY", v: inter ? "Karnataka (29)" : "Maharashtra (27)", font: SANS },
+        { l: "PAYMENT TERMS", v: "Net 30", font: SANS },
+        { l: "WAREHOUSE", v: "Bhiwandi WH-1", font: SANS },
+        { l: "SALESPERSON", v: "Arun Patil", font: SANS }
+      ],
+      lineCols: [C("#"), C("SKU"), C("DESCRIPTION"), C("HSN"), C("QTY", "right"), C("RATE", "right"), C("DISC %", "right"), C("GST %", "right"), C("AMOUNT", "right")],
+      lines: [
+        R([T("1", { m: true, c: MUTED }), T("PLY-3410", { m: true }), T("HDPE Granules 25 kg"), T("39012000", { m: true, c: MUTED }), N("120"), N("1,050"), N("2.0"), N("18"), N("1,23,480", { w: 600 })]),
+        R([T("2", { m: true, c: MUTED }), T("PLY-3411", { m: true }), T("LDPE Granules 25 kg"), T("39011010", { m: true, c: MUTED }), N("85"), N("990"), N("0.0"), N("18"), N("84,150", { w: 600 })]),
+        R([T("3", { m: true, c: MUTED }), T("PKG-0902", { m: true }), T("Corrugated Box 12×9×6"), T("48191010", { m: true, c: MUTED }), N("900"), N("46"), N("1.5"), N("12"), N("40,870", { w: 600 })])
+      ],
+      totals: inter ? [
+        { l: "Taxable value", v: "2,48,500", w: 400, lc: MUTED, size: "12.5px" },
+        { l: "IGST @ 18%", v: "44,730", w: 400, lc: MUTED, size: "12.5px" },
+        { l: "Round off", v: "0.00", w: 400, lc: MUTED, size: "12.5px" },
+        { l: "Invoice total", v: "₹2,93,230", w: 600, lc: INK, size: "15px" }
+      ] : [
+        { l: "Taxable value", v: "2,48,500", w: 400, lc: MUTED, size: "12.5px" },
+        { l: "CGST @ 9%", v: "22,365", w: 400, lc: MUTED, size: "12.5px" },
+        { l: "SGST @ 9%", v: "22,365", w: 400, lc: MUTED, size: "12.5px" },
+        { l: "Round off", v: "0.00", w: 400, lc: MUTED, size: "12.5px" },
+        { l: "Invoice total", v: "₹2,93,230", w: 600, lc: INK, size: "15px" }
+      ],
+      taxNote: inter
+        ? "Place of supply differs from the company state, so a single IGST head applies. Split is derived from the tax configuration, not hard-coded."
+        : "Place of supply matches the company state, so tax splits into CGST and SGST at half the slab rate each.",
+      journal: [
+        R([T("Dr", { m: true, c: MUTED }), T("1200 · Accounts Receivable", { w: 500 }), T("Kaveri Retail LLP", { c: MUTED }), N("2,93,230", { w: 600 })]),
+        R([T("Cr", { m: true, c: MUTED }), T("4000 · Sales — Trading Goods"), T("revenue", { c: MUTED }), N("2,48,500")]),
+        inter
+          ? R([T("Cr", { m: true, c: MUTED }), T("2212 · Output IGST"), T("18%", { c: MUTED }), N("44,730")])
+          : R([T("Cr", { m: true, c: MUTED }), T("2210 · Output CGST"), T("9%", { c: MUTED }), N("22,365")]),
+        inter
+          ? R([T("Dr", { m: true, c: MUTED }), T("5000 · Cost of Goods Sold"), T("moving average", { c: MUTED }), N("1,91,400")])
+          : R([T("Cr", { m: true, c: MUTED }), T("2211 · Output SGST"), T("9%", { c: MUTED }), N("22,365")]),
+        inter
+          ? R([T("Cr", { m: true, c: MUTED }), T("1400 · Inventory — Trading Goods"), T("3 movements OUT", { c: MUTED }), N("1,91,400")])
+          : R([T("Dr", { m: true, c: MUTED }), T("5000 · Cost of Goods Sold"), T("moving average", { c: MUTED }), N("1,91,400")]),
+        inter
+          ? R([T("", { m: true }), T("Balanced", { w: 600, c: "#1f6b47" }), T("difference 0.00", { c: MUTED }), N("—", { c: MUTED })])
+          : R([T("Cr", { m: true, c: MUTED }), T("1400 · Inventory — Trading Goods"), T("3 movements OUT", { c: MUTED }), N("1,91,400")])
+      ],
+      customerMeta: [
+        { l: "Credit limit", v: "₹5,00,000", c: INK },
+        { l: "Outstanding", v: "₹4,04,150", c: INK },
+        { l: "After this invoice", v: "₹4,60,180", c: "#8a5a08" },
+        { l: "Aging bucket", v: "0–30 d", c: MUTED }
+      ],
+      fulfilment: [
+        { l: "Warehouse", v: "Bhiwandi WH-1", c: INK },
+        { l: "Stock check", v: "all lines available", c: "#1f6b47" },
+        { l: "Delivery note", v: "auto on post", c: MUTED },
+        { l: "Print template", v: "GST Tax Invoice A4", c: MUTED }
+      ],
+      gstNet: gstNet,
+
+      reportGroups: [
+        { label: "SALES &amp; RECEIVABLES", items: [
+          { n: "Sales register", d: "Invoice-level with tax split and margin" },
+          { n: "Customer aging", d: "0–30 / 31–60 / 61–90 / 90+ buckets" },
+          { n: "Customer statement", d: "Printable account statement per customer" },
+          { n: "Item-wise sales", d: "Quantity and value by SKU, category or brand" }
+        ] },
+        { label: "PURCHASING &amp; PAYABLES", items: [
+          { n: "Purchase register", d: "PO to invoice with receipt variance" },
+          { n: "Supplier aging", d: "Open payables by due bucket" },
+          { n: "Pending receipts", d: "Ordered vs received quantities" },
+          { n: "Price variance", d: "PO rate against invoice rate" }
+        ] },
+        { label: "INVENTORY", items: [
+          { n: "Stock summary", d: "On hand, reserved and available by warehouse" },
+          { n: "Stock movement", d: "Full in/out ledger per SKU" },
+          { n: "Valuation report", d: "Moving average and closing value" },
+          { n: "Batch &amp; expiry", d: "Ageing batches and near-expiry stock" }
+        ] },
+        { label: "FINANCE &amp; TAX", items: [
+          { n: "Trial balance", d: "Any date, any level of the account tree" },
+          { n: "Profit &amp; loss", d: "Period comparison with variance" },
+          { n: "Balance sheet", d: "As at date, schedule-wise" },
+          { n: "Cash &amp; bank book", d: "Daily balances and reconciliation" },
+          { n: "GSTR-1 / 3B", d: "Return-ready summaries and JSON export" },
+          { n: "HSN summary", d: "Rate-wise outward supply by HSN" },
+          { n: "TDS summary", d: "Deductions by section and deductee" },
+          { n: "Expense analysis", d: "Category-wise with approval trail" }
+        ] },
+        { label: "PEOPLE", items: [
+          { n: "Attendance register", d: "Daily and monthly muster" },
+          { n: "Payroll register", d: "Gross to net with statutory heads" },
+          { n: "Leave balance", d: "Accrued, used and encashable" },
+          { n: "Salary slip", d: "Printable per employee per period" }
+        ] }
+      ],
+
+      settingSections: [
+        { title: "Company", table: "companies", rows: [
+          { l: "Legal name", v: "Nexus Traders Private Limited", font: SANS },
+          { l: "GSTIN", v: "27AAECN1180K1Z5", font: MONO },
+          { l: "PAN", v: "AAECN1180K", font: MONO },
+          { l: "State", v: "Maharashtra (27)", font: SANS },
+          { l: "Base currency", v: "INR ₹", font: SANS }
+        ] },
+        { title: "Branches &amp; warehouses", table: "branches · warehouses", rows: [
+          { l: "Mumbai HQ", v: "Head office · billing", font: SANS },
+          { l: "Bhiwandi WH-1", v: "Warehouse · 42,000 sq ft", font: SANS },
+          { l: "Mumbai WH-2", v: "Warehouse · packaging", font: SANS },
+          { l: "Pune WH-3", v: "Warehouse · regional", font: SANS },
+          { l: "Inter-branch transfers", v: "Enabled", font: SANS }
+        ] },
+        { title: "Financial year &amp; periods", table: "financial_years · periods", rows: [
+          { l: "Current FY", v: "01 Apr 2026 – 31 Mar 2027", font: MONO },
+          { l: "Open periods", v: "Aug 2026", font: SANS },
+          { l: "Locked up to", v: "31 Jul 2026", font: MONO },
+          { l: "Backdated entries", v: "Manager approval", font: SANS }
+        ] },
+        { title: "Numbering sequences", table: "numbering_sequences", rows: [
+          { l: "Sales invoice", v: "INV/26-27/####", font: MONO },
+          { l: "Purchase order", v: "PO/26-27/####", font: MONO },
+          { l: "Receipt voucher", v: "RCP/####", font: MONO },
+          { l: "Journal voucher", v: "JV/####", font: MONO },
+          { l: "Reset on", v: "Financial year", font: SANS }
+        ] },
+        { title: "Tax configuration", table: "tax_rates · tax_groups", rows: [
+          { l: "Regime", v: "India GST · regular", font: SANS },
+          { l: "Slabs", v: "0 / 5 / 12 / 18 / 28 %", font: MONO },
+          { l: "Pricing", v: "Tax-exclusive", font: SANS },
+          { l: "Reverse charge", v: "Supported", font: SANS },
+          { l: "Rounding", v: "Nearest rupee, invoice level", font: SANS }
+        ] },
+        { title: "Users &amp; roles", table: "users · roles · permissions", rows: [
+          { l: "Active users", v: "12 of 15 seats", font: SANS },
+          { l: "Roles", v: "Owner, Accountant, Sales, Store, Auditor", font: SANS },
+          { l: "Session timeout", v: "30 minutes idle", font: SANS },
+          { l: "Password policy", v: "12 chars, Argon2id", font: SANS },
+          { l: "Quick PIN login", v: "Enabled on mobile", font: SANS }
+        ] }
+      ],
+
+      licenseRows: [
+        { l: "Client", v: "Nexus Traders Pvt Ltd", c: INK },
+        { l: "Plan", v: "Business · 5 devices", c: INK },
+        { l: "Activated", v: "12 Apr 2026", c: INK },
+        { l: "Expires", v: "11 Apr 2027", c: INK },
+        { l: "Last revalidation", v: "03 Aug 2026 09:14", c: MUTED },
+        { l: "Offline grace remaining", v: "21 days", c: "#8a5a08" }
+      ],
+      modules: [
+        { n: "Sales", bg: "#e3f0ed", fg: "#0f766e", bd: "#c8e0da" },
+        { n: "Purchasing", bg: "#e3f0ed", fg: "#0f766e", bd: "#c8e0da" },
+        { n: "Inventory", bg: "#e3f0ed", fg: "#0f766e", bd: "#c8e0da" },
+        { n: "Accounting", bg: "#e3f0ed", fg: "#0f766e", bd: "#c8e0da" },
+        { n: "GST &amp; returns", bg: "#e3f0ed", fg: "#0f766e", bd: "#c8e0da" },
+        { n: "HR", bg: "#e3f0ed", fg: "#0f766e", bd: "#c8e0da" },
+        { n: "Payroll", bg: "#e3f0ed", fg: "#0f766e", bd: "#c8e0da" },
+        { n: "Reports", bg: "#e3f0ed", fg: "#0f766e", bd: "#c8e0da" },
+        { n: "Manufacturing", bg: "#f4f0e7", fg: "#a09889", bd: "#e8e2d6" },
+        { n: "POS", bg: "#f4f0e7", fg: "#a09889", bd: "#e8e2d6" },
+        { n: "E-way bill", bg: "#f4f0e7", fg: "#a09889", bd: "#e8e2d6" }
+      ],
+      deviceCols: [C("DEVICE ID"), C("PLATFORM"), C("USER"), C("LAST SEEN"), C("DB SIZE", "right"), C("STATUS"), C("")],
+      devices: [
+        R([T("WIN-MUM-04", { m: true, w: 500 }), T("Windows 11 · desktop"), T("r.deshmukh"), T("24 Aug 11:42", { m: true, c: MUTED }), N("84.2 MB"), pill("paid", "Active"), T("Revoke", { c: "#a03828" })]),
+        R([T("AND-WH-11", { m: true, w: 500 }), T("Android 15 · handheld"), T("s.iyer"), T("24 Aug 10:18", { m: true, c: MUTED }), N("31.6 MB"), pill("paid", "Active"), T("Revoke", { c: "#a03828" })]),
+        R([T("WEB-PUN-02", { m: true, w: 500 }), T("Web · IndexedDB"), T("a.patil"), T("21 Aug 17:55", { m: true, c: MUTED }), N("12.4 MB"), pill("warn", "Idle 3 d"), T("Revoke", { c: "#a03828" })])
+      ],
+      backupCards: [
+        { l: "LAST BACKUP", v: "Today 04:00", s: "Encrypted, compressed, uploaded to Drive · verified after upload" },
+        { l: "RETENTION", v: "14 versions", s: "Daily for 14 days, then monthly for 12 months" },
+        { l: "LAST RESTORE TEST", v: "18 Aug 2026", s: "Safety backup taken first, integrity check passed" }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
