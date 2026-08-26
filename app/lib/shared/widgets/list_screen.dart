@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
+import '../export/table_export.dart';
 import '../models/table_spec.dart';
 import 'buttons.dart';
 
@@ -42,10 +43,11 @@ class ListScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 14),
                   if (!compact) ...[
-                    const SecondaryButton(label: 'Export'),
+                    SecondaryButton(label: 'Export', onTap: () => exportTableCsv(spec)),
                     const SizedBox(width: 8),
-                    const SecondaryButton(label: 'Print'),
-                  ],
+                    SecondaryButton(label: 'Print', onTap: () => printTablePdf(spec)),
+                  ] else
+                    SecondaryButton(label: 'Export', onTap: () => showExportMenu(context, spec)),
                   if (spec.cta != null) ...[
                     const SizedBox(width: 8),
                     PrimaryButton(label: spec.cta!, onTap: spec.onCta),

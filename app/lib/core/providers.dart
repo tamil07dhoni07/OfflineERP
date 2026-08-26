@@ -4,6 +4,7 @@ import 'database/app_database.dart';
 import 'database/repositories/accounting_repository.dart';
 import 'database/repositories/audit_repository.dart';
 import 'database/repositories/auth_repository.dart';
+import 'database/repositories/collections_repository.dart';
 import 'database/repositories/dashboard_repository.dart';
 import 'database/repositories/master_data_repository.dart';
 import 'database/repositories/sales_repository.dart';
@@ -43,6 +44,22 @@ final dashboardRepositoryProvider = Provider(
     ref.watch(stockRepositoryProvider),
   ),
 );
+final collectionsRepositoryProvider = Provider(
+  (ref) => CollectionsRepository(
+    ref.watch(databaseProvider),
+    ref.watch(accountingRepositoryProvider),
+    ref.watch(auditRepositoryProvider),
+  ),
+);
+
+/// Recomputes whenever an invoice or a receipt changes — the Collections
+/// screen and every "Outstanding" figure derived from it stay live.
+final outstandingByCustomerProvider = StreamProvider((ref) async* {
+  final db = ref.watch(databaseProvider);
+  await for (final _ in db.select(db.salesInvoices).watch()) {
+    yield await ref.read(masterDataRepositoryProvider).outstandingByCustomer();
+  }
+});
 
 /// Recomputes whenever an invoice is inserted/updated — the dashboard's
 /// KPIs, chart and reorder alerts all stay live off one dependency.

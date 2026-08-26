@@ -9,9 +9,6 @@ import '../../shared/widgets/list_screen.dart';
 import '../../shared/widgets/quick_add_dialog.dart';
 
 final customersProvider = StreamProvider((ref) => ref.watch(masterDataRepositoryProvider).watchCustomers());
-final outstandingByCustomerProvider = FutureProvider(
-  (ref) => ref.watch(masterDataRepositoryProvider).outstandingByCustomer(),
-);
 
 class CustomersScreen extends ConsumerWidget {
   const CustomersScreen({super.key});

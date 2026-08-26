@@ -184,6 +184,31 @@ class SalesInvoiceItems extends Table with _AuditColumns {
   IntColumn get amountPaise => integer()();
 }
 
+/// A customer collection — the Collections module. One receipt can be
+/// allocated across several open invoices (see [ReceiptAllocations]),
+/// either auto-adjusted (oldest invoice first) or picked manually.
+class Receipts extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get voucherNo => text().unique()();
+  DateTimeColumn get date => dateTime()();
+  TextColumn get customerId => text()();
+  TextColumn get method => text()(); // cash | cheque | dd
+  TextColumn get reference => text().nullable()(); // cheque / DD number
+  IntColumn get amountPaise => integer()();
+  IntColumn get unallocatedPaise => integer().withDefault(const Constant(0))();
+}
+
+class ReceiptAllocations extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get receiptId => text()();
+  TextColumn get invoiceId => text()();
+  IntColumn get amountPaise => integer()();
+}
+
 class AuditLogs extends Table with _AuditColumns {
   @override
   Set<Column> get primaryKey => {id};
