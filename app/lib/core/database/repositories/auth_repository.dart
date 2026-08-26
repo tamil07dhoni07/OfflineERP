@@ -10,7 +10,7 @@ class AuthRepository {
   Future<AppUser?> signIn({required String username, required String password}) async {
     final user = await (_db.select(_db.appUsers)..where((t) => t.username.equals(username))).getSingleOrNull();
     if (user == null) return null;
-    if (!PasswordHasher.verify(password, user.passwordHash)) return null;
+    if (!await PasswordHasher.verify(password, user.passwordHash)) return null;
     return user;
   }
 

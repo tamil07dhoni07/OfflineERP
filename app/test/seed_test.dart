@@ -34,8 +34,8 @@ void main() {
 
     test('seed users can sign in with the published dev password', () async {
       final user = await (db.select(db.appUsers)..where((t) => t.username.equals('r.deshmukh'))).getSingle();
-      expect(PasswordHasher.verify(seedDevPassword, user.passwordHash), isTrue);
-      expect(PasswordHasher.verify('wrong', user.passwordHash), isFalse);
+      expect(await PasswordHasher.verify(seedDevPassword, user.passwordHash), isTrue);
+      expect(await PasswordHasher.verify('wrong', user.passwordHash), isFalse);
     });
 
     test('seeded invoices carry the exact statuses from the approved design', () async {

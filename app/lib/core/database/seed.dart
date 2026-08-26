@@ -53,13 +53,14 @@ Future<void> seedIfEmpty(AppDatabase db) async {
     ('a.patil', 'Arun Patil', 'AP', 'Sales Executive'),
     ('admin', 'System Administrator', 'AD', 'Administrator'),
   ];
+  final seedPasswordHash = await PasswordHasher.hash(seedDevPassword);
   for (final u in userSeed) {
     await db.into(db.appUsers).insert(
       AppUsersCompanion.insert(
         username: u.$1,
         displayName: u.$2,
         initials: u.$3,
-        passwordHash: PasswordHasher.hash(seedDevPassword),
+        passwordHash: seedPasswordHash,
         role: u.$4,
       ),
     );

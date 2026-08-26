@@ -40,28 +40,33 @@ class AppShell extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.paper,
-      drawer: wide ? null : Drawer(backgroundColor: AppColors.sidebar, width: 260, child: sidebar),
+      drawer: wide
+          ? null
+          : Drawer(backgroundColor: AppColors.sidebar, width: 260, child: SafeArea(child: sidebar)),
       body: Row(
         children: [
-          if (wide) SizedBox(width: 236, child: sidebar),
+          if (wide) SizedBox(width: 236, child: SafeArea(right: false, bottom: false, child: sidebar)),
           Expanded(
-            child: Column(
-              children: [
-                Consumer(
-                  builder: (context, ref, _) {
-                    final offline = ref.watch(offlineProvider);
-                    if (!offline) return const SizedBox.shrink();
-                    return const _OfflineBanner();
-                  },
-                ),
-                _TopBar(activeKey: activeKey, showMenuButton: !wide),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
-                    child: child,
+            child: SafeArea(
+              left: false,
+              child: Column(
+                children: [
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final offline = ref.watch(offlineProvider);
+                      if (!offline) return const SizedBox.shrink();
+                      return const _OfflineBanner();
+                    },
                   ),
-                ),
-              ],
+                  _TopBar(activeKey: activeKey, showMenuButton: !wide),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
+                      child: child,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -106,6 +111,12 @@ class _TopBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authControllerProvider);
+    // showMenuButton doubles as "compact" — the same narrow-width case that
+    // moves the sidebar into a Drawer also needs the search box and context
+    // chips off the bar, or they overflow past the right edge on phone
+    // widths (the search box alone is a fixed 220px).
+    final compact = showMenuButton;
+
     return Container(
       height: 52,
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -123,49 +134,60 @@ class _TopBar extends ConsumerWidget {
                 child: const Icon(Icons.menu, size: 20, color: AppColors.ink),
               ),
             ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                crumbFor[activeKey] ?? 'HOME',
-                style: AppText.mono(size: 10, color: AppColors.mutedFainter, letterSpacing: 0.6),
-              ),
-              Text(
-                titleFor[activeKey] ?? 'Dashboard',
-                style: AppText.sans(size: 14.5, weight: FontWeight.w600, letterSpacing: -0.2),
-              ),
-            ],
-          ),
-          const Spacer(),
-          Container(
-            height: 31,
-            width: 220,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              color: AppColors.fieldFill,
-              border: Border.all(color: AppColors.controlBorder),
-              borderRadius: BorderRadius.circular(7),
-            ),
-            child: Row(
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Search records', style: AppText.sans(size: 12.5, color: AppColors.mutedFaint)),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                  decoration: BoxDecoration(
-                    color: AppColors.card,
-                    border: Border.all(color: AppColors.controlBorder),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text('⌘K', style: AppText.mono(size: 10.5)),
+                Text(
+                  crumbFor[activeKey] ?? 'HOME',
+                  style: AppText.mono(size: 10, color: AppColors.mutedFainter, letterSpacing: 0.6),
+                ),
+                Text(
+                  titleFor[activeKey] ?? 'Dashboard',
+                  overflow: TextOverflow.ellipsis,
+                  style: AppText.sans(size: 14.5, weight: FontWeight.w600, letterSpacing: -0.2),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 9),
-          _Chip(label: 'Mumbai HQ ▾'),
-          const SizedBox(width: 9),
-          _Chip(label: 'FY 2026-27 ▾'),
+          if (!compact) ...[
+            const SizedBox(width: 12),
+            Container(
+              height: 31,
+              width: 220,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                color: AppColors.fieldFill,
+                border: Border.all(color: AppColors.controlBorder),
+                borderRadius: BorderRadius.circular(7),
+              ),
+              child: Row(
+                children: [
+                  Text('Search records', style: AppText.sans(size: 12.5, color: AppColors.mutedFaint)),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: AppColors.card,
+                      border: Border.all(color: AppColors.controlBorder),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text('⌘K', style: AppText.mono(size: 10.5)),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 9),
+            _Chip(label: 'Mumbai HQ ▾'),
+            const SizedBox(width: 9),
+            _Chip(label: 'FY 2026-27 ▾'),
+          ] else ...[
+            InkWell(
+              onTap: () {},
+              child: const Padding(padding: EdgeInsets.all(4), child: Icon(Icons.search, size: 20, color: AppColors.ink)),
+            ),
+          ],
           const SizedBox(width: 9),
           GestureDetector(
             onTap: () {

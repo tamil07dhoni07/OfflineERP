@@ -21,28 +21,38 @@ class ListScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(spec.title, style: AppText.sans(size: 19, weight: FontWeight.w600, letterSpacing: -0.4)),
-                    const SizedBox(height: 4),
-                    Text(spec.subtitle, style: AppText.sans(size: 12.5, color: AppColors.mutedInk)),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              // Export/Print are secondary on a phone: drop them rather
+              // than let a long CTA label ("Generate GSTR-3B", "New payroll
+              // run") push the header past the screen edge.
+              final compact = constraints.maxWidth < 520;
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(spec.title, style: AppText.sans(size: 19, weight: FontWeight.w600, letterSpacing: -0.4)),
+                        const SizedBox(height: 4),
+                        Text(spec.subtitle, style: AppText.sans(size: 12.5, color: AppColors.mutedInk)),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  if (!compact) ...[
+                    const SecondaryButton(label: 'Export'),
+                    const SizedBox(width: 8),
+                    const SecondaryButton(label: 'Print'),
                   ],
-                ),
-              ),
-              const SizedBox(width: 14),
-              const SecondaryButton(label: 'Export'),
-              const SizedBox(width: 8),
-              const SecondaryButton(label: 'Print'),
-              if (spec.cta != null) ...[
-                const SizedBox(width: 8),
-                PrimaryButton(label: spec.cta!, onTap: spec.onCta),
-              ],
-            ],
+                  if (spec.cta != null) ...[
+                    const SizedBox(width: 8),
+                    PrimaryButton(label: spec.cta!, onTap: spec.onCta),
+                  ],
+                ],
+              );
+            },
           ),
           const SizedBox(height: 12),
           Row(
