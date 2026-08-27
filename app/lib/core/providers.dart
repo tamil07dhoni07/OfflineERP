@@ -7,6 +7,7 @@ import 'database/repositories/auth_repository.dart';
 import 'database/repositories/collections_repository.dart';
 import 'database/repositories/dashboard_repository.dart';
 import 'database/repositories/master_data_repository.dart';
+import 'database/repositories/purchasing_repository.dart';
 import 'database/repositories/sales_repository.dart';
 import 'database/repositories/stock_repository.dart';
 import 'database/seed.dart';
@@ -51,6 +52,14 @@ final collectionsRepositoryProvider = Provider(
     ref.watch(auditRepositoryProvider),
   ),
 );
+final purchasingRepositoryProvider = Provider(
+  (ref) => PurchasingRepository(
+    ref.watch(databaseProvider),
+    ref.watch(accountingRepositoryProvider),
+    ref.watch(stockRepositoryProvider),
+    ref.watch(auditRepositoryProvider),
+  ),
+);
 
 /// Recomputes whenever an invoice or a receipt changes — the Collections
 /// screen and every "Outstanding" figure derived from it stay live.
@@ -58,6 +67,15 @@ final outstandingByCustomerProvider = StreamProvider((ref) async* {
   final db = ref.watch(databaseProvider);
   await for (final _ in db.select(db.salesInvoices).watch()) {
     yield await ref.read(masterDataRepositoryProvider).outstandingByCustomer();
+  }
+});
+
+/// Recomputes whenever a goods receipt or supplier payment changes — the
+/// Suppliers screen's "Payable" figure stays live.
+final payableBySupplierProvider = StreamProvider((ref) async* {
+  final db = ref.watch(databaseProvider);
+  await for (final _ in db.select(db.goodsReceipts).watch()) {
+    yield await ref.read(purchasingRepositoryProvider).payableBySupplier();
   }
 });
 

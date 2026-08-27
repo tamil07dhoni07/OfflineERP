@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/database/app_database.dart';
 import '../../core/providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/money.dart';
@@ -40,12 +41,12 @@ class CustomersScreen extends ConsumerWidget {
             Cell.number(c.creditLimitPaise.toIndianRupees()),
             Cell.number(out.toIndianRupees()),
             pillCell(tone, label),
-          ]);
+          ], onTap: () => _openForm(context, ref, existing: c));
         }).toList();
 
         final spec = TableSpec(
           title: 'Customers',
-          subtitle: 'Accounts, credit exposure and GST registration',
+          subtitle: 'Accounts, credit exposure and GST registration · tap a row to edit',
           devNote: 'features/customers · customers · customer_balances view',
           filters: const [
             FilterSpec('Group', 'All'),
@@ -65,40 +66,69 @@ class CustomersScreen extends ConsumerWidget {
           rows: rows,
           count: '${rows.length} customers · queried live from Drift',
           cta: 'New customer',
-          onCta: () => _newCustomer(context, ref),
+          onCta: () => _openForm(context, ref),
         );
         return ListScreen(spec: spec);
       },
     );
   }
 
-  void _newCustomer(BuildContext context, WidgetRef ref) {
-    final code = QuickField('CODE', initial: 'C-0${DateTime.now().millisecondsSinceEpoch % 1000}');
-    final name = QuickField('NAME');
-    final group = QuickField('GROUP', initial: 'Retail');
-    final gstin = QuickField('GSTIN');
-    final state = QuickField('STATE', initial: 'Maharashtra');
-    final stateCode = QuickField('STATE CODE', initial: '27');
-    final creditLimit = QuickField('CREDIT LIMIT (₹)', initial: '0', keyboardType: TextInputType.number);
+  void _openForm(BuildContext context, WidgetRef ref, {Customer? existing}) {
+    final isEdit = existing != null;
+    final code = QuickField('CODE', initial: existing?.code ?? 'C-0${DateTime.now().millisecondsSinceEpoch % 1000}');
+    final name = QuickField('NAME', initial: existing?.name ?? '');
+    final group = QuickField('GROUP', initial: existing?.groupName ?? 'Retail');
+    final gstin = QuickField('GSTIN', initial: existing?.gstin ?? '');
+    final state = QuickField('STATE', initial: existing?.state ?? 'Maharashtra');
+    final stateCode = QuickField('STATE CODE', initial: existing?.stateCode ?? '27');
+    final creditLimit = QuickField(
+      'CREDIT LIMIT (₹)',
+      initial: existing == null ? '0' : existing.creditLimitPaise.toRupees.toString(),
+      keyboardType: TextInputType.number,
+    );
 
-    showQuickAddDialog(
+    showRecordFormDialog(
       context: context,
-      title: 'New customer',
+      title: isEdit ? 'Edit customer' : 'New customer',
+      submitLabel: isEdit ? 'Save' : 'Create',
       fields: [code, name, group, gstin, state, stateCode, creditLimit],
       onSubmit: () async {
         if (name.controller.text.trim().isEmpty) throw 'Name is required';
-        await ref
-            .read(masterDataRepositoryProvider)
-            .createCustomer(
-              code: code.controller.text.trim(),
-              name: name.controller.text.trim(),
-              groupName: group.controller.text.trim(),
-              gstin: gstin.controller.text.trim().isEmpty ? null : gstin.controller.text.trim(),
-              state: state.controller.text.trim(),
-              stateCode: stateCode.controller.text.trim(),
-              creditLimitPaise: rupeesToPaise(num.tryParse(creditLimit.controller.text.trim()) ?? 0),
-            );
+        final repo = ref.read(masterDataRepositoryProvider);
+        final args = (
+          code: code.controller.text.trim(),
+          name: name.controller.text.trim(),
+          groupName: group.controller.text.trim(),
+          gstin: gstin.controller.text.trim().isEmpty ? null : gstin.controller.text.trim(),
+          state: state.controller.text.trim(),
+          stateCode: stateCode.controller.text.trim(),
+          creditLimitPaise: rupeesToPaise(num.tryParse(creditLimit.controller.text.trim()) ?? 0),
+        );
+        if (isEdit) {
+          await repo.updateCustomer(
+            existing.id,
+            code: args.code,
+            name: args.name,
+            groupName: args.groupName,
+            gstin: args.gstin,
+            state: args.state,
+            stateCode: args.stateCode,
+            creditLimitPaise: args.creditLimitPaise,
+          );
+        } else {
+          await repo.createCustomer(
+            code: args.code,
+            name: args.name,
+            groupName: args.groupName,
+            gstin: args.gstin,
+            state: args.state,
+            stateCode: args.stateCode,
+            creditLimitPaise: args.creditLimitPaise,
+          );
+        }
       },
+      onDelete: isEdit ? () => ref.read(masterDataRepositoryProvider).deleteCustomer(existing.id) : null,
+      deleteConfirmMessage: 'This removes ${existing?.name ?? 'the customer'} from lists. Existing invoices are kept for the record.',
     );
   }
 }

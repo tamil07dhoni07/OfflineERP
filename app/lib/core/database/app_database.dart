@@ -23,6 +23,12 @@ part 'app_database.g.dart';
     SalesInvoiceItems,
     Receipts,
     ReceiptAllocations,
+    PurchaseOrders,
+    PurchaseOrderItems,
+    GoodsReceipts,
+    GoodsReceiptItems,
+    SupplierPayments,
+    SupplierPaymentAllocations,
     AuditLogs,
     AppSettings,
   ],
@@ -34,7 +40,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -43,6 +49,14 @@ class AppDatabase extends _$AppDatabase {
       if (from < 2) {
         await m.createTable(receipts);
         await m.createTable(receiptAllocations);
+      }
+      if (from < 3) {
+        await m.createTable(purchaseOrders);
+        await m.createTable(purchaseOrderItems);
+        await m.createTable(goodsReceipts);
+        await m.createTable(goodsReceiptItems);
+        await m.createTable(supplierPayments);
+        await m.createTable(supplierPaymentAllocations);
       }
     },
   );

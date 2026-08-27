@@ -209,6 +209,84 @@ class ReceiptAllocations extends Table with _AuditColumns {
   IntColumn get amountPaise => integer()();
 }
 
+/// A commitment to buy — no accounting impact until goods actually arrive
+/// (see [GoodsReceipts]), matching how a PO isn't a liability yet.
+class PurchaseOrders extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get poNo => text().unique()();
+  DateTimeColumn get date => dateTime()();
+  TextColumn get supplierId => text()();
+  TextColumn get warehouseId => text()();
+  IntColumn get totalPaise => integer()();
+  TextColumn get status => text()(); // draft | approved | part_received | received | cancelled
+}
+
+class PurchaseOrderItems extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get poId => text()();
+  TextColumn get productId => text()();
+  IntColumn get lineNo => integer()();
+  IntColumn get qty => integer()();
+  IntColumn get ratePaise => integer()();
+  IntColumn get receivedQty => integer().withDefault(const Constant(0))();
+}
+
+/// The actual liability-creating event on the purchase side — posts stock
+/// IN and Dr Inventory / Cr Accounts Payable, symmetric to how a sales
+/// invoice posts stock OUT and Dr AR / Cr Sales.
+class GoodsReceipts extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get grnNo => text().unique()();
+  DateTimeColumn get date => dateTime()();
+  TextColumn get poId => text()();
+  TextColumn get supplierId => text()();
+  TextColumn get warehouseId => text()();
+  IntColumn get totalPaise => integer()();
+  IntColumn get balancePaise => integer()();
+  TextColumn get status => text()(); // posted
+}
+
+class GoodsReceiptItems extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get grnId => text()();
+  TextColumn get productId => text()();
+  IntColumn get qty => integer()();
+  IntColumn get ratePaise => integer()();
+  IntColumn get amountPaise => integer()();
+}
+
+/// Symmetric to [Receipts], but paying a supplier down instead of
+/// collecting from a customer.
+class SupplierPayments extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get voucherNo => text().unique()();
+  DateTimeColumn get date => dateTime()();
+  TextColumn get supplierId => text()();
+  TextColumn get method => text()(); // cash | cheque | dd
+  TextColumn get reference => text().nullable()();
+  IntColumn get amountPaise => integer()();
+  IntColumn get unallocatedPaise => integer().withDefault(const Constant(0))();
+}
+
+class SupplierPaymentAllocations extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get paymentId => text()();
+  TextColumn get grnId => text()();
+  IntColumn get amountPaise => integer()();
+}
+
 class AuditLogs extends Table with _AuditColumns {
   @override
   Set<Column> get primaryKey => {id};

@@ -62,8 +62,12 @@ Cell pillCell(PillTone tone, String label) {
 }
 
 class RowSpec {
-  const RowSpec(this.cells);
+  const RowSpec(this.cells, {this.onTap});
   final List<Cell> cells;
+
+  /// Opens a detail page, edit dialog, etc. Rows without this stay
+  /// non-interactive, same as before — nothing regresses just by adding it.
+  final VoidCallback? onTap;
 }
 
 class ColumnSpec {

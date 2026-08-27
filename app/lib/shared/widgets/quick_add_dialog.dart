@@ -19,6 +19,22 @@ Future<void> showQuickAddDialog({
   required List<QuickField> fields,
   required Future<void> Function() onSubmit,
 }) {
+  return showRecordFormDialog(context: context, title: title, fields: fields, onSubmit: onSubmit);
+}
+
+/// Same form, but also usable to edit an existing record: pass
+/// `submitLabel: 'Save'` and, to allow deleting it from the same dialog,
+/// `onDelete`. A confirmation step guards the delete so a stray tap can't
+/// remove a record.
+Future<void> showRecordFormDialog({
+  required BuildContext context,
+  required String title,
+  required List<QuickField> fields,
+  required Future<void> Function() onSubmit,
+  String submitLabel = 'Create',
+  Future<void> Function()? onDelete,
+  String deleteConfirmMessage = 'This cannot be undone.',
+}) {
   return showDialog(
     context: context,
     builder: (context) {
@@ -33,6 +49,38 @@ Future<void> showQuickAddDialog({
             });
             try {
               await onSubmit();
+              if (context.mounted) Navigator.of(context).pop();
+            } catch (e) {
+              setState(() {
+                error = '$e';
+                submitting = false;
+              });
+            }
+          }
+
+          Future<void> confirmDelete() async {
+            final confirmed = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                backgroundColor: AppColors.card,
+                title: const Text('Delete this record?'),
+                content: Text(deleteConfirmMessage),
+                actions: [
+                  TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancel')),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text('Delete', style: TextStyle(color: AppColors.danger)),
+                  ),
+                ],
+              ),
+            );
+            if (confirmed != true) return;
+            setState(() {
+              submitting = true;
+              error = null;
+            });
+            try {
+              await onDelete!();
               if (context.mounted) Navigator.of(context).pop();
             } catch (e) {
               setState(() {
@@ -87,11 +135,16 @@ Future<void> showQuickAddDialog({
                     ],
                     const SizedBox(height: 4),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        if (onDelete != null)
+                          TextButton(
+                            onPressed: submitting ? null : confirmDelete,
+                            child: const Text('Delete', style: TextStyle(color: AppColors.danger)),
+                          ),
+                        const Spacer(),
                         SecondaryButton(label: 'Cancel', onTap: submitting ? null : () => Navigator.of(context).pop()),
                         const SizedBox(width: 8),
-                        PrimaryButton(label: submitting ? 'Saving…' : 'Create', onTap: submitting ? null : submit),
+                        PrimaryButton(label: submitting ? 'Saving…' : submitLabel, onTap: submitting ? null : submit),
                       ],
                     ),
                   ],

@@ -98,4 +98,92 @@ class MasterDataRepository {
     );
     return _db.into(_db.products).insertReturning(companion);
   }
+
+  Future<Customer?> customerById(String id) => (_db.select(_db.customers)..where((t) => t.id.equals(id))).getSingleOrNull();
+  Future<Supplier?> supplierById(String id) => (_db.select(_db.suppliers)..where((t) => t.id.equals(id))).getSingleOrNull();
+  Future<Product?> productById(String id) => (_db.select(_db.products)..where((t) => t.id.equals(id))).getSingleOrNull();
+
+  Future<void> updateCustomer(
+    String id, {
+    required String code,
+    required String name,
+    required String groupName,
+    String? gstin,
+    required String state,
+    required String stateCode,
+    required int creditLimitPaise,
+  }) {
+    return (_db.update(_db.customers)..where((t) => t.id.equals(id))).write(
+      CustomersCompanion(
+        code: Value(code),
+        name: Value(name),
+        groupName: Value(groupName),
+        gstin: Value(gstin),
+        state: Value(state),
+        stateCode: Value(stateCode),
+        creditLimitPaise: Value(creditLimitPaise),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  Future<void> updateSupplier(
+    String id, {
+    required String code,
+    required String name,
+    required String category,
+    String? gstin,
+    required String terms,
+  }) {
+    return (_db.update(_db.suppliers)..where((t) => t.id.equals(id))).write(
+      SuppliersCompanion(
+        code: Value(code),
+        name: Value(name),
+        category: Value(category),
+        gstin: Value(gstin),
+        terms: Value(terms),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  Future<void> updateProduct(
+    String id, {
+    required String sku,
+    required String name,
+    required String category,
+    required String uom,
+    required String hsn,
+    required int purchasePricePaise,
+    required int sellingPricePaise,
+    required double gstRate,
+    required int reorderLevel,
+  }) {
+    return (_db.update(_db.products)..where((t) => t.id.equals(id))).write(
+      ProductsCompanion(
+        sku: Value(sku),
+        name: Value(name),
+        category: Value(category),
+        uom: Value(uom),
+        hsn: Value(hsn),
+        purchasePricePaise: Value(purchasePricePaise),
+        sellingPricePaise: Value(sellingPricePaise),
+        gstRate: Value(gstRate),
+        reorderLevel: Value(reorderLevel),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  /// Soft delete only — rows never physically disappear, per the spec's
+  /// "never silently delete production data" rule. Every read already
+  /// filters `deletedAt.isNull()`.
+  Future<void> deleteCustomer(String id) =>
+      (_db.update(_db.customers)..where((t) => t.id.equals(id))).write(CustomersCompanion(deletedAt: Value(DateTime.now())));
+
+  Future<void> deleteSupplier(String id) =>
+      (_db.update(_db.suppliers)..where((t) => t.id.equals(id))).write(SuppliersCompanion(deletedAt: Value(DateTime.now())));
+
+  Future<void> deleteProduct(String id) =>
+      (_db.update(_db.products)..where((t) => t.id.equals(id))).write(ProductsCompanion(deletedAt: Value(DateTime.now())));
 }

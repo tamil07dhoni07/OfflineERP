@@ -155,11 +155,10 @@ class _DataTable extends StatelessWidget {
           TableRow(
             children: [
               for (final cell in row.cells)
-                Container(
+                _RowCell(
                   height: rowHeight,
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  alignment: cell.align == CellAlign.right ? Alignment.centerRight : Alignment.centerLeft,
-                  decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.borderFaint))),
+                  align: cell.align,
+                  onTap: row.onTap,
                   child: cell.tone == CellTone.pill
                       ? _Pill(cell)
                       : Text(cell.value, softWrap: false, style: cell.style()),
@@ -167,6 +166,42 @@ class _DataTable extends StatelessWidget {
             ],
           ),
       ],
+    );
+  }
+}
+
+class _RowCell extends StatefulWidget {
+  const _RowCell({required this.height, required this.align, required this.child, this.onTap});
+  final double height;
+  final CellAlign align;
+  final Widget child;
+  final VoidCallback? onTap;
+
+  @override
+  State<_RowCell> createState() => _RowCellState();
+}
+
+class _RowCellState extends State<_RowCell> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final content = Container(
+      height: widget.height,
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      alignment: widget.align == CellAlign.right ? Alignment.centerRight : Alignment.centerLeft,
+      decoration: BoxDecoration(
+        color: _hover && widget.onTap != null ? AppColors.fieldFill : null,
+        border: const Border(bottom: BorderSide(color: AppColors.borderFaint)),
+      ),
+      child: widget.child,
+    );
+    if (widget.onTap == null) return content;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: GestureDetector(onTap: widget.onTap, child: content),
     );
   }
 }
