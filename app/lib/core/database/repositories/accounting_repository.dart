@@ -46,6 +46,20 @@ class AccountingRepository {
   Stream<List<Account>> watchAccounts() =>
       (_db.select(_db.accounts)..orderBy([(t) => OrderingTerm.asc(t.code)])).watch();
 
+  Future<Account> createAccount({
+    required String code,
+    required String name,
+    required String groupName,
+    required String type,
+    required String nature,
+  }) {
+    return _db
+        .into(_db.accounts)
+        .insertReturning(
+          AccountsCompanion.insert(code: code, name: name, groupName: groupName, type: type, nature: nature),
+        );
+  }
+
   Future<List<AccountBalance>> trialBalance() async {
     final accounts = await allAccounts();
     final result = <AccountBalance>[];

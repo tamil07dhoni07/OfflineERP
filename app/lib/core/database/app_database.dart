@@ -32,6 +32,10 @@ part 'app_database.g.dart';
     StockTransfers,
     StockTransferItems,
     StockAdjustments,
+    Employees,
+    LeaveRequests,
+    AttendanceRecords,
+    PayrollRuns,
     AuditLogs,
     AppSettings,
   ],
@@ -43,7 +47,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -65,6 +69,12 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(stockTransfers);
         await m.createTable(stockTransferItems);
         await m.createTable(stockAdjustments);
+      }
+      if (from < 5) {
+        await m.createTable(employees);
+        await m.createTable(leaveRequests);
+        await m.createTable(attendanceRecords);
+        await m.createTable(payrollRuns);
       }
     },
   );

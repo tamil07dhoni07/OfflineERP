@@ -40,7 +40,12 @@ const navGroups = <NavGroup>[
     NavItem('tb', 'Trial Balance'),
   ]),
   NavGroup('TAX · GST', [NavItem('gst', 'GST Summary'), NavItem('gstr1', 'GSTR-1 Filing')]),
-  NavGroup('PEOPLE', [NavItem('employees', 'Employees'), NavItem('payroll', 'Payroll Runs')]),
+  NavGroup('PEOPLE', [
+    NavItem('employees', 'Employees'),
+    NavItem('attendance', 'Attendance'),
+    NavItem('leave', 'Leave'),
+    NavItem('payroll', 'Payroll Runs'),
+  ]),
   NavGroup('SYSTEM', [
     NavItem('reports', 'Reports'),
     NavItem('company', 'Company Setup'),
@@ -57,7 +62,7 @@ const crumbFor = <String, String>{
   'customers': 'MASTER DATA', 'suppliers': 'MASTER DATA', 'products': 'MASTER DATA',
   'coa': 'FINANCE', 'ledger': 'FINANCE', 'tb': 'FINANCE',
   'gst': 'TAX', 'gstr1': 'TAX',
-  'employees': 'PEOPLE', 'payroll': 'PEOPLE',
+  'employees': 'PEOPLE', 'attendance': 'PEOPLE', 'leave': 'PEOPLE', 'payroll': 'PEOPLE',
   'reports': 'SYSTEM', 'company': 'SYSTEM', 'license': 'SYSTEM', 'audit': 'SYSTEM',
 };
 
@@ -70,6 +75,6 @@ const titleFor = <String, String>{
   'customers': 'Customers', 'suppliers': 'Suppliers', 'products': 'Products',
   'coa': 'Chart of Accounts', 'ledger': 'General Ledger', 'tb': 'Trial Balance',
   'gst': 'GST Summary', 'gstr1': 'GSTR-1 Filing',
-  'employees': 'Employees', 'payroll': 'Payroll Runs',
+  'employees': 'Employees', 'attendance': 'Attendance', 'leave': 'Leave', 'payroll': 'Payroll Runs',
   'reports': 'Reports', 'company': 'Company Setup', 'license': 'License & Devices', 'audit': 'Audit Log',
 };

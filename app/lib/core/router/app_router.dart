@@ -11,7 +11,9 @@ import '../../features/accounting/trial_balance_screen.dart';
 import '../../features/company/company_screen.dart';
 import '../../features/customers/customers_screen.dart';
 import '../../features/dashboard/dashboard_screen.dart';
+import '../../features/hr/attendance_screen.dart';
 import '../../features/hr/employees_screen.dart';
+import '../../features/hr/leave_screen.dart';
 import '../../features/hr/payroll_screen.dart';
 import '../../features/inventory/adjustments_screen.dart';
 import '../../features/inventory/stock_screen.dart';
@@ -79,6 +81,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       page('gst', () => const GstSummaryScreen()),
       page('gstr1', () => const Gstr1Screen()),
       page('employees', () => const EmployeesScreen()),
+      page('attendance', () => const AttendanceScreen()),
+      page('leave', () => const LeaveScreen()),
       page('payroll', () => const PayrollScreen()),
       page('reports', () => const ReportsScreen()),
       page('company', () => const CompanyScreen()),

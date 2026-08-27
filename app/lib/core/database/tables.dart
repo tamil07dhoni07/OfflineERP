@@ -329,6 +329,62 @@ class StockAdjustments extends Table with _AuditColumns {
   TextColumn get status => text()(); // posted | reversed
 }
 
+class Employees extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get code => text().unique()();
+  TextColumn get name => text()();
+  TextColumn get designation => text()();
+  TextColumn get department => text()();
+  DateTimeColumn get joinedDate => dateTime()();
+  IntColumn get ctcPaise => integer()(); // per month
+  TextColumn get status => text().withDefault(const Constant('active'))(); // active | inactive
+}
+
+class LeaveRequests extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get employeeId => text()();
+  TextColumn get leaveType => text()(); // casual | sick | earned | unpaid
+  DateTimeColumn get fromDate => dateTime()();
+  DateTimeColumn get toDate => dateTime()();
+  RealColumn get days => real()();
+  TextColumn get reason => text()();
+  TextColumn get status => text()(); // pending | approved | rejected
+  TextColumn get decidedBy => text().nullable()();
+}
+
+class AttendanceRecords extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get employeeId => text()();
+  DateTimeColumn get date => dateTime()();
+  TextColumn get status => text()(); // present | absent | half_day | leave | holiday
+  TextColumn get note => text().nullable()();
+}
+
+/// A simplified monthly payroll cycle — deduction rates are flat
+/// placeholders (PF 12%, ESI 0.75%, TDS 8%), not a real Indian statutory
+/// payroll engine. Good enough to post gross-to-net and a real journal
+/// entry; not a substitute for compliant payroll software.
+class PayrollRuns extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get period => text().unique()(); // e.g. "2026-08"
+  DateTimeColumn get periodDate => dateTime()();
+  IntColumn get headcount => integer()();
+  IntColumn get grossPaise => integer()();
+  IntColumn get pfPaise => integer()();
+  IntColumn get esiPaise => integer()();
+  IntColumn get tdsPaise => integer()();
+  IntColumn get netPayablePaise => integer()();
+  TextColumn get status => text()(); // draft | posted | paid
+}
+
 class AuditLogs extends Table with _AuditColumns {
   @override
   Set<Column> get primaryKey => {id};
