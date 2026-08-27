@@ -123,6 +123,16 @@ class StockRepository {
         );
   }
 
+  /// Full movement history for one (product, warehouse) — the "details
+  /// page" behind a Stock on Hand row: every sale, receipt, transfer and
+  /// adjustment that built up the current on-hand figure, newest first.
+  Future<List<StockMovement>> movementsFor(String productId, String warehouseId) {
+    return (_db.select(_db.stockMovements)
+          ..where((t) => t.productId.equals(productId) & t.warehouseId.equals(warehouseId))
+          ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
+        .get();
+  }
+
   /// Quantity "soft-reserved" by invoices raised but not yet posted —
   /// matches the design's "stock reserved on post" note: stock is only
   /// actually committed when an invoice posts, but draft invoices already

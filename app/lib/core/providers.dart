@@ -6,6 +6,7 @@ import 'database/repositories/audit_repository.dart';
 import 'database/repositories/auth_repository.dart';
 import 'database/repositories/collections_repository.dart';
 import 'database/repositories/dashboard_repository.dart';
+import 'database/repositories/inventory_repository.dart';
 import 'database/repositories/master_data_repository.dart';
 import 'database/repositories/purchasing_repository.dart';
 import 'database/repositories/sales_repository.dart';
@@ -51,6 +52,9 @@ final collectionsRepositoryProvider = Provider(
     ref.watch(accountingRepositoryProvider),
     ref.watch(auditRepositoryProvider),
   ),
+);
+final inventoryRepositoryProvider = Provider(
+  (ref) => InventoryRepository(ref.watch(databaseProvider), ref.watch(stockRepositoryProvider), ref.watch(auditRepositoryProvider)),
 );
 final purchasingRepositoryProvider = Provider(
   (ref) => PurchasingRepository(

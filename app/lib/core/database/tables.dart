@@ -287,6 +287,48 @@ class SupplierPaymentAllocations extends Table with _AuditColumns {
   IntColumn get amountPaise => integer()();
 }
 
+/// A transfer between warehouses posts as two paired movements (see
+/// [StockRepository.recordMovement]) tagged with this header's id — this
+/// table exists only so the transfer shows up as one row to the user
+/// rather than two anonymous ledger entries.
+class StockTransfers extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get transferNo => text().unique()();
+  DateTimeColumn get date => dateTime()();
+  TextColumn get fromWarehouseId => text()();
+  TextColumn get toWarehouseId => text()();
+  TextColumn get status => text()(); // completed | reversed
+}
+
+class StockTransferItems extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get transferId => text()();
+  TextColumn get productId => text()();
+  IntColumn get qty => integer()();
+}
+
+/// A manual quantity correction — one line, one movement, with the reason
+/// and approver the spec requires for every stock write outside the normal
+/// sale/purchase flow.
+class StockAdjustments extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get adjustmentNo => text().unique()();
+  DateTimeColumn get date => dateTime()();
+  TextColumn get productId => text()();
+  TextColumn get warehouseId => text()();
+  IntColumn get deltaQty => integer()(); // signed: + found stock, - written off
+  TextColumn get reason => text()();
+  TextColumn get approvedBy => text()();
+  IntColumn get valueImpactPaise => integer()(); // signed, at the product's purchase price
+  TextColumn get status => text()(); // posted | reversed
+}
+
 class AuditLogs extends Table with _AuditColumns {
   @override
   Set<Column> get primaryKey => {id};
