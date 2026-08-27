@@ -99,6 +99,26 @@ class MasterDataRepository {
     return _db.into(_db.products).insertReturning(companion);
   }
 
+  Future<void> updateCompany(
+    String id, {
+    required String legalName,
+    required String gstin,
+    required String pan,
+    required String state,
+    required String stateCode,
+  }) {
+    return (_db.update(_db.companies)..where((t) => t.id.equals(id))).write(
+      CompaniesCompanion(
+        legalName: Value(legalName),
+        gstin: Value(gstin),
+        pan: Value(pan),
+        state: Value(state),
+        stateCode: Value(stateCode),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
   Future<Customer?> customerById(String id) => (_db.select(_db.customers)..where((t) => t.id.equals(id))).getSingleOrNull();
   Future<Supplier?> supplierById(String id) => (_db.select(_db.suppliers)..where((t) => t.id.equals(id))).getSingleOrNull();
   Future<Product?> productById(String id) => (_db.select(_db.products)..where((t) => t.id.equals(id))).getSingleOrNull();

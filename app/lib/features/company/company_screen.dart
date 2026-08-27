@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/database/app_database.dart';
 import '../../core/providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
 import '../../shared/widgets/adaptive.dart';
 import '../../shared/widgets/cards.dart';
+import '../../shared/widgets/quick_add_dialog.dart';
 
 class _Row {
   const _Row(this.label, this.value, {this.mono = false});
@@ -15,10 +17,11 @@ class _Row {
 }
 
 class _Section {
-  const _Section(this.title, this.table, this.rows);
+  const _Section(this.title, this.table, this.rows, {this.onEdit});
   final String title;
   final String table;
   final List<_Row> rows;
+  final VoidCallback? onEdit;
 }
 
 class CompanyScreen extends ConsumerWidget {
@@ -44,7 +47,7 @@ class CompanyScreen extends ConsumerWidget {
         _Row('PAN', company.pan, mono: true),
         _Row('State', '${company.state} (${company.stateCode})'),
         _Row('Base currency', '${company.baseCurrency} ₹'),
-      ]),
+      ], onEdit: () => _editCompany(context, ref, company)),
       _Section('Branches & warehouses', 'branches · warehouses', [
         const _Row('Mumbai HQ', 'Head office · billing'),
         for (final w in warehouses) _Row(w.name, w.notes ?? 'Warehouse'),
@@ -74,7 +77,7 @@ class CompanyScreen extends ConsumerWidget {
         _Row('Active users', '$userCount seeded'),
         const _Row('Roles', 'Owner, Accountant, Sales, Store, Auditor'),
         const _Row('Session timeout', '30 minutes idle'),
-        const _Row('Password policy', 'PBKDF2-SHA256, 210k iterations'),
+        const _Row('Password policy', 'PBKDF2-SHA256, 120k iterations'),
         const _Row('Quick PIN login', 'Not yet wired'),
       ]),
     ];
@@ -83,6 +86,34 @@ class CompanyScreen extends ConsumerWidget {
       columns: 2,
       minTileWidth: 420,
       children: [for (final s in sections) _SectionCardView(s)],
+    );
+  }
+
+  void _editCompany(BuildContext context, WidgetRef ref, Company company) {
+    final legalName = QuickField('LEGAL NAME', initial: company.legalName);
+    final gstin = QuickField('GSTIN', initial: company.gstin);
+    final pan = QuickField('PAN', initial: company.pan);
+    final state = QuickField('STATE', initial: company.state);
+    final stateCode = QuickField('STATE CODE', initial: company.stateCode);
+
+    showRecordFormDialog(
+      context: context,
+      title: 'Edit company',
+      submitLabel: 'Save',
+      fields: [legalName, gstin, pan, state, stateCode],
+      onSubmit: () async {
+        if (legalName.controller.text.trim().isEmpty) throw 'Legal name is required';
+        await ref
+            .read(masterDataRepositoryProvider)
+            .updateCompany(
+              company.id,
+              legalName: legalName.controller.text.trim(),
+              gstin: gstin.controller.text.trim(),
+              pan: pan.controller.text.trim(),
+              state: state.controller.text.trim(),
+              stateCode: stateCode.controller.text.trim(),
+            );
+      },
     );
   }
 }
@@ -108,6 +139,17 @@ class _SectionCardView extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(15, 6, 15, 13),
             child: Column(
               children: [
+                if (section.onEdit != null)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: section.onEdit,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 6),
+                        child: Text('Edit', style: AppText.sans(size: 12, weight: FontWeight.w600, color: AppColors.accent)),
+                      ),
+                    ),
+                  ),
                 for (final r in section.rows)
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 9),
