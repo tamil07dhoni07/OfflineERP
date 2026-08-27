@@ -75,7 +75,7 @@ class CompanyScreen extends ConsumerWidget {
       ]),
       _Section('Users & roles', 'users · roles · permissions', [
         _Row('Active users', '$userCount seeded'),
-        const _Row('Roles', 'Owner, Accountant, Sales, Store, Auditor'),
+        const _Row('Roles', 'Admin, Accountant, Sales, Store, HR, Auditor · Super Admin (control plane, separate)'),
         const _Row('Session timeout', '30 minutes idle'),
         const _Row('Password policy', 'PBKDF2-SHA256, 120k iterations'),
         const _Row('Quick PIN login', 'Not yet wired'),

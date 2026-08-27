@@ -36,6 +36,9 @@ part 'app_database.g.dart';
     LeaveRequests,
     AttendanceRecords,
     PayrollRuns,
+    Clients,
+    ClientLicenses,
+    ClientDevices,
     AuditLogs,
     AppSettings,
   ],
@@ -47,7 +50,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -75,6 +78,11 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(leaveRequests);
         await m.createTable(attendanceRecords);
         await m.createTable(payrollRuns);
+      }
+      if (from < 6) {
+        await m.createTable(clients);
+        await m.createTable(clientLicenses);
+        await m.createTable(clientDevices);
       }
     },
   );

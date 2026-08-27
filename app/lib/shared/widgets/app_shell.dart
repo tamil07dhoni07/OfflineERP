@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/providers.dart';
 import '../../core/router/nav_data.dart';
+import '../../core/security/roles.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
 import '../../features/auth/auth_controller.dart';
@@ -240,6 +241,11 @@ class _Sidebar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final draftCount = ref.watch(draftInvoiceCountProvider).valueOrNull;
     final reorderCount = ref.watch(belowReorderCountProvider).valueOrNull;
+    final role = AppRole.fromDb(ref.watch(authControllerProvider)?.role ?? 'admin');
+    final visibleGroups = [
+      for (final group in navGroups)
+        NavGroup(group.label, [for (final item in group.items) if (navKeyAllowedFor(role, item.key)) item]),
+    ]..removeWhere((g) => g.items.isEmpty);
 
     return Container(
       color: AppColors.sidebar,
@@ -278,7 +284,7 @@ class _Sidebar extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(8, 10, 8, 16),
               children: [
-                for (final group in navGroups)
+                for (final group in visibleGroups)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Column(

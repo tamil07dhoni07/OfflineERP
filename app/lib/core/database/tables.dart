@@ -385,6 +385,49 @@ class PayrollRuns extends Table with _AuditColumns {
   TextColumn get status => text()(); // draft | posted | paid
 }
 
+/// Super Admin control-plane data. Per the spec this belongs in Firebase
+/// (shared across every client/device), not a single client's local
+/// SQLite — a local database can only ever hold one client's own data by
+/// construction. These tables exist so the Super Admin *workflow* is real
+/// and demoable now; once a Firebase project is connected, the backing
+/// store swaps out from under the same repository interface, the same way
+/// the spec's own repository-abstraction principle works everywhere else
+/// in this app. Until then, this device's local copy is standing in for
+/// what would be a shared multi-tenant store.
+class Clients extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get companyName => text()();
+  TextColumn get contactEmail => text()();
+  TextColumn get status => text()(); // active | suspended | deactivated
+}
+
+class ClientLicenses extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get clientId => text()();
+  TextColumn get licenseKey => text().unique()();
+  TextColumn get plan => text()();
+  TextColumn get status => text()(); // active | suspended | expired | revoked
+  DateTimeColumn get activatedAt => dateTime()();
+  DateTimeColumn get expiresAt => dateTime()();
+  IntColumn get maxDevices => integer()();
+  TextColumn get enabledModulesCsv => text()();
+}
+
+class ClientDevices extends Table with _AuditColumns {
+  @override
+  Set<Column> get primaryKey => {id};
+
+  TextColumn get clientId => text()();
+  TextColumn get deviceId => text()();
+  TextColumn get platform => text()();
+  DateTimeColumn get lastSeenAt => dateTime()();
+  TextColumn get status => text()(); // active | revoked
+}
+
 class AuditLogs extends Table with _AuditColumns {
   @override
   Set<Column> get primaryKey => {id};

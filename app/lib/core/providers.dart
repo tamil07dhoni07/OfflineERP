@@ -8,6 +8,7 @@ import 'database/repositories/collections_repository.dart';
 import 'database/repositories/dashboard_repository.dart';
 import 'database/repositories/hr_repository.dart';
 import 'database/repositories/inventory_repository.dart';
+import 'database/repositories/super_admin_repository.dart';
 import 'database/repositories/master_data_repository.dart';
 import 'database/repositories/purchasing_repository.dart';
 import 'database/repositories/sales_repository.dart';
@@ -53,6 +54,9 @@ final collectionsRepositoryProvider = Provider(
     ref.watch(accountingRepositoryProvider),
     ref.watch(auditRepositoryProvider),
   ),
+);
+final superAdminRepositoryProvider = Provider(
+  (ref) => SuperAdminRepository(ref.watch(databaseProvider), ref.watch(auditRepositoryProvider)),
 );
 final hrRepositoryProvider = Provider(
   (ref) => HrRepository(ref.watch(databaseProvider), ref.watch(accountingRepositoryProvider), ref.watch(auditRepositoryProvider)),

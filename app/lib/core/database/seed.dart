@@ -47,11 +47,16 @@ Future<void> seedIfEmpty(AppDatabase db) async {
         .insert(WarehousesCompanion.insert(id: Value(w.$1), branchId: branchId, name: w.$2, notes: Value(w.$3)));
   }
 
+  // Role is the RBAC slug (matches AppRole.name in core/security/roles.dart),
+  // not a display title — it's what gates sidebar nav access per role.
   final userSeed = [
-    ('r.deshmukh', 'Rohit Deshmukh', 'RD', 'Owner'),
-    ('s.iyer', 'Sneha Iyer', 'SI', 'Warehouse Supervisor'),
-    ('a.patil', 'Arun Patil', 'AP', 'Sales Executive'),
-    ('admin', 'System Administrator', 'AD', 'Administrator'),
+    ('r.deshmukh', 'Rohit Deshmukh', 'RD', 'admin'),
+    ('s.iyer', 'Sneha Iyer', 'SI', 'store'),
+    ('a.patil', 'Arun Patil', 'AP', 'sales'),
+    ('k.rao', 'Kavita Rao', 'KR', 'accountant'),
+    ('p.nair', 'Priya Nair', 'PN', 'hr'),
+    ('v.menon', 'Vikram Menon', 'VM', 'auditor'),
+    ('admin', 'System Administrator', 'AD', 'superAdmin'),
   ];
   final seedPasswordHash = await PasswordHasher.hash(seedDevPassword);
   for (final u in userSeed) {
@@ -527,4 +532,95 @@ Future<void> seedIfEmpty(AppDatabase db) async {
   for (final e in settings.entries) {
     await db.into(db.appSettings).insert(AppSettingsCompanion.insert(key: e.key, value: e.value));
   }
+
+  // ---- Super Admin control-plane demo data -------------------------------
+  // "Nexus Traders" is this device's own tenant — its license/device rows
+  // mirror the app_settings values above so the two views agree. The other
+  // two clients exist purely so the Super Admin client list isn't a list of
+  // one; a real multi-tenant store would have many.
+  const clientsSeed = [
+    (
+      'client-nexus',
+      'Nexus Traders Private Limited',
+      'accounts@nexustraders.example',
+      'active',
+      'NXS-IN-4471-9930-KLQ',
+      'Business · 5 devices',
+      'active',
+      '2026-04-12',
+      '2027-04-11',
+      5,
+      'Sales,Purchasing,Inventory,Accounting,GST & returns,HR,Payroll,Reports',
+    ),
+    (
+      'client-meridian',
+      'Meridian Textiles Pvt Ltd',
+      'ops@meridiantextiles.example',
+      'active',
+      'NXS-IN-2201-7734-PLM',
+      'Starter · 2 devices',
+      'active',
+      '2026-07-01',
+      '2027-07-01',
+      2,
+      'Sales,Inventory,Accounting,Reports',
+    ),
+    (
+      'client-coastal',
+      'Coastal Traders LLP',
+      'admin@coastaltraders.example',
+      'suspended',
+      'NXS-IN-9081-2245-XQR',
+      'Business · 5 devices',
+      'suspended',
+      '2025-11-20',
+      '2026-11-20',
+      5,
+      'Sales,Purchasing,Inventory,Accounting,Reports',
+    ),
+  ];
+  for (final c in clientsSeed) {
+    await db.into(db.clients).insert(
+      ClientsCompanion.insert(id: Value(c.$1), companyName: c.$2, contactEmail: c.$3, status: c.$4),
+    );
+    await db.into(db.clientLicenses).insert(
+      ClientLicensesCompanion.insert(
+        clientId: c.$1,
+        licenseKey: c.$5,
+        plan: c.$6,
+        status: c.$7,
+        activatedAt: DateTime.parse(c.$8),
+        expiresAt: DateTime.parse(c.$9),
+        maxDevices: c.$10,
+        enabledModulesCsv: c.$11,
+      ),
+    );
+  }
+  await db.into(db.clientDevices).insert(
+    ClientDevicesCompanion.insert(
+      clientId: 'client-nexus',
+      deviceId: 'WIN-MUM-04',
+      platform: 'Windows 11 · desktop',
+      lastSeenAt: DateTime(2026, 8, 24, 11, 42),
+      status: 'active',
+    ),
+  );
+  await db.into(db.clientDevices).insert(
+    ClientDevicesCompanion.insert(
+      clientId: 'client-nexus',
+      deviceId: 'AND-WH-11',
+      platform: 'Android 15 · handheld',
+      lastSeenAt: DateTime(2026, 8, 24, 10, 18),
+      status: 'active',
+    ),
+  );
+  await db.into(db.clientDevices).insert(
+    ClientDevicesCompanion.insert(
+      clientId: 'client-meridian',
+      deviceId: 'WIN-MER-01',
+      platform: 'Windows 11 · desktop',
+      lastSeenAt: DateTime(2026, 8, 20, 9, 0),
+      status: 'active',
+    ),
+  );
 }

@@ -234,7 +234,8 @@ class _SignInPanel extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Seed users: r.deshmukh · s.iyer · a.patil · admin — password "$seedDevPassword"',
+                      'Seed users (password "$seedDevPassword"): r.deshmukh (admin) · s.iyer (store) · a.patil (sales) · '
+                      'k.rao (accountant) · p.nair (hr) · v.menon (auditor) · admin (super admin)',
                       style: AppText.mono(size: 10.5, color: AppColors.mutedFainter),
                     ),
                   ],

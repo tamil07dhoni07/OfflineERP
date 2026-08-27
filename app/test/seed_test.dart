@@ -25,7 +25,7 @@ void main() {
     test('seeds a company, warehouses, users, customers, suppliers and products', () async {
       expect(await db.select(db.companies).get(), hasLength(1));
       expect(await db.select(db.warehouses).get(), hasLength(3));
-      expect(await db.select(db.appUsers).get(), hasLength(4));
+      expect(await db.select(db.appUsers).get(), hasLength(7));
       expect(await db.select(db.customers).get(), hasLength(7));
       expect(await db.select(db.suppliers).get(), hasLength(4));
       expect(await db.select(db.products).get(), hasLength(7));

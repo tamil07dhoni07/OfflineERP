@@ -17452,6 +17452,1741 @@ class PayrollRunsCompanion extends UpdateCompanion<PayrollRun> {
   }
 }
 
+class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ClientsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: newId,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _companyNameMeta = const VerificationMeta(
+    'companyName',
+  );
+  @override
+  late final GeneratedColumn<String> companyName = GeneratedColumn<String>(
+    'company_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _contactEmailMeta = const VerificationMeta(
+    'contactEmail',
+  );
+  @override
+  late final GeneratedColumn<String> contactEmail = GeneratedColumn<String>(
+    'contact_email',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    companyName,
+    contactEmail,
+    status,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'clients';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Client> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('company_name')) {
+      context.handle(
+        _companyNameMeta,
+        companyName.isAcceptableOrUnknown(
+          data['company_name']!,
+          _companyNameMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_companyNameMeta);
+    }
+    if (data.containsKey('contact_email')) {
+      context.handle(
+        _contactEmailMeta,
+        contactEmail.isAcceptableOrUnknown(
+          data['contact_email']!,
+          _contactEmailMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_contactEmailMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Client map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Client(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      companyName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}company_name'],
+      )!,
+      contactEmail: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}contact_email'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+    );
+  }
+
+  @override
+  $ClientsTable createAlias(String alias) {
+    return $ClientsTable(attachedDatabase, alias);
+  }
+}
+
+class Client extends DataClass implements Insertable<Client> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final String companyName;
+  final String contactEmail;
+  final String status;
+  const Client({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.companyName,
+    required this.contactEmail,
+    required this.status,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['company_name'] = Variable<String>(companyName);
+    map['contact_email'] = Variable<String>(contactEmail);
+    map['status'] = Variable<String>(status);
+    return map;
+  }
+
+  ClientsCompanion toCompanion(bool nullToAbsent) {
+    return ClientsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      companyName: Value(companyName),
+      contactEmail: Value(contactEmail),
+      status: Value(status),
+    );
+  }
+
+  factory Client.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Client(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      companyName: serializer.fromJson<String>(json['companyName']),
+      contactEmail: serializer.fromJson<String>(json['contactEmail']),
+      status: serializer.fromJson<String>(json['status']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'companyName': serializer.toJson<String>(companyName),
+      'contactEmail': serializer.toJson<String>(contactEmail),
+      'status': serializer.toJson<String>(status),
+    };
+  }
+
+  Client copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    String? companyName,
+    String? contactEmail,
+    String? status,
+  }) => Client(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    companyName: companyName ?? this.companyName,
+    contactEmail: contactEmail ?? this.contactEmail,
+    status: status ?? this.status,
+  );
+  Client copyWithCompanion(ClientsCompanion data) {
+    return Client(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      companyName: data.companyName.present
+          ? data.companyName.value
+          : this.companyName,
+      contactEmail: data.contactEmail.present
+          ? data.contactEmail.value
+          : this.contactEmail,
+      status: data.status.present ? data.status.value : this.status,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Client(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('companyName: $companyName, ')
+          ..write('contactEmail: $contactEmail, ')
+          ..write('status: $status')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    companyName,
+    contactEmail,
+    status,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Client &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.companyName == this.companyName &&
+          other.contactEmail == this.contactEmail &&
+          other.status == this.status);
+}
+
+class ClientsCompanion extends UpdateCompanion<Client> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<String> companyName;
+  final Value<String> contactEmail;
+  final Value<String> status;
+  final Value<int> rowid;
+  const ClientsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.companyName = const Value.absent(),
+    this.contactEmail = const Value.absent(),
+    this.status = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ClientsCompanion.insert({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    required String companyName,
+    required String contactEmail,
+    required String status,
+    this.rowid = const Value.absent(),
+  }) : companyName = Value(companyName),
+       contactEmail = Value(contactEmail),
+       status = Value(status);
+  static Insertable<Client> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<String>? companyName,
+    Expression<String>? contactEmail,
+    Expression<String>? status,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (companyName != null) 'company_name': companyName,
+      if (contactEmail != null) 'contact_email': contactEmail,
+      if (status != null) 'status': status,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ClientsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<String>? companyName,
+    Value<String>? contactEmail,
+    Value<String>? status,
+    Value<int>? rowid,
+  }) {
+    return ClientsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      companyName: companyName ?? this.companyName,
+      contactEmail: contactEmail ?? this.contactEmail,
+      status: status ?? this.status,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (companyName.present) {
+      map['company_name'] = Variable<String>(companyName.value);
+    }
+    if (contactEmail.present) {
+      map['contact_email'] = Variable<String>(contactEmail.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ClientsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('companyName: $companyName, ')
+          ..write('contactEmail: $contactEmail, ')
+          ..write('status: $status, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ClientLicensesTable extends ClientLicenses
+    with TableInfo<$ClientLicensesTable, ClientLicense> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ClientLicensesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: newId,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _clientIdMeta = const VerificationMeta(
+    'clientId',
+  );
+  @override
+  late final GeneratedColumn<String> clientId = GeneratedColumn<String>(
+    'client_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _licenseKeyMeta = const VerificationMeta(
+    'licenseKey',
+  );
+  @override
+  late final GeneratedColumn<String> licenseKey = GeneratedColumn<String>(
+    'license_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _planMeta = const VerificationMeta('plan');
+  @override
+  late final GeneratedColumn<String> plan = GeneratedColumn<String>(
+    'plan',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _activatedAtMeta = const VerificationMeta(
+    'activatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> activatedAt = GeneratedColumn<DateTime>(
+    'activated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _expiresAtMeta = const VerificationMeta(
+    'expiresAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> expiresAt = GeneratedColumn<DateTime>(
+    'expires_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _maxDevicesMeta = const VerificationMeta(
+    'maxDevices',
+  );
+  @override
+  late final GeneratedColumn<int> maxDevices = GeneratedColumn<int>(
+    'max_devices',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _enabledModulesCsvMeta = const VerificationMeta(
+    'enabledModulesCsv',
+  );
+  @override
+  late final GeneratedColumn<String> enabledModulesCsv =
+      GeneratedColumn<String>(
+        'enabled_modules_csv',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    clientId,
+    licenseKey,
+    plan,
+    status,
+    activatedAt,
+    expiresAt,
+    maxDevices,
+    enabledModulesCsv,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'client_licenses';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ClientLicense> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('client_id')) {
+      context.handle(
+        _clientIdMeta,
+        clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_clientIdMeta);
+    }
+    if (data.containsKey('license_key')) {
+      context.handle(
+        _licenseKeyMeta,
+        licenseKey.isAcceptableOrUnknown(data['license_key']!, _licenseKeyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_licenseKeyMeta);
+    }
+    if (data.containsKey('plan')) {
+      context.handle(
+        _planMeta,
+        plan.isAcceptableOrUnknown(data['plan']!, _planMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_planMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('activated_at')) {
+      context.handle(
+        _activatedAtMeta,
+        activatedAt.isAcceptableOrUnknown(
+          data['activated_at']!,
+          _activatedAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_activatedAtMeta);
+    }
+    if (data.containsKey('expires_at')) {
+      context.handle(
+        _expiresAtMeta,
+        expiresAt.isAcceptableOrUnknown(data['expires_at']!, _expiresAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_expiresAtMeta);
+    }
+    if (data.containsKey('max_devices')) {
+      context.handle(
+        _maxDevicesMeta,
+        maxDevices.isAcceptableOrUnknown(data['max_devices']!, _maxDevicesMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_maxDevicesMeta);
+    }
+    if (data.containsKey('enabled_modules_csv')) {
+      context.handle(
+        _enabledModulesCsvMeta,
+        enabledModulesCsv.isAcceptableOrUnknown(
+          data['enabled_modules_csv']!,
+          _enabledModulesCsvMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_enabledModulesCsvMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ClientLicense map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ClientLicense(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      clientId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}client_id'],
+      )!,
+      licenseKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}license_key'],
+      )!,
+      plan: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}plan'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      activatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}activated_at'],
+      )!,
+      expiresAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}expires_at'],
+      )!,
+      maxDevices: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}max_devices'],
+      )!,
+      enabledModulesCsv: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}enabled_modules_csv'],
+      )!,
+    );
+  }
+
+  @override
+  $ClientLicensesTable createAlias(String alias) {
+    return $ClientLicensesTable(attachedDatabase, alias);
+  }
+}
+
+class ClientLicense extends DataClass implements Insertable<ClientLicense> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final String clientId;
+  final String licenseKey;
+  final String plan;
+  final String status;
+  final DateTime activatedAt;
+  final DateTime expiresAt;
+  final int maxDevices;
+  final String enabledModulesCsv;
+  const ClientLicense({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.clientId,
+    required this.licenseKey,
+    required this.plan,
+    required this.status,
+    required this.activatedAt,
+    required this.expiresAt,
+    required this.maxDevices,
+    required this.enabledModulesCsv,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['client_id'] = Variable<String>(clientId);
+    map['license_key'] = Variable<String>(licenseKey);
+    map['plan'] = Variable<String>(plan);
+    map['status'] = Variable<String>(status);
+    map['activated_at'] = Variable<DateTime>(activatedAt);
+    map['expires_at'] = Variable<DateTime>(expiresAt);
+    map['max_devices'] = Variable<int>(maxDevices);
+    map['enabled_modules_csv'] = Variable<String>(enabledModulesCsv);
+    return map;
+  }
+
+  ClientLicensesCompanion toCompanion(bool nullToAbsent) {
+    return ClientLicensesCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      clientId: Value(clientId),
+      licenseKey: Value(licenseKey),
+      plan: Value(plan),
+      status: Value(status),
+      activatedAt: Value(activatedAt),
+      expiresAt: Value(expiresAt),
+      maxDevices: Value(maxDevices),
+      enabledModulesCsv: Value(enabledModulesCsv),
+    );
+  }
+
+  factory ClientLicense.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ClientLicense(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      clientId: serializer.fromJson<String>(json['clientId']),
+      licenseKey: serializer.fromJson<String>(json['licenseKey']),
+      plan: serializer.fromJson<String>(json['plan']),
+      status: serializer.fromJson<String>(json['status']),
+      activatedAt: serializer.fromJson<DateTime>(json['activatedAt']),
+      expiresAt: serializer.fromJson<DateTime>(json['expiresAt']),
+      maxDevices: serializer.fromJson<int>(json['maxDevices']),
+      enabledModulesCsv: serializer.fromJson<String>(json['enabledModulesCsv']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'clientId': serializer.toJson<String>(clientId),
+      'licenseKey': serializer.toJson<String>(licenseKey),
+      'plan': serializer.toJson<String>(plan),
+      'status': serializer.toJson<String>(status),
+      'activatedAt': serializer.toJson<DateTime>(activatedAt),
+      'expiresAt': serializer.toJson<DateTime>(expiresAt),
+      'maxDevices': serializer.toJson<int>(maxDevices),
+      'enabledModulesCsv': serializer.toJson<String>(enabledModulesCsv),
+    };
+  }
+
+  ClientLicense copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    String? clientId,
+    String? licenseKey,
+    String? plan,
+    String? status,
+    DateTime? activatedAt,
+    DateTime? expiresAt,
+    int? maxDevices,
+    String? enabledModulesCsv,
+  }) => ClientLicense(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    clientId: clientId ?? this.clientId,
+    licenseKey: licenseKey ?? this.licenseKey,
+    plan: plan ?? this.plan,
+    status: status ?? this.status,
+    activatedAt: activatedAt ?? this.activatedAt,
+    expiresAt: expiresAt ?? this.expiresAt,
+    maxDevices: maxDevices ?? this.maxDevices,
+    enabledModulesCsv: enabledModulesCsv ?? this.enabledModulesCsv,
+  );
+  ClientLicense copyWithCompanion(ClientLicensesCompanion data) {
+    return ClientLicense(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      clientId: data.clientId.present ? data.clientId.value : this.clientId,
+      licenseKey: data.licenseKey.present
+          ? data.licenseKey.value
+          : this.licenseKey,
+      plan: data.plan.present ? data.plan.value : this.plan,
+      status: data.status.present ? data.status.value : this.status,
+      activatedAt: data.activatedAt.present
+          ? data.activatedAt.value
+          : this.activatedAt,
+      expiresAt: data.expiresAt.present ? data.expiresAt.value : this.expiresAt,
+      maxDevices: data.maxDevices.present
+          ? data.maxDevices.value
+          : this.maxDevices,
+      enabledModulesCsv: data.enabledModulesCsv.present
+          ? data.enabledModulesCsv.value
+          : this.enabledModulesCsv,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ClientLicense(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('clientId: $clientId, ')
+          ..write('licenseKey: $licenseKey, ')
+          ..write('plan: $plan, ')
+          ..write('status: $status, ')
+          ..write('activatedAt: $activatedAt, ')
+          ..write('expiresAt: $expiresAt, ')
+          ..write('maxDevices: $maxDevices, ')
+          ..write('enabledModulesCsv: $enabledModulesCsv')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    clientId,
+    licenseKey,
+    plan,
+    status,
+    activatedAt,
+    expiresAt,
+    maxDevices,
+    enabledModulesCsv,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ClientLicense &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.clientId == this.clientId &&
+          other.licenseKey == this.licenseKey &&
+          other.plan == this.plan &&
+          other.status == this.status &&
+          other.activatedAt == this.activatedAt &&
+          other.expiresAt == this.expiresAt &&
+          other.maxDevices == this.maxDevices &&
+          other.enabledModulesCsv == this.enabledModulesCsv);
+}
+
+class ClientLicensesCompanion extends UpdateCompanion<ClientLicense> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<String> clientId;
+  final Value<String> licenseKey;
+  final Value<String> plan;
+  final Value<String> status;
+  final Value<DateTime> activatedAt;
+  final Value<DateTime> expiresAt;
+  final Value<int> maxDevices;
+  final Value<String> enabledModulesCsv;
+  final Value<int> rowid;
+  const ClientLicensesCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.clientId = const Value.absent(),
+    this.licenseKey = const Value.absent(),
+    this.plan = const Value.absent(),
+    this.status = const Value.absent(),
+    this.activatedAt = const Value.absent(),
+    this.expiresAt = const Value.absent(),
+    this.maxDevices = const Value.absent(),
+    this.enabledModulesCsv = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ClientLicensesCompanion.insert({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    required String clientId,
+    required String licenseKey,
+    required String plan,
+    required String status,
+    required DateTime activatedAt,
+    required DateTime expiresAt,
+    required int maxDevices,
+    required String enabledModulesCsv,
+    this.rowid = const Value.absent(),
+  }) : clientId = Value(clientId),
+       licenseKey = Value(licenseKey),
+       plan = Value(plan),
+       status = Value(status),
+       activatedAt = Value(activatedAt),
+       expiresAt = Value(expiresAt),
+       maxDevices = Value(maxDevices),
+       enabledModulesCsv = Value(enabledModulesCsv);
+  static Insertable<ClientLicense> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<String>? clientId,
+    Expression<String>? licenseKey,
+    Expression<String>? plan,
+    Expression<String>? status,
+    Expression<DateTime>? activatedAt,
+    Expression<DateTime>? expiresAt,
+    Expression<int>? maxDevices,
+    Expression<String>? enabledModulesCsv,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (clientId != null) 'client_id': clientId,
+      if (licenseKey != null) 'license_key': licenseKey,
+      if (plan != null) 'plan': plan,
+      if (status != null) 'status': status,
+      if (activatedAt != null) 'activated_at': activatedAt,
+      if (expiresAt != null) 'expires_at': expiresAt,
+      if (maxDevices != null) 'max_devices': maxDevices,
+      if (enabledModulesCsv != null) 'enabled_modules_csv': enabledModulesCsv,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ClientLicensesCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<String>? clientId,
+    Value<String>? licenseKey,
+    Value<String>? plan,
+    Value<String>? status,
+    Value<DateTime>? activatedAt,
+    Value<DateTime>? expiresAt,
+    Value<int>? maxDevices,
+    Value<String>? enabledModulesCsv,
+    Value<int>? rowid,
+  }) {
+    return ClientLicensesCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      clientId: clientId ?? this.clientId,
+      licenseKey: licenseKey ?? this.licenseKey,
+      plan: plan ?? this.plan,
+      status: status ?? this.status,
+      activatedAt: activatedAt ?? this.activatedAt,
+      expiresAt: expiresAt ?? this.expiresAt,
+      maxDevices: maxDevices ?? this.maxDevices,
+      enabledModulesCsv: enabledModulesCsv ?? this.enabledModulesCsv,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (clientId.present) {
+      map['client_id'] = Variable<String>(clientId.value);
+    }
+    if (licenseKey.present) {
+      map['license_key'] = Variable<String>(licenseKey.value);
+    }
+    if (plan.present) {
+      map['plan'] = Variable<String>(plan.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (activatedAt.present) {
+      map['activated_at'] = Variable<DateTime>(activatedAt.value);
+    }
+    if (expiresAt.present) {
+      map['expires_at'] = Variable<DateTime>(expiresAt.value);
+    }
+    if (maxDevices.present) {
+      map['max_devices'] = Variable<int>(maxDevices.value);
+    }
+    if (enabledModulesCsv.present) {
+      map['enabled_modules_csv'] = Variable<String>(enabledModulesCsv.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ClientLicensesCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('clientId: $clientId, ')
+          ..write('licenseKey: $licenseKey, ')
+          ..write('plan: $plan, ')
+          ..write('status: $status, ')
+          ..write('activatedAt: $activatedAt, ')
+          ..write('expiresAt: $expiresAt, ')
+          ..write('maxDevices: $maxDevices, ')
+          ..write('enabledModulesCsv: $enabledModulesCsv, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ClientDevicesTable extends ClientDevices
+    with TableInfo<$ClientDevicesTable, ClientDevice> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ClientDevicesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: newId,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _clientIdMeta = const VerificationMeta(
+    'clientId',
+  );
+  @override
+  late final GeneratedColumn<String> clientId = GeneratedColumn<String>(
+    'client_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deviceIdMeta = const VerificationMeta(
+    'deviceId',
+  );
+  @override
+  late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
+    'device_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _platformMeta = const VerificationMeta(
+    'platform',
+  );
+  @override
+  late final GeneratedColumn<String> platform = GeneratedColumn<String>(
+    'platform',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lastSeenAtMeta = const VerificationMeta(
+    'lastSeenAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastSeenAt = GeneratedColumn<DateTime>(
+    'last_seen_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    clientId,
+    deviceId,
+    platform,
+    lastSeenAt,
+    status,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'client_devices';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ClientDevice> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('client_id')) {
+      context.handle(
+        _clientIdMeta,
+        clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_clientIdMeta);
+    }
+    if (data.containsKey('device_id')) {
+      context.handle(
+        _deviceIdMeta,
+        deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_deviceIdMeta);
+    }
+    if (data.containsKey('platform')) {
+      context.handle(
+        _platformMeta,
+        platform.isAcceptableOrUnknown(data['platform']!, _platformMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_platformMeta);
+    }
+    if (data.containsKey('last_seen_at')) {
+      context.handle(
+        _lastSeenAtMeta,
+        lastSeenAt.isAcceptableOrUnknown(
+          data['last_seen_at']!,
+          _lastSeenAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lastSeenAtMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ClientDevice map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ClientDevice(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      clientId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}client_id'],
+      )!,
+      deviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_id'],
+      )!,
+      platform: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}platform'],
+      )!,
+      lastSeenAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_seen_at'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+    );
+  }
+
+  @override
+  $ClientDevicesTable createAlias(String alias) {
+    return $ClientDevicesTable(attachedDatabase, alias);
+  }
+}
+
+class ClientDevice extends DataClass implements Insertable<ClientDevice> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final String clientId;
+  final String deviceId;
+  final String platform;
+  final DateTime lastSeenAt;
+  final String status;
+  const ClientDevice({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.clientId,
+    required this.deviceId,
+    required this.platform,
+    required this.lastSeenAt,
+    required this.status,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['client_id'] = Variable<String>(clientId);
+    map['device_id'] = Variable<String>(deviceId);
+    map['platform'] = Variable<String>(platform);
+    map['last_seen_at'] = Variable<DateTime>(lastSeenAt);
+    map['status'] = Variable<String>(status);
+    return map;
+  }
+
+  ClientDevicesCompanion toCompanion(bool nullToAbsent) {
+    return ClientDevicesCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      clientId: Value(clientId),
+      deviceId: Value(deviceId),
+      platform: Value(platform),
+      lastSeenAt: Value(lastSeenAt),
+      status: Value(status),
+    );
+  }
+
+  factory ClientDevice.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ClientDevice(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      clientId: serializer.fromJson<String>(json['clientId']),
+      deviceId: serializer.fromJson<String>(json['deviceId']),
+      platform: serializer.fromJson<String>(json['platform']),
+      lastSeenAt: serializer.fromJson<DateTime>(json['lastSeenAt']),
+      status: serializer.fromJson<String>(json['status']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'clientId': serializer.toJson<String>(clientId),
+      'deviceId': serializer.toJson<String>(deviceId),
+      'platform': serializer.toJson<String>(platform),
+      'lastSeenAt': serializer.toJson<DateTime>(lastSeenAt),
+      'status': serializer.toJson<String>(status),
+    };
+  }
+
+  ClientDevice copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    String? clientId,
+    String? deviceId,
+    String? platform,
+    DateTime? lastSeenAt,
+    String? status,
+  }) => ClientDevice(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    clientId: clientId ?? this.clientId,
+    deviceId: deviceId ?? this.deviceId,
+    platform: platform ?? this.platform,
+    lastSeenAt: lastSeenAt ?? this.lastSeenAt,
+    status: status ?? this.status,
+  );
+  ClientDevice copyWithCompanion(ClientDevicesCompanion data) {
+    return ClientDevice(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      clientId: data.clientId.present ? data.clientId.value : this.clientId,
+      deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
+      platform: data.platform.present ? data.platform.value : this.platform,
+      lastSeenAt: data.lastSeenAt.present
+          ? data.lastSeenAt.value
+          : this.lastSeenAt,
+      status: data.status.present ? data.status.value : this.status,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ClientDevice(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('clientId: $clientId, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('platform: $platform, ')
+          ..write('lastSeenAt: $lastSeenAt, ')
+          ..write('status: $status')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    clientId,
+    deviceId,
+    platform,
+    lastSeenAt,
+    status,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ClientDevice &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.clientId == this.clientId &&
+          other.deviceId == this.deviceId &&
+          other.platform == this.platform &&
+          other.lastSeenAt == this.lastSeenAt &&
+          other.status == this.status);
+}
+
+class ClientDevicesCompanion extends UpdateCompanion<ClientDevice> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<String> clientId;
+  final Value<String> deviceId;
+  final Value<String> platform;
+  final Value<DateTime> lastSeenAt;
+  final Value<String> status;
+  final Value<int> rowid;
+  const ClientDevicesCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.clientId = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.platform = const Value.absent(),
+    this.lastSeenAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ClientDevicesCompanion.insert({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    required String clientId,
+    required String deviceId,
+    required String platform,
+    required DateTime lastSeenAt,
+    required String status,
+    this.rowid = const Value.absent(),
+  }) : clientId = Value(clientId),
+       deviceId = Value(deviceId),
+       platform = Value(platform),
+       lastSeenAt = Value(lastSeenAt),
+       status = Value(status);
+  static Insertable<ClientDevice> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<String>? clientId,
+    Expression<String>? deviceId,
+    Expression<String>? platform,
+    Expression<DateTime>? lastSeenAt,
+    Expression<String>? status,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (clientId != null) 'client_id': clientId,
+      if (deviceId != null) 'device_id': deviceId,
+      if (platform != null) 'platform': platform,
+      if (lastSeenAt != null) 'last_seen_at': lastSeenAt,
+      if (status != null) 'status': status,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ClientDevicesCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<String>? clientId,
+    Value<String>? deviceId,
+    Value<String>? platform,
+    Value<DateTime>? lastSeenAt,
+    Value<String>? status,
+    Value<int>? rowid,
+  }) {
+    return ClientDevicesCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      clientId: clientId ?? this.clientId,
+      deviceId: deviceId ?? this.deviceId,
+      platform: platform ?? this.platform,
+      lastSeenAt: lastSeenAt ?? this.lastSeenAt,
+      status: status ?? this.status,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (clientId.present) {
+      map['client_id'] = Variable<String>(clientId.value);
+    }
+    if (deviceId.present) {
+      map['device_id'] = Variable<String>(deviceId.value);
+    }
+    if (platform.present) {
+      map['platform'] = Variable<String>(platform.value);
+    }
+    if (lastSeenAt.present) {
+      map['last_seen_at'] = Variable<DateTime>(lastSeenAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ClientDevicesCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('clientId: $clientId, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('platform: $platform, ')
+          ..write('lastSeenAt: $lastSeenAt, ')
+          ..write('status: $status, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $AuditLogsTable extends AuditLogs
     with TableInfo<$AuditLogsTable, AuditLog> {
   @override
@@ -18395,6 +20130,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $AttendanceRecordsTable attendanceRecords =
       $AttendanceRecordsTable(this);
   late final $PayrollRunsTable payrollRuns = $PayrollRunsTable(this);
+  late final $ClientsTable clients = $ClientsTable(this);
+  late final $ClientLicensesTable clientLicenses = $ClientLicensesTable(this);
+  late final $ClientDevicesTable clientDevices = $ClientDevicesTable(this);
   late final $AuditLogsTable auditLogs = $AuditLogsTable(this);
   late final $AppSettingsTable appSettings = $AppSettingsTable(this);
   @override
@@ -18430,6 +20168,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     leaveRequests,
     attendanceRecords,
     payrollRuns,
+    clients,
+    clientLicenses,
+    clientDevices,
     auditLogs,
     appSettings,
   ];
@@ -27061,6 +28802,863 @@ typedef $$PayrollRunsTableProcessedTableManager =
       PayrollRun,
       PrefetchHooks Function()
     >;
+typedef $$ClientsTableCreateCompanionBuilder =
+    ClientsCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      required String companyName,
+      required String contactEmail,
+      required String status,
+      Value<int> rowid,
+    });
+typedef $$ClientsTableUpdateCompanionBuilder =
+    ClientsCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<String> companyName,
+      Value<String> contactEmail,
+      Value<String> status,
+      Value<int> rowid,
+    });
+
+class $$ClientsTableFilterComposer
+    extends Composer<_$AppDatabase, $ClientsTable> {
+  $$ClientsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companyName => $composableBuilder(
+    column: $table.companyName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get contactEmail => $composableBuilder(
+    column: $table.contactEmail,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ClientsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ClientsTable> {
+  $$ClientsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get companyName => $composableBuilder(
+    column: $table.companyName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get contactEmail => $composableBuilder(
+    column: $table.contactEmail,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ClientsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ClientsTable> {
+  $$ClientsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get companyName => $composableBuilder(
+    column: $table.companyName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get contactEmail => $composableBuilder(
+    column: $table.contactEmail,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+}
+
+class $$ClientsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ClientsTable,
+          Client,
+          $$ClientsTableFilterComposer,
+          $$ClientsTableOrderingComposer,
+          $$ClientsTableAnnotationComposer,
+          $$ClientsTableCreateCompanionBuilder,
+          $$ClientsTableUpdateCompanionBuilder,
+          (Client, BaseReferences<_$AppDatabase, $ClientsTable, Client>),
+          Client,
+          PrefetchHooks Function()
+        > {
+  $$ClientsTableTableManager(_$AppDatabase db, $ClientsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ClientsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ClientsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ClientsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<String> companyName = const Value.absent(),
+                Value<String> contactEmail = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ClientsCompanion(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                companyName: companyName,
+                contactEmail: contactEmail,
+                status: status,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                required String companyName,
+                required String contactEmail,
+                required String status,
+                Value<int> rowid = const Value.absent(),
+              }) => ClientsCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                companyName: companyName,
+                contactEmail: contactEmail,
+                status: status,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ClientsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ClientsTable,
+      Client,
+      $$ClientsTableFilterComposer,
+      $$ClientsTableOrderingComposer,
+      $$ClientsTableAnnotationComposer,
+      $$ClientsTableCreateCompanionBuilder,
+      $$ClientsTableUpdateCompanionBuilder,
+      (Client, BaseReferences<_$AppDatabase, $ClientsTable, Client>),
+      Client,
+      PrefetchHooks Function()
+    >;
+typedef $$ClientLicensesTableCreateCompanionBuilder =
+    ClientLicensesCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      required String clientId,
+      required String licenseKey,
+      required String plan,
+      required String status,
+      required DateTime activatedAt,
+      required DateTime expiresAt,
+      required int maxDevices,
+      required String enabledModulesCsv,
+      Value<int> rowid,
+    });
+typedef $$ClientLicensesTableUpdateCompanionBuilder =
+    ClientLicensesCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<String> clientId,
+      Value<String> licenseKey,
+      Value<String> plan,
+      Value<String> status,
+      Value<DateTime> activatedAt,
+      Value<DateTime> expiresAt,
+      Value<int> maxDevices,
+      Value<String> enabledModulesCsv,
+      Value<int> rowid,
+    });
+
+class $$ClientLicensesTableFilterComposer
+    extends Composer<_$AppDatabase, $ClientLicensesTable> {
+  $$ClientLicensesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get clientId => $composableBuilder(
+    column: $table.clientId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get licenseKey => $composableBuilder(
+    column: $table.licenseKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get plan => $composableBuilder(
+    column: $table.plan,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get activatedAt => $composableBuilder(
+    column: $table.activatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get expiresAt => $composableBuilder(
+    column: $table.expiresAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get maxDevices => $composableBuilder(
+    column: $table.maxDevices,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get enabledModulesCsv => $composableBuilder(
+    column: $table.enabledModulesCsv,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ClientLicensesTableOrderingComposer
+    extends Composer<_$AppDatabase, $ClientLicensesTable> {
+  $$ClientLicensesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get clientId => $composableBuilder(
+    column: $table.clientId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get licenseKey => $composableBuilder(
+    column: $table.licenseKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get plan => $composableBuilder(
+    column: $table.plan,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get activatedAt => $composableBuilder(
+    column: $table.activatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get expiresAt => $composableBuilder(
+    column: $table.expiresAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get maxDevices => $composableBuilder(
+    column: $table.maxDevices,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get enabledModulesCsv => $composableBuilder(
+    column: $table.enabledModulesCsv,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ClientLicensesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ClientLicensesTable> {
+  $$ClientLicensesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get clientId =>
+      $composableBuilder(column: $table.clientId, builder: (column) => column);
+
+  GeneratedColumn<String> get licenseKey => $composableBuilder(
+    column: $table.licenseKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get plan =>
+      $composableBuilder(column: $table.plan, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get activatedAt => $composableBuilder(
+    column: $table.activatedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get expiresAt =>
+      $composableBuilder(column: $table.expiresAt, builder: (column) => column);
+
+  GeneratedColumn<int> get maxDevices => $composableBuilder(
+    column: $table.maxDevices,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get enabledModulesCsv => $composableBuilder(
+    column: $table.enabledModulesCsv,
+    builder: (column) => column,
+  );
+}
+
+class $$ClientLicensesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ClientLicensesTable,
+          ClientLicense,
+          $$ClientLicensesTableFilterComposer,
+          $$ClientLicensesTableOrderingComposer,
+          $$ClientLicensesTableAnnotationComposer,
+          $$ClientLicensesTableCreateCompanionBuilder,
+          $$ClientLicensesTableUpdateCompanionBuilder,
+          (
+            ClientLicense,
+            BaseReferences<_$AppDatabase, $ClientLicensesTable, ClientLicense>,
+          ),
+          ClientLicense,
+          PrefetchHooks Function()
+        > {
+  $$ClientLicensesTableTableManager(
+    _$AppDatabase db,
+    $ClientLicensesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ClientLicensesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ClientLicensesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ClientLicensesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<String> clientId = const Value.absent(),
+                Value<String> licenseKey = const Value.absent(),
+                Value<String> plan = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<DateTime> activatedAt = const Value.absent(),
+                Value<DateTime> expiresAt = const Value.absent(),
+                Value<int> maxDevices = const Value.absent(),
+                Value<String> enabledModulesCsv = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ClientLicensesCompanion(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                clientId: clientId,
+                licenseKey: licenseKey,
+                plan: plan,
+                status: status,
+                activatedAt: activatedAt,
+                expiresAt: expiresAt,
+                maxDevices: maxDevices,
+                enabledModulesCsv: enabledModulesCsv,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                required String clientId,
+                required String licenseKey,
+                required String plan,
+                required String status,
+                required DateTime activatedAt,
+                required DateTime expiresAt,
+                required int maxDevices,
+                required String enabledModulesCsv,
+                Value<int> rowid = const Value.absent(),
+              }) => ClientLicensesCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                clientId: clientId,
+                licenseKey: licenseKey,
+                plan: plan,
+                status: status,
+                activatedAt: activatedAt,
+                expiresAt: expiresAt,
+                maxDevices: maxDevices,
+                enabledModulesCsv: enabledModulesCsv,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ClientLicensesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ClientLicensesTable,
+      ClientLicense,
+      $$ClientLicensesTableFilterComposer,
+      $$ClientLicensesTableOrderingComposer,
+      $$ClientLicensesTableAnnotationComposer,
+      $$ClientLicensesTableCreateCompanionBuilder,
+      $$ClientLicensesTableUpdateCompanionBuilder,
+      (
+        ClientLicense,
+        BaseReferences<_$AppDatabase, $ClientLicensesTable, ClientLicense>,
+      ),
+      ClientLicense,
+      PrefetchHooks Function()
+    >;
+typedef $$ClientDevicesTableCreateCompanionBuilder =
+    ClientDevicesCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      required String clientId,
+      required String deviceId,
+      required String platform,
+      required DateTime lastSeenAt,
+      required String status,
+      Value<int> rowid,
+    });
+typedef $$ClientDevicesTableUpdateCompanionBuilder =
+    ClientDevicesCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<String> clientId,
+      Value<String> deviceId,
+      Value<String> platform,
+      Value<DateTime> lastSeenAt,
+      Value<String> status,
+      Value<int> rowid,
+    });
+
+class $$ClientDevicesTableFilterComposer
+    extends Composer<_$AppDatabase, $ClientDevicesTable> {
+  $$ClientDevicesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get clientId => $composableBuilder(
+    column: $table.clientId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get platform => $composableBuilder(
+    column: $table.platform,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastSeenAt => $composableBuilder(
+    column: $table.lastSeenAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ClientDevicesTableOrderingComposer
+    extends Composer<_$AppDatabase, $ClientDevicesTable> {
+  $$ClientDevicesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get clientId => $composableBuilder(
+    column: $table.clientId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get platform => $composableBuilder(
+    column: $table.platform,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastSeenAt => $composableBuilder(
+    column: $table.lastSeenAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ClientDevicesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ClientDevicesTable> {
+  $$ClientDevicesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get clientId =>
+      $composableBuilder(column: $table.clientId, builder: (column) => column);
+
+  GeneratedColumn<String> get deviceId =>
+      $composableBuilder(column: $table.deviceId, builder: (column) => column);
+
+  GeneratedColumn<String> get platform =>
+      $composableBuilder(column: $table.platform, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastSeenAt => $composableBuilder(
+    column: $table.lastSeenAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+}
+
+class $$ClientDevicesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ClientDevicesTable,
+          ClientDevice,
+          $$ClientDevicesTableFilterComposer,
+          $$ClientDevicesTableOrderingComposer,
+          $$ClientDevicesTableAnnotationComposer,
+          $$ClientDevicesTableCreateCompanionBuilder,
+          $$ClientDevicesTableUpdateCompanionBuilder,
+          (
+            ClientDevice,
+            BaseReferences<_$AppDatabase, $ClientDevicesTable, ClientDevice>,
+          ),
+          ClientDevice,
+          PrefetchHooks Function()
+        > {
+  $$ClientDevicesTableTableManager(_$AppDatabase db, $ClientDevicesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ClientDevicesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ClientDevicesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ClientDevicesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<String> clientId = const Value.absent(),
+                Value<String> deviceId = const Value.absent(),
+                Value<String> platform = const Value.absent(),
+                Value<DateTime> lastSeenAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ClientDevicesCompanion(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                clientId: clientId,
+                deviceId: deviceId,
+                platform: platform,
+                lastSeenAt: lastSeenAt,
+                status: status,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                required String clientId,
+                required String deviceId,
+                required String platform,
+                required DateTime lastSeenAt,
+                required String status,
+                Value<int> rowid = const Value.absent(),
+              }) => ClientDevicesCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                clientId: clientId,
+                deviceId: deviceId,
+                platform: platform,
+                lastSeenAt: lastSeenAt,
+                status: status,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ClientDevicesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ClientDevicesTable,
+      ClientDevice,
+      $$ClientDevicesTableFilterComposer,
+      $$ClientDevicesTableOrderingComposer,
+      $$ClientDevicesTableAnnotationComposer,
+      $$ClientDevicesTableCreateCompanionBuilder,
+      $$ClientDevicesTableUpdateCompanionBuilder,
+      (
+        ClientDevice,
+        BaseReferences<_$AppDatabase, $ClientDevicesTable, ClientDevice>,
+      ),
+      ClientDevice,
+      PrefetchHooks Function()
+    >;
 typedef $$AuditLogsTableCreateCompanionBuilder =
     AuditLogsCompanion Function({
       Value<String> id,
@@ -27591,6 +30189,12 @@ class $AppDatabaseManager {
       $$AttendanceRecordsTableTableManager(_db, _db.attendanceRecords);
   $$PayrollRunsTableTableManager get payrollRuns =>
       $$PayrollRunsTableTableManager(_db, _db.payrollRuns);
+  $$ClientsTableTableManager get clients =>
+      $$ClientsTableTableManager(_db, _db.clients);
+  $$ClientLicensesTableTableManager get clientLicenses =>
+      $$ClientLicensesTableTableManager(_db, _db.clientLicenses);
+  $$ClientDevicesTableTableManager get clientDevices =>
+      $$ClientDevicesTableTableManager(_db, _db.clientDevices);
   $$AuditLogsTableTableManager get auditLogs =>
       $$AuditLogsTableTableManager(_db, _db.auditLogs);
   $$AppSettingsTableTableManager get appSettings =>
