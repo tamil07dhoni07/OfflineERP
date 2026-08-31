@@ -41,7 +41,11 @@ class EmployeesScreen extends ConsumerWidget {
                 Cell.number(e.ctcPaise.toIndianRupees()),
                 Cell.number((leaveUsed[e.id] ?? 0).toStringAsFixed(1)),
                 pillCell(e.status == 'active' ? PillTone.paid : PillTone.draft, e.status == 'active' ? 'Active' : 'Inactive'),
-              ], onTap: () => _openForm(context, ref, existing: e)),
+              ],
+                onTap: () => _openForm(context, ref, existing: e),
+                onEdit: () => _openForm(context, ref, existing: e),
+                onDelete: () => ref.read(hrRepositoryProvider).deleteEmployee(e.id),
+              ),
             )
             .toList();
 

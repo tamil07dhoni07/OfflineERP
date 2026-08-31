@@ -41,7 +41,11 @@ class ProductsScreen extends ConsumerWidget {
             Cell.number('${p.gstRate.toStringAsFixed(0)}%'),
             Cell.number('${margin.toStringAsFixed(1)}%', color: marginColor),
             pillCell(p.active ? PillTone.paid : PillTone.draft, p.active ? 'Active' : 'Discontinued'),
-          ], onTap: () => _openForm(context, ref, existing: p));
+          ],
+            onTap: () => _openForm(context, ref, existing: p),
+            onEdit: () => _openForm(context, ref, existing: p),
+            onDelete: () => ref.read(masterDataRepositoryProvider).deleteProduct(p.id),
+          );
         }).toList();
 
         final spec = TableSpec(

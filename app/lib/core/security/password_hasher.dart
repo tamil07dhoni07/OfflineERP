@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
-import 'package:flutter/foundation.dart';
 
 /// PBKDF2-HMAC-SHA256 password hashing.
 ///
@@ -14,37 +14,37 @@ import 'package:flutter/foundation.dart';
 /// Iteration count is tuned for a *local device unlock*, not an
 /// internet-facing login: the threat model is "someone copied the local
 /// database file offline," not "someone hammering a login endpoint," so it
-/// doesn't need OWASP's server-facing PBKDF2 counts, and a login that
-/// visibly hangs for seconds is a worse tradeoff than a slightly smaller
-/// brute-force margin. `hash`/`verify` run via [compute] so on native
-/// platforms (where `compute` spawns a real isolate) this never blocks the
-/// UI thread; on Flutter Web, `compute` currently runs inline, so
-/// iteration count is what actually determines perceived speed there.
+/// doesn't need OWASP's server-facing PBKDF2 counts.
+///
+/// Runs synchronously on the calling isolate on purpose — an earlier
+/// version dispatched through `compute()` to keep this off the UI thread,
+/// but `compute()`'s isolate spawn can stall on its very first invocation
+/// in an app's lifetime (a known Flutter flakiness class), which showed up
+/// as "the first login click does nothing, the second one works." 120k
+/// iterations runs in tens of milliseconds on native, which is short
+/// enough that briefly blocking the UI thread is the safer tradeoff than
+/// a flaky isolate warm-up on the one interaction (login) where reliability
+/// matters most.
 abstract final class PasswordHasher {
   static const _iterations = 120000;
   static const _saltBytes = 16;
   static const _keyBytes = 32;
 
   /// Format: `pbkdf2$iterations$base64(salt)$base64(hash)`
-  static Future<String> hash(String password) => compute(_hashSync, password);
-
-  static String _hashSync(String password) {
+  static Future<String> hash(String password) async {
     final salt = _randomBytes(_saltBytes);
     final derived = _derive(password, salt, _iterations);
     return 'pbkdf2\$$_iterations\$${base64Encode(salt)}\$${base64Encode(derived)}';
   }
 
-  static Future<bool> verify(String password, String encoded) =>
-      compute(_verifySync, (password: password, encoded: encoded));
-
-  static bool _verifySync(({String password, String encoded}) args) {
-    final parts = args.encoded.split('\$');
+  static Future<bool> verify(String password, String encoded) async {
+    final parts = encoded.split('\$');
     if (parts.length != 4 || parts[0] != 'pbkdf2') return false;
     final iterations = int.tryParse(parts[1]);
     if (iterations == null) return false;
     final salt = base64Decode(parts[2]);
     final expected = base64Decode(parts[3]);
-    final actual = _derive(args.password, salt, iterations);
+    final actual = _derive(password, salt, iterations);
     return _constantTimeEquals(actual, expected);
   }
 

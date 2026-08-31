@@ -9,14 +9,34 @@ import 'buttons.dart';
 /// Renders a full list screen (header, filter chips, data table, pager,
 /// footnote) from a [TableSpec] — the Flutter equivalent of the prototype's
 /// `sc-if value="{{ table }}"` block.
-class ListScreen extends StatelessWidget {
+class ListScreen extends StatefulWidget {
   const ListScreen({super.key, required this.spec, this.dense = false});
 
   final TableSpec spec;
   final bool dense;
 
   @override
+  State<ListScreen> createState() => _ListScreenState();
+}
+
+class _ListScreenState extends State<ListScreen> {
+  final _searchController = TextEditingController();
+  String _query = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final spec = widget.spec;
+    final dense = widget.dense;
+    final filteredRows = _query.isEmpty
+        ? spec.rows
+        : spec.rows.where((r) => r.cells.any((c) => c.value.toLowerCase().contains(_query))).toList();
+    final count = _query.isEmpty ? spec.count : '${filteredRows.length} of ${spec.rows.length} match "${_searchController.text.trim()}"';
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 1320),
       child: Column(
@@ -58,13 +78,20 @@ class ListScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [for (final f in spec.filters) _FilterChip(f)],
+              Expanded(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    _SearchBox(controller: _searchController, onChanged: (v) => setState(() => _query = v.trim().toLowerCase())),
+                    for (final f in spec.filters) _FilterChip(f),
+                  ],
+                ),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               if (spec.devNote.isNotEmpty) _DevNote(spec.devNote),
             ],
           ),
@@ -78,10 +105,26 @@ class ListScreen extends StatelessWidget {
             clipBehavior: Clip.antiAlias,
             child: Column(
               children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: _DataTable(spec: spec, dense: dense),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    // Few columns (say, a compact PO/GRN list) should
+                    // stretch to fill the card instead of hugging content
+                    // width and leaving a slab of empty space — that's the
+                    // "fit to screen" ask. Wider tables (10+ columns, e.g.
+                    // Sales Invoices) still need to scroll horizontally
+                    // rather than squeeze unreadably narrow.
+                    final stretch = spec.columns.length <= 6;
+                    final table = _DataTable(columns: spec.columns, rows: filteredRows, dense: dense, stretch: stretch);
+                    if (stretch) return table;
+                    return SingleChildScrollView(scrollDirection: Axis.horizontal, child: table);
+                  },
                 ),
+                if (filteredRows.isEmpty && spec.rows.isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 28),
+                    alignment: Alignment.center,
+                    child: Text('No records match your search.', style: AppText.sans(size: 12.5, color: AppColors.mutedFaint)),
+                  ),
                 Container(
                   height: 41,
                   padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -91,7 +134,7 @@ class ListScreen extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Text(spec.count, style: AppText.mono(size: 11, color: AppColors.mutedSoft)),
+                      Text(count, style: AppText.mono(size: 11, color: AppColors.mutedSoft)),
                       const Spacer(),
                       const _PagerButton('Prev', enabled: false),
                       const SizedBox(width: 6),
@@ -120,15 +163,29 @@ class ListScreen extends StatelessWidget {
 }
 
 class _DataTable extends StatelessWidget {
-  const _DataTable({required this.spec, required this.dense});
-  final TableSpec spec;
+  const _DataTable({required this.columns, required this.rows, required this.dense, required this.stretch});
+  final List<ColumnSpec> columns;
+  final List<RowSpec> rows;
   final bool dense;
+
+  /// True for narrow tables: columns get FlexColumnWidth so the table
+  /// fills the card instead of shrink-wrapping to content. False keeps the
+  /// old IntrinsicColumnWidth + horizontal-scroll behaviour for wide
+  /// tables where flexing would squeeze every column unreadably.
+  final bool stretch;
+
+  bool get _hasActions => rows.any((r) => r.onEdit != null || r.onDelete != null);
 
   @override
   Widget build(BuildContext context) {
     final rowHeight = dense ? 34.0 : 40.0;
+    final hasActions = _hasActions;
     final widths = <int, TableColumnWidth>{
-      for (var i = 0; i < spec.columns.length; i++) i: const IntrinsicColumnWidth(),
+      for (var i = 0; i < columns.length; i++)
+        i: stretch
+            ? FlexColumnWidth(columns[i].align == CellAlign.right ? 1 : 1.7)
+            : const IntrinsicColumnWidth(),
+      if (hasActions) columns.length: const FixedColumnWidth(76),
     };
     return Table(
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
@@ -137,7 +194,7 @@ class _DataTable extends StatelessWidget {
         TableRow(
           decoration: const BoxDecoration(color: AppColors.fieldFill),
           children: [
-            for (final c in spec.columns)
+            for (final c in columns)
               Container(
                 height: 36,
                 padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -149,9 +206,14 @@ class _DataTable extends StatelessWidget {
                   style: AppText.sans(size: 11, weight: FontWeight.w600, color: AppColors.mutedInk, letterSpacing: 0.5),
                 ),
               ),
+            if (hasActions)
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 14),
+                child: SizedBox(height: 36),
+              ),
           ],
         ),
-        for (final row in spec.rows)
+        for (final row in rows)
           TableRow(
             children: [
               for (final cell in row.cells)
@@ -163,9 +225,123 @@ class _DataTable extends StatelessWidget {
                       ? _Pill(cell)
                       : Text(cell.value, softWrap: false, style: cell.style()),
                 ),
+              if (hasActions)
+                _RowActionsCell(
+                  height: rowHeight,
+                  onEdit: row.onEdit,
+                  onDelete: row.onDelete,
+                  deleteTooltip: row.deleteTooltip,
+                  deleteConfirmTitle: row.deleteConfirmTitle,
+                  deleteConfirmMessage: row.deleteConfirmMessage,
+                ),
             ],
           ),
       ],
+    );
+  }
+}
+
+class _RowActionsCell extends StatefulWidget {
+  const _RowActionsCell({
+    required this.height,
+    this.onEdit,
+    this.onDelete,
+    this.deleteTooltip = 'Delete',
+    this.deleteConfirmTitle = 'Delete this record?',
+    this.deleteConfirmMessage = 'This cannot be undone.',
+  });
+  final double height;
+  final VoidCallback? onEdit;
+  final Future<void> Function()? onDelete;
+  final String deleteTooltip;
+  final String deleteConfirmTitle;
+  final String deleteConfirmMessage;
+
+  @override
+  State<_RowActionsCell> createState() => _RowActionsCellState();
+}
+
+class _RowActionsCellState extends State<_RowActionsCell> {
+  bool _deleting = false;
+  String? _error;
+
+  Future<void> _confirmDelete() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.card,
+        title: Text(widget.deleteConfirmTitle),
+        content: Text(widget.deleteConfirmMessage),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(widget.deleteTooltip, style: const TextStyle(color: AppColors.danger)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    setState(() {
+      _deleting = true;
+      _error = null;
+    });
+    try {
+      await widget.onDelete!();
+    } catch (e) {
+      _error = e.toString();
+    }
+    if (mounted) {
+      setState(() => _deleting = false);
+      if (_error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(_error!), backgroundColor: AppColors.danger));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: widget.height,
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      alignment: Alignment.centerRight,
+      decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.borderFaint))),
+      child: _deleting
+          ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (widget.onEdit != null)
+                  _RowIconButton(icon: Icons.edit_outlined, color: AppColors.accent, tooltip: 'Edit', onTap: widget.onEdit!),
+                if (widget.onDelete != null)
+                  _RowIconButton(
+                    icon: Icons.delete_outline,
+                    color: AppColors.danger,
+                    tooltip: widget.deleteTooltip,
+                    onTap: _confirmDelete,
+                  ),
+              ],
+            ),
+    );
+  }
+}
+
+class _RowIconButton extends StatelessWidget {
+  const _RowIconButton({required this.icon, required this.color, required this.tooltip, required this.onTap});
+  final IconData icon;
+  final Color color;
+  final String tooltip;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(6),
+        onTap: onTap,
+        child: Padding(padding: const EdgeInsets.all(6), child: Icon(icon, size: 16, color: color)),
+      ),
     );
   }
 }
@@ -216,6 +392,37 @@ class _Pill extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
       decoration: BoxDecoration(color: cell.pillBg, borderRadius: BorderRadius.circular(999)),
       child: Text(cell.value, style: AppText.sans(size: 11, weight: FontWeight.w600, color: cell.pillFg!)),
+    );
+  }
+}
+
+class _SearchBox extends StatelessWidget {
+  const _SearchBox({required this.controller, required this.onChanged});
+  final TextEditingController controller;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 220,
+      height: 32,
+      child: TextField(
+        controller: controller,
+        onChanged: onChanged,
+        style: AppText.sans(size: 12.5),
+        decoration: InputDecoration(
+          isDense: true,
+          hintText: 'Search…',
+          hintStyle: AppText.sans(size: 12.5, color: AppColors.mutedFaint),
+          prefixIcon: const Icon(Icons.search, size: 16, color: AppColors.mutedFaint),
+          filled: true,
+          fillColor: AppColors.card,
+          contentPadding: const EdgeInsets.symmetric(vertical: 8),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(999), borderSide: const BorderSide(color: AppColors.controlBorder)),
+          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(999), borderSide: const BorderSide(color: AppColors.controlBorder)),
+          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(999), borderSide: const BorderSide(color: AppColors.accent)),
+        ),
+      ),
     );
   }
 }

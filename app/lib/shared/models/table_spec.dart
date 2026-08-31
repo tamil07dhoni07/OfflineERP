@@ -62,12 +62,35 @@ Cell pillCell(PillTone tone, String label) {
 }
 
 class RowSpec {
-  const RowSpec(this.cells, {this.onTap});
+  const RowSpec(
+    this.cells, {
+    this.onTap,
+    this.onEdit,
+    this.onDelete,
+    this.deleteTooltip = 'Delete',
+    this.deleteConfirmTitle = 'Delete this record?',
+    this.deleteConfirmMessage = 'This cannot be undone.',
+  });
   final List<Cell> cells;
 
   /// Opens a detail page, edit dialog, etc. Rows without this stay
   /// non-interactive, same as before — nothing regresses just by adding it.
   final VoidCallback? onTap;
+
+  /// When either is set, [ListScreen] renders a trailing actions column
+  /// with an edit pencil and/or a delete trash icon for that row — visible
+  /// buttons, not just a tappable row, per the explicit ask for edit/delete
+  /// icons in every list. Leave both null for read-only rows (audit log,
+  /// computed reports) — they simply get no actions column cell.
+  final VoidCallback? onEdit;
+  final Future<void> Function()? onDelete;
+
+  /// Lets rows whose "delete" action is really something else — voiding a
+  /// posted invoice, cancelling a PO — relabel the trash-icon tooltip and
+  /// confirm dialog instead of pretending it's a plain delete.
+  final String deleteTooltip;
+  final String deleteConfirmTitle;
+  final String deleteConfirmMessage;
 }
 
 class ColumnSpec {

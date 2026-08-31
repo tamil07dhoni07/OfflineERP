@@ -34,7 +34,11 @@ class SuppliersScreen extends ConsumerWidget {
                 Cell.text(s.terms, mono: true, color: AppColors.mutedInk),
                 Cell.number(owed.toIndianRupees(), color: owed > 0 ? AppColors.danger : AppColors.mutedInk),
                 pillCell(owed > 0 ? PillTone.warn : PillTone.paid, owed > 0 ? 'Payable due' : 'Settled'),
-              ], onTap: () => _openForm(context, ref, existing: s));
+              ],
+                onTap: () => _openForm(context, ref, existing: s),
+                onEdit: () => _openForm(context, ref, existing: s),
+                onDelete: () => ref.read(masterDataRepositoryProvider).deleteSupplier(s.id),
+              );
             })
             .toList();
 

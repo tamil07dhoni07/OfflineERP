@@ -25,11 +25,26 @@ class InvoiceNewScreen extends ConsumerStatefulWidget {
 class _InvoiceNewScreenState extends ConsumerState<InvoiceNewScreen> {
   Customer? _customer;
   Warehouse? _warehouse;
-  final String _paymentTerms = 'Net 30';
-  final String _salesperson = 'Arun Patil';
+  String _paymentTerms = 'Net 30';
+  String _salesperson = 'Arun Patil';
   final List<DraftInvoiceLine> _lines = [];
   bool _submitting = false;
   String? _error;
+
+  String? _editingId;
+  bool _editingIdResolved = false;
+  bool _hydrating = false;
+  bool _hydrated = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_editingIdResolved) {
+      _editingIdResolved = true;
+      final id = GoRouterState.of(context).uri.queryParameters['id'];
+      _editingId = (id == null || id.isEmpty) ? null : id;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +61,15 @@ class _InvoiceNewScreenState extends ConsumerState<InvoiceNewScreen> {
     final customers = customersAsync.value!;
     final products = productsAsync.value!.where((p) => p.active).toList();
     final warehouses = warehousesAsync.value!;
+
+    if (_editingId != null && !_hydrated) {
+      if (!_hydrating) {
+        _hydrating = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) => _hydrate(_editingId!, customers, warehouses, products));
+      }
+      return const Center(child: CircularProgressIndicator());
+    }
+
     _customer ??= customers.isEmpty ? null : customers.first;
     _warehouse ??= warehouses.isEmpty ? null : warehouses.first;
 
@@ -72,7 +96,7 @@ class _InvoiceNewScreenState extends ConsumerState<InvoiceNewScreen> {
               ),
               const Spacer(),
               SecondaryButton(
-                label: 'Save draft',
+                label: _submitting ? 'Saving…' : 'Save draft',
                 onTap: _submitting || _lines.isEmpty ? null : () => _submit(asDraft: true, company: company),
               ),
               const SizedBox(width: 8),
@@ -146,6 +170,51 @@ class _InvoiceNewScreenState extends ConsumerState<InvoiceNewScreen> {
     if (result != null) setState(() => _lines.add(result));
   }
 
+  Future<void> _hydrate(String id, List<Customer> customers, List<Warehouse> warehouses, List<Product> products) async {
+    final sales = ref.read(salesRepositoryProvider);
+    final invoice = await sales.invoiceById(id);
+    if (invoice == null || invoice.status != 'draft') {
+      if (mounted) {
+        setState(() {
+          _error = 'This invoice can no longer be edited here — only drafts can be opened for editing.';
+          _hydrated = true;
+        });
+      }
+      return;
+    }
+    final items = await sales.itemsFor(id);
+    final productsById = {for (final p in products) p.id: p};
+    final lines = [
+      for (final item in items)
+        if (productsById[item.productId] != null)
+          DraftInvoiceLine(
+            product: productsById[item.productId]!,
+            qty: item.qty,
+            ratePaise: item.ratePaise,
+            discountPct: item.discountPct,
+          ),
+    ];
+    Customer? matchedCustomer;
+    for (final c in customers) {
+      if (c.id == invoice.customerId) matchedCustomer = c;
+    }
+    Warehouse? matchedWarehouse;
+    for (final w in warehouses) {
+      if (w.id == invoice.warehouseId) matchedWarehouse = w;
+    }
+    if (!mounted) return;
+    setState(() {
+      _customer = matchedCustomer;
+      _warehouse = matchedWarehouse;
+      _paymentTerms = invoice.paymentTerms;
+      _salesperson = invoice.salesperson;
+      _lines
+        ..clear()
+        ..addAll(lines);
+      _hydrated = true;
+    });
+  }
+
   Future<void> _submit({required bool asDraft, required Company company}) async {
     setState(() {
       _submitting = true;
@@ -153,26 +222,48 @@ class _InvoiceNewScreenState extends ConsumerState<InvoiceNewScreen> {
     });
     try {
       final sales = ref.read(salesRepositoryProvider);
-      final invoiceNo = await sales.nextInvoiceNumber('26-27');
       final interState = _customer!.stateCode != company.stateCode;
-      await sales.postInvoice(
-        invoiceNo: invoiceNo,
-        date: DateTime.now(),
-        customer: _customer!,
-        warehouseId: _warehouse!.id,
-        placeOfSupplyState: _customer!.state,
-        placeOfSupplyCode: _customer!.stateCode,
-        paymentTerms: _paymentTerms,
-        salesperson: _salesperson,
-        lines: _lines,
-        interState: interState,
-        actor: ref.read(authControllerProvider)?.username ?? 'unknown',
-        device: currentDeviceId,
-        asDraft: asDraft,
-      );
+      final actor = ref.read(authControllerProvider)?.username ?? 'unknown';
+      final editingId = _editingId;
+      if (editingId != null) {
+        await sales.updateDraftInvoice(
+          invoiceId: editingId,
+          date: DateTime.now(),
+          customer: _customer!,
+          warehouseId: _warehouse!.id,
+          placeOfSupplyState: _customer!.state,
+          placeOfSupplyCode: _customer!.stateCode,
+          paymentTerms: _paymentTerms,
+          salesperson: _salesperson,
+          lines: _lines,
+          interState: interState,
+          actor: actor,
+          device: currentDeviceId,
+        );
+        if (!asDraft) {
+          await sales.postExistingDraft(editingId, actor: actor, device: currentDeviceId);
+        }
+      } else {
+        final invoiceNo = await sales.nextInvoiceNumber('26-27');
+        await sales.postInvoice(
+          invoiceNo: invoiceNo,
+          date: DateTime.now(),
+          customer: _customer!,
+          warehouseId: _warehouse!.id,
+          placeOfSupplyState: _customer!.state,
+          placeOfSupplyCode: _customer!.stateCode,
+          paymentTerms: _paymentTerms,
+          salesperson: _salesperson,
+          lines: _lines,
+          interState: interState,
+          actor: actor,
+          device: currentDeviceId,
+          asDraft: asDraft,
+        );
+      }
       if (mounted) context.go('/invoices');
     } catch (e) {
-      setState(() => _error = 'Could not post invoice: $e');
+      setState(() => _error = 'Could not save invoice: $e');
     } finally {
       if (mounted) setState(() => _submitting = false);
     }

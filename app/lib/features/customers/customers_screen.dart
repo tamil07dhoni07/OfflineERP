@@ -41,7 +41,11 @@ class CustomersScreen extends ConsumerWidget {
             Cell.number(c.creditLimitPaise.toIndianRupees()),
             Cell.number(out.toIndianRupees()),
             pillCell(tone, label),
-          ], onTap: () => _openForm(context, ref, existing: c));
+          ],
+            onTap: () => _openForm(context, ref, existing: c),
+            onEdit: () => _openForm(context, ref, existing: c),
+            onDelete: () => ref.read(masterDataRepositoryProvider).deleteCustomer(c.id),
+          );
         }).toList();
 
         final spec = TableSpec(
