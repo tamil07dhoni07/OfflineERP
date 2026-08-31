@@ -174,6 +174,63 @@ class CollectionsRepository {
     return receiptId;
   }
 
+  /// Reverses a receipt: every invoice it settled has its balance and
+  /// status restored, and a reversing Cr Cash/Bank / Dr AR journal is
+  /// posted. The voucher stays on record as voided rather than deleted.
+  Future<void> voidReceipt(String receiptId, {required String actor, required String device}) async {
+    final receipt = await (_db.select(_db.receipts)..where((t) => t.id.equals(receiptId))).getSingle();
+    if (receipt.status == 'voided') return;
+    final customer = await (_db.select(_db.customers)..where((t) => t.id.equals(receipt.customerId))).getSingle();
+    final allocations = await allocationsFor(receiptId);
+    final allocatedTotal = allocations.fold<int>(0, (a, l) => a + l.amountPaise);
+
+    await _db.transaction(() async {
+      for (final alloc in allocations) {
+        final invoice = await (_db.select(_db.salesInvoices)..where((t) => t.id.equals(alloc.invoiceId))).getSingleOrNull();
+        if (invoice == null) continue;
+        final restored = invoice.balancePaise + alloc.amountPaise;
+        final cappedBalance = restored > invoice.totalPaise ? invoice.totalPaise : restored;
+        await (_db.update(_db.salesInvoices)..where((t) => t.id.equals(invoice.id))).write(
+          SalesInvoicesCompanion(
+            balancePaise: Value(cappedBalance),
+            status: Value(cappedBalance >= invoice.totalPaise ? 'posted' : 'part_paid'),
+            updatedAt: Value(DateTime.now()),
+          ),
+        );
+      }
+
+      if (allocatedTotal > 0) {
+        final method = PaymentMethod.values.byName(receipt.method);
+        final cashOrBankAccount = await _accountIdByCode(method.accountCode);
+        final arAccount = await _accountIdByCode('1200');
+        await _accounting.postJournal(
+          voucherNo: '${receipt.voucherNo}/VOID',
+          date: DateTime.now(),
+          narration: 'Void ${receipt.voucherNo} — ${customer.name}',
+          sourceType: 'receipt_void',
+          sourceId: receiptId,
+          lines: [
+            (accountId: arAccount, debitPaise: allocatedTotal, creditPaise: 0, particulars: '${customer.name} (void)'),
+            (accountId: cashOrBankAccount, debitPaise: 0, creditPaise: allocatedTotal, particulars: '${method.label} (void)'),
+          ],
+        );
+      }
+
+      await (_db.update(_db.receipts)..where((t) => t.id.equals(receiptId)))
+          .write(const ReceiptsCompanion(status: Value('voided')));
+
+      await _audit.log(
+        username: actor,
+        module: 'Sales',
+        action: 'receipt.voided',
+        recordRef: receipt.voucherNo,
+        oldValue: 'posted',
+        newValue: 'voided',
+        device: device,
+      );
+    });
+  }
+
   Future<String> _accountIdByCode(String code) async {
     final account = await (_db.select(_db.accounts)..where((t) => t.code.equals(code))).getSingle();
     return account.id;

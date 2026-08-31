@@ -20,6 +20,7 @@ import '../../features/inventory/stock_screen.dart';
 import '../../features/inventory/transfers_screen.dart';
 import '../../features/license/license_screen.dart';
 import '../../features/products/products_screen.dart';
+import '../../features/profile/profile_screen.dart';
 import '../../features/purchasing/goods_receipt_screen.dart';
 import '../../features/purchasing/purchase_orders_screen.dart';
 import '../../features/purchasing/supplier_payments_screen.dart';
@@ -82,7 +83,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (atLogin) return '/dashboard';
 
       final key = path.replaceFirst('/', '');
-      if (key.isNotEmpty && !navKeyAllowedFor(role, key == 'invoice-new' ? 'invoices' : key)) {
+      // Profile isn't a module in the nav-access allow-list — every signed
+      // in user can see their own account regardless of role — so it's
+      // checked against 'dashboard' (which every role has) as a stand-in
+      // for "just needs to be signed in", same as invoice-new piggybacks
+      // on the invoices permission.
+      final effectiveKey = switch (key) {
+        'invoice-new' => 'invoices',
+        'profile' => 'dashboard',
+        _ => key,
+      };
+      if (key.isNotEmpty && !navKeyAllowedFor(role, effectiveKey)) {
         return '/${roleNavAccess[role]!.first}';
       }
       return null;
@@ -100,6 +111,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
         routes: [
           page('dashboard', () => const DashboardScreen()),
+          page('profile', () => const ProfileScreen()),
           page('invoices', () => const InvoicesScreen()),
           page('invoice-new', () => const InvoiceNewScreen()),
           page('quotations', () => const QuotationsScreen()),

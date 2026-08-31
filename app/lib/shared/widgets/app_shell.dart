@@ -198,10 +198,7 @@ class _TopBar extends ConsumerWidget {
           ],
           const SizedBox(width: 9),
           GestureDetector(
-            onTap: () {
-              ref.read(authControllerProvider.notifier).signOut();
-              context.go('/login');
-            },
+            onTap: () => context.go('/profile'),
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
               child: CircleAvatar(

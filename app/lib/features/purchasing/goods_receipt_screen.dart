@@ -36,14 +36,31 @@ class GoodsReceiptScreen extends ConsumerWidget {
         final rows = grns.map((grn) {
           final supplier = suppliersById[grn.supplierId];
           final po = posById[grn.poId];
-          return RowSpec([
-            Cell.text(grn.grnNo, mono: true, weight: FontWeight.w500),
-            Cell.text(_fmtDate(grn.date), mono: true, color: AppColors.mutedInk),
-            Cell.text(supplier?.name ?? grn.supplierId),
-            Cell.text(po?.poNo ?? grn.poId, mono: true),
-            Cell.number(grn.totalPaise.toIndianRupees()),
-            grn.balancePaise > 0 ? pillCell(PillTone.warn, 'Payable due') : pillCell(PillTone.paid, 'Settled'),
-          ]);
+          final voided = grn.status == 'voided';
+          return RowSpec(
+            [
+              Cell.text(grn.grnNo, mono: true, weight: FontWeight.w500),
+              Cell.text(_fmtDate(grn.date), mono: true, color: AppColors.mutedInk),
+              Cell.text(supplier?.name ?? grn.supplierId),
+              Cell.text(po?.poNo ?? grn.poId, mono: true),
+              Cell.number(grn.totalPaise.toIndianRupees()),
+              voided
+                  ? pillCell(PillTone.late, 'Voided')
+                  : grn.balancePaise > 0
+                  ? pillCell(PillTone.warn, 'Payable due')
+                  : pillCell(PillTone.paid, 'Settled'),
+            ],
+            onDelete: voided
+                ? null
+                : () => ref.read(purchasingRepositoryProvider).voidGoodsReceipt(
+                    grn.id,
+                    actor: ref.read(authControllerProvider)?.username ?? 'unknown',
+                    device: currentDeviceId,
+                  ),
+            deleteTooltip: 'Void',
+            deleteConfirmTitle: 'Void this receipt?',
+            deleteConfirmMessage: 'Reverses the stock and the PO receipt progress for ${grn.grnNo}, and posts a reversing journal. Refused if a payment is already allocated against it.',
+          );
         }).toList();
 
         final spec = TableSpec(

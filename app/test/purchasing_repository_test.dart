@@ -205,5 +205,132 @@ void main() {
       final lines = await db.select(db.journalLines).get();
       expect(lines.any((l) => l.accountId == bankAccount.id && l.creditPaise == 2000000), isTrue);
     });
+
+    test('voidGoodsReceipt reverses stock, rolls back the PO received qty, and balances the journal', () async {
+      final supplier = await _insertSupplier(db);
+      final product = await _insertProduct(db);
+      final poId = await purchasing.createPurchaseOrder(
+        date: DateTime(2026, 8, 1),
+        supplier: supplier,
+        warehouseId: 'wh-test',
+        lines: [DraftPoLine(product: product, qty: 100, ratePaise: 50000)],
+        actor: 'test-user',
+        device: 'TEST-DEVICE',
+      );
+      final po = await (db.select(db.purchaseOrders)..where((t) => t.id.equals(poId))).getSingle();
+      final items = await purchasing.itemsForPo(poId);
+      final grnId = await purchasing.postGoodsReceipt(
+        date: DateTime(2026, 8, 5),
+        po: po,
+        supplier: supplier,
+        lines: [ReceiveLine(poItem: items.single, product: product, qty: 100)],
+        actor: 'test-user',
+        device: 'TEST-DEVICE',
+      );
+
+      await purchasing.voidGoodsReceipt(grnId, actor: 'test-user', device: 'TEST-DEVICE');
+
+      final grn = (await db.select(db.goodsReceipts).get()).single;
+      expect(grn.status, 'voided');
+      expect(grn.balancePaise, 0);
+
+      final movements = await db.select(db.stockMovements).get();
+      expect(movements.fold<int>(0, (a, m) => a + m.qtyDelta), 0);
+
+      final updatedPo = await (db.select(db.purchaseOrders)..where((t) => t.id.equals(poId))).getSingle();
+      expect(updatedPo.status, 'approved');
+
+      final lines = await db.select(db.journalLines).get();
+      final totalDebit = lines.fold<int>(0, (a, l) => a + l.debitPaise);
+      final totalCredit = lines.fold<int>(0, (a, l) => a + l.creditPaise);
+      expect(totalDebit, totalCredit);
+    });
+
+    test('voidGoodsReceipt refuses once a payment has been allocated against it', () async {
+      final supplier = await _insertSupplier(db);
+      final product = await _insertProduct(db);
+      final poId = await purchasing.createPurchaseOrder(
+        date: DateTime(2026, 8, 1),
+        supplier: supplier,
+        warehouseId: 'wh-test',
+        lines: [DraftPoLine(product: product, qty: 100, ratePaise: 50000)],
+        actor: 'test-user',
+        device: 'TEST-DEVICE',
+      );
+      final po = await (db.select(db.purchaseOrders)..where((t) => t.id.equals(poId))).getSingle();
+      final items = await purchasing.itemsForPo(poId);
+      final grnId = await purchasing.postGoodsReceipt(
+        date: DateTime(2026, 8, 5),
+        po: po,
+        supplier: supplier,
+        lines: [ReceiveLine(poItem: items.single, product: product, qty: 100)],
+        actor: 'test-user',
+        device: 'TEST-DEVICE',
+      );
+      final openGrns = await purchasing.openGoodsReceiptsFor(supplier.id);
+      await purchasing.recordSupplierPayment(
+        date: DateTime(2026, 8, 10),
+        supplier: supplier,
+        method: PaymentMethod.cash,
+        amountPaise: 1000000,
+        allocations: purchasing.autoAdjust(openGrns, 1000000).lines,
+        unallocatedPaise: 0,
+        actor: 'test-user',
+        device: 'TEST-DEVICE',
+      );
+
+      expect(
+        () => purchasing.voidGoodsReceipt(grnId, actor: 'test-user', device: 'TEST-DEVICE'),
+        throwsStateError,
+      );
+    });
+
+    test('voidSupplierPayment restores the GRN balance and posts a reversing journal', () async {
+      final supplier = await _insertSupplier(db);
+      final product = await _insertProduct(db);
+      final poId = await purchasing.createPurchaseOrder(
+        date: DateTime(2026, 8, 1),
+        supplier: supplier,
+        warehouseId: 'wh-test',
+        lines: [DraftPoLine(product: product, qty: 100, ratePaise: 50000)],
+        actor: 'test-user',
+        device: 'TEST-DEVICE',
+      );
+      final po = await (db.select(db.purchaseOrders)..where((t) => t.id.equals(poId))).getSingle();
+      final items = await purchasing.itemsForPo(poId);
+      await purchasing.postGoodsReceipt(
+        date: DateTime(2026, 8, 5),
+        po: po,
+        supplier: supplier,
+        lines: [ReceiveLine(poItem: items.single, product: product, qty: 100)],
+        actor: 'test-user',
+        device: 'TEST-DEVICE',
+      );
+      final openGrns = await purchasing.openGoodsReceiptsFor(supplier.id);
+      final paymentId = await purchasing.recordSupplierPayment(
+        date: DateTime(2026, 8, 10),
+        supplier: supplier,
+        method: PaymentMethod.cheque,
+        reference: '445566',
+        amountPaise: 2000000,
+        allocations: purchasing.autoAdjust(openGrns, 2000000).lines,
+        unallocatedPaise: 0,
+        actor: 'test-user',
+        device: 'TEST-DEVICE',
+      );
+
+      await purchasing.voidSupplierPayment(paymentId, actor: 'test-user', device: 'TEST-DEVICE');
+
+      final payment = (await db.select(db.supplierPayments).get()).single;
+      expect(payment.status, 'voided');
+
+      final grn = (await db.select(db.goodsReceipts).get()).single;
+      expect(grn.balancePaise, 5000000);
+
+      final lines = await db.select(db.journalLines).get();
+      final totalDebit = lines.fold<int>(0, (a, l) => a + l.debitPaise);
+      final totalCredit = lines.fold<int>(0, (a, l) => a + l.creditPaise);
+      expect(totalDebit, totalCredit);
+    });
   });
 }

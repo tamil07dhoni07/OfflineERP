@@ -36,16 +36,33 @@ class ReceiptsScreen extends ConsumerWidget {
         final rows = receipts.map((r) {
           final customer = customersById[r.customerId];
           final unallocated = r.unallocatedPaise;
-          return RowSpec([
-            Cell.text(r.voucherNo, mono: true, weight: FontWeight.w500),
-            Cell.text(_fmtDate(r.date), mono: true, color: AppColors.mutedInk),
-            Cell.text(customer?.name ?? r.customerId),
-            Cell.text(PaymentMethod.values.byName(r.method).label),
-            Cell.text(r.reference ?? '—', mono: true, color: AppColors.mutedInk),
-            Cell.number((r.amountPaise - unallocated).toIndianRupees()),
-            Cell.number(unallocated.toIndianRupees(), color: unallocated > 0 ? AppColors.warnText : AppColors.mutedInk),
-            unallocated > 0 ? pillCell(PillTone.warn, 'Part allocated') : pillCell(PillTone.posted, 'Posted'),
-          ]);
+          final voided = r.status == 'voided';
+          return RowSpec(
+            [
+              Cell.text(r.voucherNo, mono: true, weight: FontWeight.w500),
+              Cell.text(_fmtDate(r.date), mono: true, color: AppColors.mutedInk),
+              Cell.text(customer?.name ?? r.customerId),
+              Cell.text(PaymentMethod.values.byName(r.method).label),
+              Cell.text(r.reference ?? '—', mono: true, color: AppColors.mutedInk),
+              Cell.number((r.amountPaise - unallocated).toIndianRupees()),
+              Cell.number(unallocated.toIndianRupees(), color: unallocated > 0 ? AppColors.warnText : AppColors.mutedInk),
+              voided
+                  ? pillCell(PillTone.late, 'Voided')
+                  : unallocated > 0
+                  ? pillCell(PillTone.warn, 'Part allocated')
+                  : pillCell(PillTone.posted, 'Posted'),
+            ],
+            onDelete: voided
+                ? null
+                : () => ref.read(collectionsRepositoryProvider).voidReceipt(
+                    r.id,
+                    actor: ref.read(authControllerProvider)?.username ?? 'unknown',
+                    device: currentDeviceId,
+                  ),
+            deleteTooltip: 'Void',
+            deleteConfirmTitle: 'Void this receipt?',
+            deleteConfirmMessage: 'Restores the balance on every invoice ${r.voucherNo} settled, and posts a reversing journal.',
+          );
         }).toList();
 
         final spec = TableSpec(

@@ -44,7 +44,20 @@ class AdjustmentsScreen extends ConsumerWidget {
               color: a.valueImpactPaise > 0 ? AppColors.successText : AppColors.danger,
             ),
             Cell.text(a.approvedBy, color: AppColors.mutedInk),
-          ], onTap: () => _openDetail(context, ref, a));
+          ],
+            onTap: () => _openDetail(context, ref, a),
+            onEdit: () => _openDetail(context, ref, a),
+            onDelete: a.status == 'reversed'
+                ? null
+                : () => ref.read(inventoryRepositoryProvider).reverseAdjustment(
+                    a.id,
+                    actor: ref.read(authControllerProvider)?.username ?? 'unknown',
+                    device: currentDeviceId,
+                  ),
+            deleteTooltip: 'Reverse',
+            deleteConfirmTitle: 'Reverse this adjustment?',
+            deleteConfirmMessage: 'Posts an equal and opposite quantity correction for ${a.adjustmentNo}.',
+          );
         }).toList();
 
         final spec = TableSpec(

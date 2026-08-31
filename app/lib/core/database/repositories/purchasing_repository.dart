@@ -243,6 +243,90 @@ class PurchasingRepository {
     return grnId;
   }
 
+  /// Reverses a posted receipt: stock goes back out, the PO's received
+  /// quantities and status roll back, and a reversing Cr Inventory / Dr AP
+  /// journal is posted — the receipt stays on record as voided rather than
+  /// being deleted, same "reversal, not edit" policy as invoices. Refused
+  /// if a supplier payment has already been allocated against it, since
+  /// that payment would otherwise reference a balance that no longer
+  /// makes sense; reverse the payment first.
+  Future<void> voidGoodsReceipt(String grnId, {required String actor, required String device}) async {
+    final grn = await (_db.select(_db.goodsReceipts)..where((t) => t.id.equals(grnId))).getSingle();
+    if (grn.status == 'voided') return;
+    if (grn.balancePaise != grn.totalPaise) {
+      throw StateError('A payment has been allocated against this receipt — reverse the payment before voiding.');
+    }
+    final supplier = await (_db.select(_db.suppliers)..where((t) => t.id.equals(grn.supplierId))).getSingle();
+    final items = await itemsForGrn(grnId);
+
+    await _db.transaction(() async {
+      for (final item in items) {
+        await _stock.recordMovement(
+          productId: item.productId,
+          warehouseId: grn.warehouseId,
+          kind: 'out',
+          qtyDelta: -item.qty,
+          unitCostPaise: item.ratePaise,
+          refType: 'grn_reversal',
+          refId: grnId,
+        );
+        final poItems = await (_db.select(_db.purchaseOrderItems)
+              ..where((t) => t.poId.equals(grn.poId) & t.productId.equals(item.productId)))
+            .get();
+        if (poItems.isNotEmpty) {
+          final poItem = poItems.first;
+          await (_db.update(_db.purchaseOrderItems)..where((t) => t.id.equals(poItem.id))).write(
+            PurchaseOrderItemsCompanion(
+              receivedQty: Value(poItem.receivedQty - item.qty < 0 ? 0 : poItem.receivedQty - item.qty),
+              updatedAt: Value(DateTime.now()),
+            ),
+          );
+        }
+      }
+
+      final po = await (_db.select(_db.purchaseOrders)..where((t) => t.id.equals(grn.poId))).getSingleOrNull();
+      if (po != null && po.status != 'cancelled') {
+        final allItems = await (_db.select(_db.purchaseOrderItems)..where((t) => t.poId.equals(grn.poId))).get();
+        final anyReceived = allItems.any((i) => i.receivedQty > 0);
+        final fullyReceived = allItems.every((i) => i.receivedQty >= i.qty);
+        final newStatus = fullyReceived ? 'received' : (anyReceived ? 'part_received' : 'approved');
+        await (_db.update(_db.purchaseOrders)..where((t) => t.id.equals(grn.poId))).write(
+          PurchaseOrdersCompanion(status: Value(newStatus), updatedAt: Value(DateTime.now())),
+        );
+      }
+
+      if (grn.totalPaise > 0) {
+        final inventoryAccount = await _accountIdByCode('1400');
+        final apAccount = await _accountIdByCode('2100');
+        await _accounting.postJournal(
+          voucherNo: '${grn.grnNo}/VOID',
+          date: DateTime.now(),
+          narration: 'Void ${grn.grnNo} — ${supplier.name}',
+          sourceType: 'goods_receipt_void',
+          sourceId: grnId,
+          lines: [
+            (accountId: apAccount, debitPaise: grn.totalPaise, creditPaise: 0, particulars: '${supplier.name} (void)'),
+            (accountId: inventoryAccount, debitPaise: 0, creditPaise: grn.totalPaise, particulars: '${items.length} movements OUT (void)'),
+          ],
+        );
+      }
+
+      await (_db.update(_db.goodsReceipts)..where((t) => t.id.equals(grnId))).write(
+        GoodsReceiptsCompanion(status: const Value('voided'), balancePaise: const Value(0), updatedAt: Value(DateTime.now())),
+      );
+
+      await _audit.log(
+        username: actor,
+        module: 'Purchasing',
+        action: 'grn.voided',
+        recordRef: grn.grnNo,
+        oldValue: 'posted',
+        newValue: 'voided',
+        device: device,
+      );
+    });
+  }
+
   // ---- Supplier payments ------------------------------------------------
 
   Stream<List<SupplierPayment>> watchSupplierPayments() =>
@@ -353,6 +437,64 @@ class PurchasingRepository {
       );
     });
     return paymentId;
+  }
+
+  Future<List<SupplierPaymentAllocation>> allocationsForPayment(String paymentId) =>
+      (_db.select(_db.supplierPaymentAllocations)..where((t) => t.paymentId.equals(paymentId))).get();
+
+  /// Reverses a payment: every GRN it was allocated against gets its
+  /// balance restored, and a reversing Dr Bank / Cr AP journal is posted.
+  /// The voucher stays on record as voided rather than deleted.
+  Future<void> voidSupplierPayment(String paymentId, {required String actor, required String device}) async {
+    final payment = await (_db.select(_db.supplierPayments)..where((t) => t.id.equals(paymentId))).getSingle();
+    if (payment.status == 'voided') return;
+    final supplier = await (_db.select(_db.suppliers)..where((t) => t.id.equals(payment.supplierId))).getSingle();
+    final allocations = await allocationsForPayment(paymentId);
+    final allocatedTotal = allocations.fold<int>(0, (a, l) => a + l.amountPaise);
+
+    await _db.transaction(() async {
+      for (final alloc in allocations) {
+        final grn = await (_db.select(_db.goodsReceipts)..where((t) => t.id.equals(alloc.grnId))).getSingleOrNull();
+        if (grn == null) continue;
+        final restored = grn.balancePaise + alloc.amountPaise;
+        await (_db.update(_db.goodsReceipts)..where((t) => t.id.equals(grn.id))).write(
+          GoodsReceiptsCompanion(
+            balancePaise: Value(restored > grn.totalPaise ? grn.totalPaise : restored),
+            updatedAt: Value(DateTime.now()),
+          ),
+        );
+      }
+
+      if (allocatedTotal > 0) {
+        final method = PaymentMethod.values.byName(payment.method);
+        final cashOrBankAccount = await _accountIdByCode(method.accountCode);
+        final apAccount = await _accountIdByCode('2100');
+        await _accounting.postJournal(
+          voucherNo: '${payment.voucherNo}/VOID',
+          date: DateTime.now(),
+          narration: 'Void ${payment.voucherNo} — ${supplier.name}',
+          sourceType: 'supplier_payment_void',
+          sourceId: paymentId,
+          lines: [
+            (accountId: cashOrBankAccount, debitPaise: allocatedTotal, creditPaise: 0, particulars: '${method.label} (void)'),
+            (accountId: apAccount, debitPaise: 0, creditPaise: allocatedTotal, particulars: '${supplier.name} (void)'),
+          ],
+        );
+      }
+
+      await (_db.update(_db.supplierPayments)..where((t) => t.id.equals(paymentId)))
+          .write(const SupplierPaymentsCompanion(status: Value('voided')));
+
+      await _audit.log(
+        username: actor,
+        module: 'Purchasing',
+        action: 'supplier_payment.voided',
+        recordRef: payment.voucherNo,
+        oldValue: 'posted',
+        newValue: 'voided',
+        device: device,
+      );
+    });
   }
 
   /// Sum of unpaid balance across a supplier's goods receipts — the

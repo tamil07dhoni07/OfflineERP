@@ -14,6 +14,7 @@ import 'database/repositories/purchasing_repository.dart';
 import 'database/repositories/sales_repository.dart';
 import 'database/repositories/stock_repository.dart';
 import 'database/seed.dart';
+import 'security/session_store.dart';
 
 /// Overridden in [main] once the database is open and seeded — every other
 /// provider derives from this one, so nothing can read the database before
@@ -26,6 +27,16 @@ Future<AppDatabase> openAndSeedDatabase() async {
   final db = AppDatabase();
   await seedIfEmpty(db);
   return db;
+}
+
+/// Looks up the user "keep me signed in" left remembered on this device, if
+/// any — called once during boot, before the provider tree exists, so
+/// [AuthController] can start already signed in rather than showing the
+/// login screen every launch.
+Future<AppUser?> restoreKeptSignInUser(AppDatabase db) async {
+  final userId = await SessionStore.restoreUserId();
+  if (userId == null) return null;
+  return (db.select(db.appUsers)..where((t) => t.id.equals(userId))).getSingleOrNull();
 }
 
 final authRepositoryProvider = Provider((ref) => AuthRepository(ref.watch(databaseProvider)));

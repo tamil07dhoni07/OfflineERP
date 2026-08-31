@@ -168,10 +168,13 @@ class _DataTable extends StatelessWidget {
   final List<RowSpec> rows;
   final bool dense;
 
-  /// True for narrow tables: columns get FlexColumnWidth so the table
-  /// fills the card instead of shrink-wrapping to content. False keeps the
-  /// old IntrinsicColumnWidth + horizontal-scroll behaviour for wide
-  /// tables where flexing would squeeze every column unreadably.
+  /// True for narrow tables: a trailing flexible spacer column soaks up
+  /// whatever width is left over so the table fills the card instead of
+  /// shrink-wrapping to content ("center gravity"). Real columns stay
+  /// IntrinsicColumnWidth either way — giving every column a flex weight
+  /// used to stretch each one open with dead space around short values;
+  /// now only the one spacer column absorbs the slack. False keeps the
+  /// horizontal-scroll behaviour for wide tables.
   final bool stretch;
 
   bool get _hasActions => rows.any((r) => r.onEdit != null || r.onDelete != null);
@@ -180,12 +183,11 @@ class _DataTable extends StatelessWidget {
   Widget build(BuildContext context) {
     final rowHeight = dense ? 34.0 : 40.0;
     final hasActions = _hasActions;
+    final actionsIndex = columns.length + (stretch ? 1 : 0);
     final widths = <int, TableColumnWidth>{
-      for (var i = 0; i < columns.length; i++)
-        i: stretch
-            ? FlexColumnWidth(columns[i].align == CellAlign.right ? 1 : 1.7)
-            : const IntrinsicColumnWidth(),
-      if (hasActions) columns.length: const FixedColumnWidth(76),
+      for (var i = 0; i < columns.length; i++) i: const IntrinsicColumnWidth(),
+      if (stretch) columns.length: const FlexColumnWidth(),
+      if (hasActions) actionsIndex: const FixedColumnWidth(76),
     };
     return Table(
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
@@ -206,6 +208,8 @@ class _DataTable extends StatelessWidget {
                   style: AppText.sans(size: 11, weight: FontWeight.w600, color: AppColors.mutedInk, letterSpacing: 0.5),
                 ),
               ),
+            if (stretch)
+              const SizedBox(height: 36, child: DecoratedBox(decoration: BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.border))))),
             if (hasActions)
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 14),
@@ -225,6 +229,8 @@ class _DataTable extends StatelessWidget {
                       ? _Pill(cell)
                       : Text(cell.value, softWrap: false, style: cell.style()),
                 ),
+              if (stretch)
+                _RowCell(height: rowHeight, align: CellAlign.left, onTap: row.onTap, child: const SizedBox.shrink()),
               if (hasActions)
                 _RowActionsCell(
                   height: rowHeight,

@@ -46,13 +46,28 @@ class PurchaseOrdersScreen extends ConsumerWidget {
         final suppliersById = {for (final s in suppliersAsync.valueOrNull ?? <Supplier>[]) s.id: s};
         final rows = pos.map((po) {
           final supplier = suppliersById[po.supplierId];
-          return RowSpec([
-            Cell.text(po.poNo, mono: true, weight: FontWeight.w500),
-            Cell.text(_fmtDate(po.date), mono: true, color: AppColors.mutedInk),
-            Cell.text(supplier?.name ?? po.supplierId),
-            Cell.number(po.totalPaise.toIndianRupees(), weight: FontWeight.w600),
-            pillCell(_poStatusTone[po.status] ?? PillTone.draft, _poStatusLabel[po.status] ?? po.status),
-          ], onTap: () => _openPoDetail(context, ref, po));
+          final cancellable = po.status != 'received' && po.status != 'cancelled';
+          return RowSpec(
+            [
+              Cell.text(po.poNo, mono: true, weight: FontWeight.w500),
+              Cell.text(_fmtDate(po.date), mono: true, color: AppColors.mutedInk),
+              Cell.text(supplier?.name ?? po.supplierId),
+              Cell.number(po.totalPaise.toIndianRupees(), weight: FontWeight.w600),
+              pillCell(_poStatusTone[po.status] ?? PillTone.draft, _poStatusLabel[po.status] ?? po.status),
+            ],
+            onTap: () => _openPoDetail(context, ref, po),
+            onEdit: () => _openPoDetail(context, ref, po),
+            onDelete: cancellable
+                ? () => ref.read(purchasingRepositoryProvider).cancelPurchaseOrder(
+                    po.id,
+                    actor: ref.read(authControllerProvider)?.username ?? 'unknown',
+                    device: currentDeviceId,
+                  )
+                : null,
+            deleteTooltip: 'Cancel',
+            deleteConfirmTitle: 'Cancel this purchase order?',
+            deleteConfirmMessage: 'Marks ${po.poNo} cancelled. Goods already received against it are unaffected.',
+          );
         }).toList();
 
         final spec = TableSpec(

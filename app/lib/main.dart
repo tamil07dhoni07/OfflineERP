@@ -6,6 +6,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_colors.dart';
 import 'core/theme/app_text.dart';
 import 'core/theme/app_theme.dart';
+import 'features/auth/auth_controller.dart';
 
 /// Opens (and, on first run, seeds) the local database *before* the real
 /// provider tree exists, then mounts a single root [ProviderScope] with
@@ -25,9 +26,13 @@ Future<void> main() async {
 
   try {
     final db = await openAndSeedDatabase();
+    final keptUser = await restoreKeptSignInUser(db);
     runApp(
       ProviderScope(
-        overrides: [databaseProvider.overrideWithValue(db)],
+        overrides: [
+          databaseProvider.overrideWithValue(db),
+          authControllerProvider.overrideWith((ref) => AuthController(ref, initialUser: keptUser)),
+        ],
         child: const NexusErpApp(),
       ),
     );

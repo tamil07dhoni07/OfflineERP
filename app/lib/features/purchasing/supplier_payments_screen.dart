@@ -30,14 +30,31 @@ class SupplierPaymentsScreen extends ConsumerWidget {
         final suppliersById = {for (final s in suppliersAsync.valueOrNull ?? <Supplier>[]) s.id: s};
         final rows = payments.map((p) {
           final supplier = suppliersById[p.supplierId];
-          return RowSpec([
-            Cell.text(p.voucherNo, mono: true, weight: FontWeight.w500),
-            Cell.text(_fmtDate(p.date), mono: true, color: AppColors.mutedInk),
-            Cell.text(supplier?.name ?? p.supplierId),
-            Cell.text(PaymentMethod.values.byName(p.method).label),
-            Cell.number(p.amountPaise.toIndianRupees(), weight: FontWeight.w600),
-            p.unallocatedPaise > 0 ? pillCell(PillTone.warn, 'Part allocated') : pillCell(PillTone.posted, 'Posted'),
-          ]);
+          final voided = p.status == 'voided';
+          return RowSpec(
+            [
+              Cell.text(p.voucherNo, mono: true, weight: FontWeight.w500),
+              Cell.text(_fmtDate(p.date), mono: true, color: AppColors.mutedInk),
+              Cell.text(supplier?.name ?? p.supplierId),
+              Cell.text(PaymentMethod.values.byName(p.method).label),
+              Cell.number(p.amountPaise.toIndianRupees(), weight: FontWeight.w600),
+              voided
+                  ? pillCell(PillTone.late, 'Voided')
+                  : p.unallocatedPaise > 0
+                  ? pillCell(PillTone.warn, 'Part allocated')
+                  : pillCell(PillTone.posted, 'Posted'),
+            ],
+            onDelete: voided
+                ? null
+                : () => ref.read(purchasingRepositoryProvider).voidSupplierPayment(
+                    p.id,
+                    actor: ref.read(authControllerProvider)?.username ?? 'unknown',
+                    device: currentDeviceId,
+                  ),
+            deleteTooltip: 'Void',
+            deleteConfirmTitle: 'Void this payment?',
+            deleteConfirmMessage: 'Restores the balance on every receipt ${p.voucherNo} was allocated against, and posts a reversing journal.',
+          );
         }).toList();
 
         final spec = TableSpec(

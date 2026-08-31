@@ -29,13 +29,27 @@ class TransfersScreen extends ConsumerWidget {
         final whById = {for (final w in warehousesAsync.valueOrNull ?? <Warehouse>[]) w.id: w};
         final rows = transfers
             .map(
-              (t) => RowSpec([
-                Cell.text(t.transferNo, mono: true, weight: FontWeight.w500),
-                Cell.text(_fmtDate(t.date), mono: true, color: AppColors.mutedInk),
-                Cell.text(whById[t.fromWarehouseId]?.name ?? t.fromWarehouseId),
-                Cell.text(whById[t.toWarehouseId]?.name ?? t.toWarehouseId),
-                t.status == 'reversed' ? pillCell(PillTone.late, 'Reversed') : pillCell(PillTone.paid, 'Completed'),
-              ], onTap: () => showDialog(context: context, builder: (_) => _TransferDetailDialog(transfer: t))),
+              (t) => RowSpec(
+                [
+                  Cell.text(t.transferNo, mono: true, weight: FontWeight.w500),
+                  Cell.text(_fmtDate(t.date), mono: true, color: AppColors.mutedInk),
+                  Cell.text(whById[t.fromWarehouseId]?.name ?? t.fromWarehouseId),
+                  Cell.text(whById[t.toWarehouseId]?.name ?? t.toWarehouseId),
+                  t.status == 'reversed' ? pillCell(PillTone.late, 'Reversed') : pillCell(PillTone.paid, 'Completed'),
+                ],
+                onTap: () => showDialog(context: context, builder: (_) => _TransferDetailDialog(transfer: t)),
+                onEdit: () => showDialog(context: context, builder: (_) => _TransferDetailDialog(transfer: t)),
+                onDelete: t.status == 'reversed'
+                    ? null
+                    : () => ref.read(inventoryRepositoryProvider).reverseTransfer(
+                        t.id,
+                        actor: ref.read(authControllerProvider)?.username ?? 'unknown',
+                        device: currentDeviceId,
+                      ),
+                deleteTooltip: 'Reverse',
+                deleteConfirmTitle: 'Reverse this transfer?',
+                deleteConfirmMessage: 'Posts equal and opposite movements for ${t.transferNo} — stock moves back to ${whById[t.fromWarehouseId]?.name ?? t.fromWarehouseId}.',
+              ),
             )
             .toList();
 

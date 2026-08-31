@@ -8468,6 +8468,16 @@ class $ReceiptsTable extends Receipts with TableInfo<$ReceiptsTable, Receipt> {
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('posted'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -8481,6 +8491,7 @@ class $ReceiptsTable extends Receipts with TableInfo<$ReceiptsTable, Receipt> {
     reference,
     amountPaise,
     unallocatedPaise,
+    status,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -8573,6 +8584,12 @@ class $ReceiptsTable extends Receipts with TableInfo<$ReceiptsTable, Receipt> {
         ),
       );
     }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
     return context;
   }
 
@@ -8626,6 +8643,10 @@ class $ReceiptsTable extends Receipts with TableInfo<$ReceiptsTable, Receipt> {
         DriftSqlType.int,
         data['${effectivePrefix}unallocated_paise'],
       )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
     );
   }
 
@@ -8647,6 +8668,7 @@ class Receipt extends DataClass implements Insertable<Receipt> {
   final String? reference;
   final int amountPaise;
   final int unallocatedPaise;
+  final String status;
   const Receipt({
     required this.id,
     required this.createdAt,
@@ -8659,6 +8681,7 @@ class Receipt extends DataClass implements Insertable<Receipt> {
     this.reference,
     required this.amountPaise,
     required this.unallocatedPaise,
+    required this.status,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -8678,6 +8701,7 @@ class Receipt extends DataClass implements Insertable<Receipt> {
     }
     map['amount_paise'] = Variable<int>(amountPaise);
     map['unallocated_paise'] = Variable<int>(unallocatedPaise);
+    map['status'] = Variable<String>(status);
     return map;
   }
 
@@ -8698,6 +8722,7 @@ class Receipt extends DataClass implements Insertable<Receipt> {
           : Value(reference),
       amountPaise: Value(amountPaise),
       unallocatedPaise: Value(unallocatedPaise),
+      status: Value(status),
     );
   }
 
@@ -8718,6 +8743,7 @@ class Receipt extends DataClass implements Insertable<Receipt> {
       reference: serializer.fromJson<String?>(json['reference']),
       amountPaise: serializer.fromJson<int>(json['amountPaise']),
       unallocatedPaise: serializer.fromJson<int>(json['unallocatedPaise']),
+      status: serializer.fromJson<String>(json['status']),
     );
   }
   @override
@@ -8735,6 +8761,7 @@ class Receipt extends DataClass implements Insertable<Receipt> {
       'reference': serializer.toJson<String?>(reference),
       'amountPaise': serializer.toJson<int>(amountPaise),
       'unallocatedPaise': serializer.toJson<int>(unallocatedPaise),
+      'status': serializer.toJson<String>(status),
     };
   }
 
@@ -8750,6 +8777,7 @@ class Receipt extends DataClass implements Insertable<Receipt> {
     Value<String?> reference = const Value.absent(),
     int? amountPaise,
     int? unallocatedPaise,
+    String? status,
   }) => Receipt(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -8762,6 +8790,7 @@ class Receipt extends DataClass implements Insertable<Receipt> {
     reference: reference.present ? reference.value : this.reference,
     amountPaise: amountPaise ?? this.amountPaise,
     unallocatedPaise: unallocatedPaise ?? this.unallocatedPaise,
+    status: status ?? this.status,
   );
   Receipt copyWithCompanion(ReceiptsCompanion data) {
     return Receipt(
@@ -8782,6 +8811,7 @@ class Receipt extends DataClass implements Insertable<Receipt> {
       unallocatedPaise: data.unallocatedPaise.present
           ? data.unallocatedPaise.value
           : this.unallocatedPaise,
+      status: data.status.present ? data.status.value : this.status,
     );
   }
 
@@ -8798,7 +8828,8 @@ class Receipt extends DataClass implements Insertable<Receipt> {
           ..write('method: $method, ')
           ..write('reference: $reference, ')
           ..write('amountPaise: $amountPaise, ')
-          ..write('unallocatedPaise: $unallocatedPaise')
+          ..write('unallocatedPaise: $unallocatedPaise, ')
+          ..write('status: $status')
           ..write(')'))
         .toString();
   }
@@ -8816,6 +8847,7 @@ class Receipt extends DataClass implements Insertable<Receipt> {
     reference,
     amountPaise,
     unallocatedPaise,
+    status,
   );
   @override
   bool operator ==(Object other) =>
@@ -8831,7 +8863,8 @@ class Receipt extends DataClass implements Insertable<Receipt> {
           other.method == this.method &&
           other.reference == this.reference &&
           other.amountPaise == this.amountPaise &&
-          other.unallocatedPaise == this.unallocatedPaise);
+          other.unallocatedPaise == this.unallocatedPaise &&
+          other.status == this.status);
 }
 
 class ReceiptsCompanion extends UpdateCompanion<Receipt> {
@@ -8846,6 +8879,7 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
   final Value<String?> reference;
   final Value<int> amountPaise;
   final Value<int> unallocatedPaise;
+  final Value<String> status;
   final Value<int> rowid;
   const ReceiptsCompanion({
     this.id = const Value.absent(),
@@ -8859,6 +8893,7 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
     this.reference = const Value.absent(),
     this.amountPaise = const Value.absent(),
     this.unallocatedPaise = const Value.absent(),
+    this.status = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ReceiptsCompanion.insert({
@@ -8873,6 +8908,7 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
     this.reference = const Value.absent(),
     required int amountPaise,
     this.unallocatedPaise = const Value.absent(),
+    this.status = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : voucherNo = Value(voucherNo),
        date = Value(date),
@@ -8891,6 +8927,7 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
     Expression<String>? reference,
     Expression<int>? amountPaise,
     Expression<int>? unallocatedPaise,
+    Expression<String>? status,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -8905,6 +8942,7 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
       if (reference != null) 'reference': reference,
       if (amountPaise != null) 'amount_paise': amountPaise,
       if (unallocatedPaise != null) 'unallocated_paise': unallocatedPaise,
+      if (status != null) 'status': status,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -8921,6 +8959,7 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
     Value<String?>? reference,
     Value<int>? amountPaise,
     Value<int>? unallocatedPaise,
+    Value<String>? status,
     Value<int>? rowid,
   }) {
     return ReceiptsCompanion(
@@ -8935,6 +8974,7 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
       reference: reference ?? this.reference,
       amountPaise: amountPaise ?? this.amountPaise,
       unallocatedPaise: unallocatedPaise ?? this.unallocatedPaise,
+      status: status ?? this.status,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -8975,6 +9015,9 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
     if (unallocatedPaise.present) {
       map['unallocated_paise'] = Variable<int>(unallocatedPaise.value);
     }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -8995,6 +9038,7 @@ class ReceiptsCompanion extends UpdateCompanion<Receipt> {
           ..write('reference: $reference, ')
           ..write('amountPaise: $amountPaise, ')
           ..write('unallocatedPaise: $unallocatedPaise, ')
+          ..write('status: $status, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -12063,6 +12107,16 @@ class $SupplierPaymentsTable extends SupplierPayments
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('posted'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -12076,6 +12130,7 @@ class $SupplierPaymentsTable extends SupplierPayments
     reference,
     amountPaise,
     unallocatedPaise,
+    status,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -12168,6 +12223,12 @@ class $SupplierPaymentsTable extends SupplierPayments
         ),
       );
     }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
     return context;
   }
 
@@ -12221,6 +12282,10 @@ class $SupplierPaymentsTable extends SupplierPayments
         DriftSqlType.int,
         data['${effectivePrefix}unallocated_paise'],
       )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
     );
   }
 
@@ -12242,6 +12307,7 @@ class SupplierPayment extends DataClass implements Insertable<SupplierPayment> {
   final String? reference;
   final int amountPaise;
   final int unallocatedPaise;
+  final String status;
   const SupplierPayment({
     required this.id,
     required this.createdAt,
@@ -12254,6 +12320,7 @@ class SupplierPayment extends DataClass implements Insertable<SupplierPayment> {
     this.reference,
     required this.amountPaise,
     required this.unallocatedPaise,
+    required this.status,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -12273,6 +12340,7 @@ class SupplierPayment extends DataClass implements Insertable<SupplierPayment> {
     }
     map['amount_paise'] = Variable<int>(amountPaise);
     map['unallocated_paise'] = Variable<int>(unallocatedPaise);
+    map['status'] = Variable<String>(status);
     return map;
   }
 
@@ -12293,6 +12361,7 @@ class SupplierPayment extends DataClass implements Insertable<SupplierPayment> {
           : Value(reference),
       amountPaise: Value(amountPaise),
       unallocatedPaise: Value(unallocatedPaise),
+      status: Value(status),
     );
   }
 
@@ -12313,6 +12382,7 @@ class SupplierPayment extends DataClass implements Insertable<SupplierPayment> {
       reference: serializer.fromJson<String?>(json['reference']),
       amountPaise: serializer.fromJson<int>(json['amountPaise']),
       unallocatedPaise: serializer.fromJson<int>(json['unallocatedPaise']),
+      status: serializer.fromJson<String>(json['status']),
     );
   }
   @override
@@ -12330,6 +12400,7 @@ class SupplierPayment extends DataClass implements Insertable<SupplierPayment> {
       'reference': serializer.toJson<String?>(reference),
       'amountPaise': serializer.toJson<int>(amountPaise),
       'unallocatedPaise': serializer.toJson<int>(unallocatedPaise),
+      'status': serializer.toJson<String>(status),
     };
   }
 
@@ -12345,6 +12416,7 @@ class SupplierPayment extends DataClass implements Insertable<SupplierPayment> {
     Value<String?> reference = const Value.absent(),
     int? amountPaise,
     int? unallocatedPaise,
+    String? status,
   }) => SupplierPayment(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -12357,6 +12429,7 @@ class SupplierPayment extends DataClass implements Insertable<SupplierPayment> {
     reference: reference.present ? reference.value : this.reference,
     amountPaise: amountPaise ?? this.amountPaise,
     unallocatedPaise: unallocatedPaise ?? this.unallocatedPaise,
+    status: status ?? this.status,
   );
   SupplierPayment copyWithCompanion(SupplierPaymentsCompanion data) {
     return SupplierPayment(
@@ -12377,6 +12450,7 @@ class SupplierPayment extends DataClass implements Insertable<SupplierPayment> {
       unallocatedPaise: data.unallocatedPaise.present
           ? data.unallocatedPaise.value
           : this.unallocatedPaise,
+      status: data.status.present ? data.status.value : this.status,
     );
   }
 
@@ -12393,7 +12467,8 @@ class SupplierPayment extends DataClass implements Insertable<SupplierPayment> {
           ..write('method: $method, ')
           ..write('reference: $reference, ')
           ..write('amountPaise: $amountPaise, ')
-          ..write('unallocatedPaise: $unallocatedPaise')
+          ..write('unallocatedPaise: $unallocatedPaise, ')
+          ..write('status: $status')
           ..write(')'))
         .toString();
   }
@@ -12411,6 +12486,7 @@ class SupplierPayment extends DataClass implements Insertable<SupplierPayment> {
     reference,
     amountPaise,
     unallocatedPaise,
+    status,
   );
   @override
   bool operator ==(Object other) =>
@@ -12426,7 +12502,8 @@ class SupplierPayment extends DataClass implements Insertable<SupplierPayment> {
           other.method == this.method &&
           other.reference == this.reference &&
           other.amountPaise == this.amountPaise &&
-          other.unallocatedPaise == this.unallocatedPaise);
+          other.unallocatedPaise == this.unallocatedPaise &&
+          other.status == this.status);
 }
 
 class SupplierPaymentsCompanion extends UpdateCompanion<SupplierPayment> {
@@ -12441,6 +12518,7 @@ class SupplierPaymentsCompanion extends UpdateCompanion<SupplierPayment> {
   final Value<String?> reference;
   final Value<int> amountPaise;
   final Value<int> unallocatedPaise;
+  final Value<String> status;
   final Value<int> rowid;
   const SupplierPaymentsCompanion({
     this.id = const Value.absent(),
@@ -12454,6 +12532,7 @@ class SupplierPaymentsCompanion extends UpdateCompanion<SupplierPayment> {
     this.reference = const Value.absent(),
     this.amountPaise = const Value.absent(),
     this.unallocatedPaise = const Value.absent(),
+    this.status = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SupplierPaymentsCompanion.insert({
@@ -12468,6 +12547,7 @@ class SupplierPaymentsCompanion extends UpdateCompanion<SupplierPayment> {
     this.reference = const Value.absent(),
     required int amountPaise,
     this.unallocatedPaise = const Value.absent(),
+    this.status = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : voucherNo = Value(voucherNo),
        date = Value(date),
@@ -12486,6 +12566,7 @@ class SupplierPaymentsCompanion extends UpdateCompanion<SupplierPayment> {
     Expression<String>? reference,
     Expression<int>? amountPaise,
     Expression<int>? unallocatedPaise,
+    Expression<String>? status,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -12500,6 +12581,7 @@ class SupplierPaymentsCompanion extends UpdateCompanion<SupplierPayment> {
       if (reference != null) 'reference': reference,
       if (amountPaise != null) 'amount_paise': amountPaise,
       if (unallocatedPaise != null) 'unallocated_paise': unallocatedPaise,
+      if (status != null) 'status': status,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -12516,6 +12598,7 @@ class SupplierPaymentsCompanion extends UpdateCompanion<SupplierPayment> {
     Value<String?>? reference,
     Value<int>? amountPaise,
     Value<int>? unallocatedPaise,
+    Value<String>? status,
     Value<int>? rowid,
   }) {
     return SupplierPaymentsCompanion(
@@ -12530,6 +12613,7 @@ class SupplierPaymentsCompanion extends UpdateCompanion<SupplierPayment> {
       reference: reference ?? this.reference,
       amountPaise: amountPaise ?? this.amountPaise,
       unallocatedPaise: unallocatedPaise ?? this.unallocatedPaise,
+      status: status ?? this.status,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -12570,6 +12654,9 @@ class SupplierPaymentsCompanion extends UpdateCompanion<SupplierPayment> {
     if (unallocatedPaise.present) {
       map['unallocated_paise'] = Variable<int>(unallocatedPaise.value);
     }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -12590,6 +12677,7 @@ class SupplierPaymentsCompanion extends UpdateCompanion<SupplierPayment> {
           ..write('reference: $reference, ')
           ..write('amountPaise: $amountPaise, ')
           ..write('unallocatedPaise: $unallocatedPaise, ')
+          ..write('status: $status, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -24236,6 +24324,7 @@ typedef $$ReceiptsTableCreateCompanionBuilder =
       Value<String?> reference,
       required int amountPaise,
       Value<int> unallocatedPaise,
+      Value<String> status,
       Value<int> rowid,
     });
 typedef $$ReceiptsTableUpdateCompanionBuilder =
@@ -24251,6 +24340,7 @@ typedef $$ReceiptsTableUpdateCompanionBuilder =
       Value<String?> reference,
       Value<int> amountPaise,
       Value<int> unallocatedPaise,
+      Value<String> status,
       Value<int> rowid,
     });
 
@@ -24315,6 +24405,11 @@ class $$ReceiptsTableFilterComposer
 
   ColumnFilters<int> get unallocatedPaise => $composableBuilder(
     column: $table.unallocatedPaise,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -24382,6 +24477,11 @@ class $$ReceiptsTableOrderingComposer
     column: $table.unallocatedPaise,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ReceiptsTableAnnotationComposer
@@ -24431,6 +24531,9 @@ class $$ReceiptsTableAnnotationComposer
     column: $table.unallocatedPaise,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
 }
 
 class $$ReceiptsTableTableManager
@@ -24472,6 +24575,7 @@ class $$ReceiptsTableTableManager
                 Value<String?> reference = const Value.absent(),
                 Value<int> amountPaise = const Value.absent(),
                 Value<int> unallocatedPaise = const Value.absent(),
+                Value<String> status = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ReceiptsCompanion(
                 id: id,
@@ -24485,6 +24589,7 @@ class $$ReceiptsTableTableManager
                 reference: reference,
                 amountPaise: amountPaise,
                 unallocatedPaise: unallocatedPaise,
+                status: status,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -24500,6 +24605,7 @@ class $$ReceiptsTableTableManager
                 Value<String?> reference = const Value.absent(),
                 required int amountPaise,
                 Value<int> unallocatedPaise = const Value.absent(),
+                Value<String> status = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ReceiptsCompanion.insert(
                 id: id,
@@ -24513,6 +24619,7 @@ class $$ReceiptsTableTableManager
                 reference: reference,
                 amountPaise: amountPaise,
                 unallocatedPaise: unallocatedPaise,
+                status: status,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -26048,6 +26155,7 @@ typedef $$SupplierPaymentsTableCreateCompanionBuilder =
       Value<String?> reference,
       required int amountPaise,
       Value<int> unallocatedPaise,
+      Value<String> status,
       Value<int> rowid,
     });
 typedef $$SupplierPaymentsTableUpdateCompanionBuilder =
@@ -26063,6 +26171,7 @@ typedef $$SupplierPaymentsTableUpdateCompanionBuilder =
       Value<String?> reference,
       Value<int> amountPaise,
       Value<int> unallocatedPaise,
+      Value<String> status,
       Value<int> rowid,
     });
 
@@ -26127,6 +26236,11 @@ class $$SupplierPaymentsTableFilterComposer
 
   ColumnFilters<int> get unallocatedPaise => $composableBuilder(
     column: $table.unallocatedPaise,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -26194,6 +26308,11 @@ class $$SupplierPaymentsTableOrderingComposer
     column: $table.unallocatedPaise,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$SupplierPaymentsTableAnnotationComposer
@@ -26243,6 +26362,9 @@ class $$SupplierPaymentsTableAnnotationComposer
     column: $table.unallocatedPaise,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
 }
 
 class $$SupplierPaymentsTableTableManager
@@ -26293,6 +26415,7 @@ class $$SupplierPaymentsTableTableManager
                 Value<String?> reference = const Value.absent(),
                 Value<int> amountPaise = const Value.absent(),
                 Value<int> unallocatedPaise = const Value.absent(),
+                Value<String> status = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SupplierPaymentsCompanion(
                 id: id,
@@ -26306,6 +26429,7 @@ class $$SupplierPaymentsTableTableManager
                 reference: reference,
                 amountPaise: amountPaise,
                 unallocatedPaise: unallocatedPaise,
+                status: status,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -26321,6 +26445,7 @@ class $$SupplierPaymentsTableTableManager
                 Value<String?> reference = const Value.absent(),
                 required int amountPaise,
                 Value<int> unallocatedPaise = const Value.absent(),
+                Value<String> status = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SupplierPaymentsCompanion.insert(
                 id: id,
@@ -26334,6 +26459,7 @@ class $$SupplierPaymentsTableTableManager
                 reference: reference,
                 amountPaise: amountPaise,
                 unallocatedPaise: unallocatedPaise,
+                status: status,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

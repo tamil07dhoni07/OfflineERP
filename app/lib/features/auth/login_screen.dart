@@ -16,29 +16,40 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _username = TextEditingController(text: 'r.deshmukh');
   final _password = TextEditingController(text: seedDevPassword);
+  final _pin = TextEditingController();
   bool _submitting = false;
   bool _keepSignedIn = true;
+  bool _pinMode = false;
   String? _error;
 
   @override
   void dispose() {
     _username.dispose();
     _password.dispose();
+    _pin.dispose();
     super.dispose();
   }
 
   void _toggleKeepSignedIn() => setState(() => _keepSignedIn = !_keepSignedIn);
+
+  void _togglePinMode() => setState(() {
+    _pinMode = !_pinMode;
+    _error = null;
+  });
 
   Future<void> _submit() async {
     setState(() {
       _submitting = true;
       _error = null;
     });
-    final ok = await ref.read(authControllerProvider.notifier).signIn(_username.text.trim(), _password.text);
+    final controller = ref.read(authControllerProvider.notifier);
+    final ok = _pinMode
+        ? await controller.signInWithPin(_username.text.trim(), _pin.text.trim())
+        : await controller.signIn(_username.text.trim(), _password.text, keepSignedIn: _keepSignedIn);
     if (!mounted) return;
     setState(() {
       _submitting = false;
-      _error = ok ? null : ref.read(authControllerProvider.notifier).lastError;
+      _error = ok ? null : controller.lastError;
     });
   }
 
@@ -161,32 +172,55 @@ class _SignInPanel extends StatelessWidget {
               const SizedBox(height: 6),
               _TextField(controller: state._username),
               const SizedBox(height: 14),
-              const _FieldLabel('PASSWORD'),
-              const SizedBox(height: 6),
-              _TextField(controller: state._password, obscure: true, onSubmit: state._submit),
+              if (state._pinMode) ...[
+                const _FieldLabel('PIN'),
+                const SizedBox(height: 6),
+                _TextField(
+                  controller: state._pin,
+                  obscure: true,
+                  numeric: true,
+                  onSubmit: state._submit,
+                ),
+              ] else ...[
+                const _FieldLabel('PASSWORD'),
+                const SizedBox(height: 6),
+                _TextField(controller: state._password, obscure: true, onSubmit: state._submit),
+              ],
               const SizedBox(height: 14),
               Row(
                 children: [
-                  GestureDetector(
-                    onTap: state._toggleKeepSignedIn,
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 15,
-                          height: 15,
-                          decoration: BoxDecoration(
-                            color: state._keepSignedIn ? AppColors.accent : AppColors.card,
-                            border: Border.all(color: AppColors.dashedBorder),
-                            borderRadius: BorderRadius.circular(4),
+                  if (!state._pinMode)
+                    GestureDetector(
+                      onTap: state._toggleKeepSignedIn,
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 15,
+                            height: 15,
+                            decoration: BoxDecoration(
+                              color: state._keepSignedIn ? AppColors.accent : AppColors.card,
+                              border: Border.all(color: AppColors.dashedBorder),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text('Keep me signed in on this device', style: AppText.sans(size: 12.5, color: AppColors.mutedInk)),
-                      ],
+                          const SizedBox(width: 8),
+                          Text('Keep me signed in on this device', style: AppText.sans(size: 12.5, color: AppColors.mutedInk)),
+                        ],
+                      ),
+                    )
+                  else
+                    Text(
+                      'PIN sign-in keeps this device signed in',
+                      style: AppText.sans(size: 12.5, color: AppColors.mutedFaint),
+                    ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: state._togglePinMode,
+                    child: Text(
+                      state._pinMode ? 'Use password' : 'Use PIN',
+                      style: AppText.sans(size: 12.5, weight: FontWeight.w500, color: AppColors.accent),
                     ),
                   ),
-                  const Spacer(),
-                  Text('Use PIN', style: AppText.sans(size: 12.5, weight: FontWeight.w500, color: AppColors.accent)),
                 ],
               ),
               const SizedBox(height: 4),
@@ -260,9 +294,10 @@ class _FieldLabel extends StatelessWidget {
 }
 
 class _TextField extends StatelessWidget {
-  const _TextField({required this.controller, this.obscure = false, this.onSubmit});
+  const _TextField({required this.controller, this.obscure = false, this.numeric = false, this.onSubmit});
   final TextEditingController controller;
   final bool obscure;
+  final bool numeric;
   final VoidCallback? onSubmit;
 
   @override
@@ -279,9 +314,11 @@ class _TextField extends StatelessWidget {
       child: TextField(
         controller: controller,
         obscureText: obscure,
+        keyboardType: numeric ? TextInputType.number : TextInputType.text,
+        maxLength: numeric ? 6 : null,
         onSubmitted: (_) => onSubmit?.call(),
         style: AppText.sans(size: 14),
-        decoration: const InputDecoration(border: InputBorder.none, isDense: true, filled: false),
+        decoration: const InputDecoration(border: InputBorder.none, isDense: true, filled: false, counterText: ''),
       ),
     );
   }

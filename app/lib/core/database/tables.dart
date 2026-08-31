@@ -198,6 +198,7 @@ class Receipts extends Table with _AuditColumns {
   TextColumn get reference => text().nullable()(); // cheque / DD number
   IntColumn get amountPaise => integer()();
   IntColumn get unallocatedPaise => integer().withDefault(const Constant(0))();
+  TextColumn get status => text().withDefault(const Constant('posted'))(); // posted | voided
 }
 
 class ReceiptAllocations extends Table with _AuditColumns {
@@ -249,7 +250,7 @@ class GoodsReceipts extends Table with _AuditColumns {
   TextColumn get warehouseId => text()();
   IntColumn get totalPaise => integer()();
   IntColumn get balancePaise => integer()();
-  TextColumn get status => text()(); // posted
+  TextColumn get status => text()(); // posted | voided
 }
 
 class GoodsReceiptItems extends Table with _AuditColumns {
@@ -276,6 +277,7 @@ class SupplierPayments extends Table with _AuditColumns {
   TextColumn get reference => text().nullable()();
   IntColumn get amountPaise => integer()();
   IntColumn get unallocatedPaise => integer().withDefault(const Constant(0))();
+  TextColumn get status => text().withDefault(const Constant('posted'))(); // posted | voided
 }
 
 class SupplierPaymentAllocations extends Table with _AuditColumns {

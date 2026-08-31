@@ -56,6 +56,7 @@ const navGroups = <NavGroup>[
 
 const crumbFor = <String, String>{
   'dashboard': 'HOME',
+  'profile': 'ACCOUNT',
   'invoices': 'SALES', 'quotations': 'SALES', 'receipts': 'SALES', 'invoice-new': 'SALES / INVOICES',
   'po': 'PURCHASING', 'grn': 'PURCHASING', 'suppay': 'PURCHASING',
   'stock': 'INVENTORY', 'transfers': 'INVENTORY', 'adjust': 'INVENTORY',
@@ -68,6 +69,7 @@ const crumbFor = <String, String>{
 
 const titleFor = <String, String>{
   'dashboard': 'Dashboard',
+  'profile': 'Profile',
   'invoices': 'Sales Invoices', 'quotations': 'Quotations', 'receipts': 'Customer Receipts',
   'invoice-new': 'New Sales Invoice',
   'po': 'Purchase Orders', 'grn': 'Goods Receipt', 'suppay': 'Supplier Payments',

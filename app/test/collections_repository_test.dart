@@ -221,5 +221,42 @@ void main() {
       );
       expect(await db.select(db.receipts).get(), isEmpty);
     });
+
+    test('voidReceipt restores the invoice balance and posts a reversing journal', () async {
+      final customer = await _insertCustomer(db);
+      final invoice = await _insertInvoice(
+        db,
+        customerId: customer.id,
+        invoiceNo: 'INV/0001',
+        totalPaise: 100000,
+        balancePaise: 100000,
+        date: DateTime(2026, 8, 1),
+      );
+
+      final receiptId = await collections.recordCollection(
+        date: DateTime(2026, 8, 15),
+        customer: customer,
+        method: PaymentMethod.cash,
+        amountPaise: 100000,
+        allocations: [AllocationLine(invoice: invoice, amountPaise: 100000)],
+        unallocatedPaise: 0,
+        actor: 'test-user',
+        device: 'TEST-DEVICE',
+      );
+
+      await collections.voidReceipt(receiptId, actor: 'test-user', device: 'TEST-DEVICE');
+
+      final updated = await (db.select(db.salesInvoices)..where((t) => t.id.equals(invoice.id))).getSingle();
+      expect(updated.balancePaise, 100000);
+      expect(updated.status, 'posted');
+
+      final receipt = (await db.select(db.receipts).get()).single;
+      expect(receipt.status, 'voided');
+
+      final lines = await db.select(db.journalLines).get();
+      final totalDebit = lines.fold<int>(0, (a, l) => a + l.debitPaise);
+      final totalCredit = lines.fold<int>(0, (a, l) => a + l.creditPaise);
+      expect(totalDebit, totalCredit);
+    });
   });
 }
