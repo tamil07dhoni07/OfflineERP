@@ -45,11 +45,16 @@ class _AuthRefresh extends ChangeNotifier {
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = _AuthRefresh(ref);
 
+  // A plain GoRoute per menu item used to wrap the whole page — including
+  // AppShell's Scaffold/Sidebar/Drawer — in a brand new widget on every
+  // click, so the entire shell tore down and rebuilt (and, on mobile, the
+  // just-tapped Drawer got rebuilt mid-close) each time you picked a
+  // sidebar item. Nesting these under one ShellRoute keeps AppShell as a
+  // single persistent widget across navigations — only the inner page
+  // swaps — and NoTransitionPage drops the page-turn animation that made
+  // every click read as loading a whole new page.
   GoRoute page(String key, Widget Function() build) {
-    return GoRoute(
-      path: '/$key',
-      builder: (context, state) => AppShell(activeKey: key, child: build()),
-    );
+    return GoRoute(path: '/$key', pageBuilder: (context, state) => NoTransitionPage(child: build()));
   }
 
   return GoRouter(
@@ -88,33 +93,41 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/admin/clients',
         builder: (context, state) => const SuperAdminShell(child: ClientsScreen()),
       ),
-      page('dashboard', () => const DashboardScreen()),
-      page('invoices', () => const InvoicesScreen()),
-      page('invoice-new', () => const InvoiceNewScreen()),
-      page('quotations', () => const QuotationsScreen()),
-      page('receipts', () => const ReceiptsScreen()),
-      page('po', () => const PurchaseOrdersScreen()),
-      page('grn', () => const GoodsReceiptScreen()),
-      page('suppay', () => const SupplierPaymentsScreen()),
-      page('stock', () => const StockScreen()),
-      page('transfers', () => const TransfersScreen()),
-      page('adjust', () => const AdjustmentsScreen()),
-      page('customers', () => const CustomersScreen()),
-      page('suppliers', () => const SuppliersScreen()),
-      page('products', () => const ProductsScreen()),
-      page('coa', () => const ChartOfAccountsScreen()),
-      page('ledger', () => const GeneralLedgerScreen()),
-      page('tb', () => const TrialBalanceScreen()),
-      page('gst', () => const GstSummaryScreen()),
-      page('gstr1', () => const Gstr1Screen()),
-      page('employees', () => const EmployeesScreen()),
-      page('attendance', () => const AttendanceScreen()),
-      page('leave', () => const LeaveScreen()),
-      page('payroll', () => const PayrollScreen()),
-      page('reports', () => const ReportsScreen()),
-      page('company', () => const CompanyScreen()),
-      page('license', () => const LicenseScreen()),
-      page('audit', () => const AuditScreen()),
+      ShellRoute(
+        builder: (context, state, child) {
+          final key = state.matchedLocation.replaceFirst('/', '');
+          return AppShell(activeKey: key, child: child);
+        },
+        routes: [
+          page('dashboard', () => const DashboardScreen()),
+          page('invoices', () => const InvoicesScreen()),
+          page('invoice-new', () => const InvoiceNewScreen()),
+          page('quotations', () => const QuotationsScreen()),
+          page('receipts', () => const ReceiptsScreen()),
+          page('po', () => const PurchaseOrdersScreen()),
+          page('grn', () => const GoodsReceiptScreen()),
+          page('suppay', () => const SupplierPaymentsScreen()),
+          page('stock', () => const StockScreen()),
+          page('transfers', () => const TransfersScreen()),
+          page('adjust', () => const AdjustmentsScreen()),
+          page('customers', () => const CustomersScreen()),
+          page('suppliers', () => const SuppliersScreen()),
+          page('products', () => const ProductsScreen()),
+          page('coa', () => const ChartOfAccountsScreen()),
+          page('ledger', () => const GeneralLedgerScreen()),
+          page('tb', () => const TrialBalanceScreen()),
+          page('gst', () => const GstSummaryScreen()),
+          page('gstr1', () => const Gstr1Screen()),
+          page('employees', () => const EmployeesScreen()),
+          page('attendance', () => const AttendanceScreen()),
+          page('leave', () => const LeaveScreen()),
+          page('payroll', () => const PayrollScreen()),
+          page('reports', () => const ReportsScreen()),
+          page('company', () => const CompanyScreen()),
+          page('license', () => const LicenseScreen()),
+          page('audit', () => const AuditScreen()),
+        ],
+      ),
     ],
   );
 });

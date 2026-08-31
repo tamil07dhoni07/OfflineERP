@@ -62,6 +62,13 @@ class AppShell extends ConsumerWidget {
                   _TopBar(activeKey: activeKey, showMenuButton: !wide),
                   Expanded(
                     child: SingleChildScrollView(
+                      // Keyed per page so switching sections starts each one
+                      // scrolled to the top instead of inheriting whatever
+                      // offset the previous page was left at — AppShell (and
+                      // this scroll view) is now one persistent widget
+                      // across navigations rather than being rebuilt fresh
+                      // on every click.
+                      key: PageStorageKey(activeKey),
                       padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
                       child: child,
                     ),
@@ -374,7 +381,15 @@ class _NavRowState extends State<_NavRow> {
       onEnter: (_) => setState(() => _hover = true),
       onExit: (_) => setState(() => _hover = false),
       child: GestureDetector(
-        onTap: () => context.go('/${widget.item.key}'),
+        onTap: () {
+          // On mobile the sidebar lives inside the Drawer; now that
+          // AppShell persists across navigation instead of being torn down
+          // and rebuilt on every click, the Drawer no longer closes itself
+          // as a side effect — close it explicitly before navigating.
+          final scaffold = Scaffold.of(context);
+          if (scaffold.isDrawerOpen) scaffold.closeDrawer();
+          context.go('/${widget.item.key}');
+        },
         child: Container(
           height: 29,
           padding: const EdgeInsets.symmetric(horizontal: 9),
