@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/backup/drive_backup_service.dart';
 import 'core/providers.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_colors.dart';
@@ -25,6 +27,10 @@ Future<void> main() async {
   runApp(const _BootSplash());
 
   try {
+    // A Google Drive restore stages its bytes next to the real database
+    // file rather than swapping it live (see DriveBackupService) — apply
+    // it now, before anything opens a connection to that file.
+    if (!kIsWeb) await DriveBackupService.applyStagedRestoreIfAny();
     final db = await openAndSeedDatabase();
     final keptUser = await restoreKeptSignInUser(db);
     runApp(

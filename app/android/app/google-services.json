@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "621767616303",
+    "project_id": "offlineerp-cdd05",
+    "storage_bucket": "offlineerp-cdd05.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:621767616303:android:1b52d8c7245d0060c363da",
+        "android_client_info": {
+          "package_name": "com.nexuserp.nexus_erp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA386Oz22eHnomcBf5e5eXLU5poVW-_TKc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

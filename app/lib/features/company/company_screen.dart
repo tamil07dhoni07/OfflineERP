@@ -1,11 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
+import '../../core/backup/drive_backup_service.dart';
 import '../../core/database/app_database.dart';
 import '../../core/providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
 import '../../shared/widgets/adaptive.dart';
+import '../../shared/widgets/buttons.dart';
 import '../../shared/widgets/cards.dart';
 import '../../shared/widgets/quick_add_dialog.dart';
 
@@ -85,7 +89,7 @@ class CompanyScreen extends ConsumerWidget {
     return AdaptiveGrid(
       columns: 2,
       minTileWidth: 420,
-      children: [for (final s in sections) _SectionCardView(s)],
+      children: [for (final s in sections) _SectionCardView(s), const _BackupSyncCard()],
     );
   }
 
@@ -171,6 +175,156 @@ class _SectionCardView extends StatelessWidget {
                       ],
                     ),
                   ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Google Drive backup — private "app data" storage tied to whoever signs
+/// in, not visible in their regular Drive. See DriveBackupService for the
+/// exact semantics of Sync / Upload / Download, and for why Google sign-in
+/// won't succeed yet: the Firebase project has no OAuth client registered
+/// for either platform.
+class _BackupSyncCard extends ConsumerStatefulWidget {
+  const _BackupSyncCard();
+
+  @override
+  ConsumerState<_BackupSyncCard> createState() => _BackupSyncCardState();
+}
+
+enum _BackupBusy { none, signIn, sync, upload, download }
+
+class _BackupSyncCardState extends ConsumerState<_BackupSyncCard> {
+  _BackupBusy _busy = _BackupBusy.none;
+  String? _status;
+  String? _error;
+  DateTime? _remoteBackupTime;
+
+  Future<void> _run(_BackupBusy which, Future<void> Function() action, {String? successMessage}) async {
+    setState(() {
+      _busy = which;
+      _error = null;
+    });
+    try {
+      await action();
+      if (mounted) setState(() => _status = successMessage);
+    } catch (e) {
+      if (mounted) setState(() => _error = '$e');
+    } finally {
+      if (mounted) setState(() => _busy = _BackupBusy.none);
+    }
+  }
+
+  Future<void> _signIn() => _run(_BackupBusy.signIn, () async {
+    await DriveBackupService.signIn();
+  });
+
+  Future<void> _signOut() => _run(_BackupBusy.none, () async {
+    await DriveBackupService.signOut();
+    setState(() {
+      _remoteBackupTime = null;
+      _status = null;
+    });
+  });
+
+  Future<void> _upload() => _run(_BackupBusy.upload, () async {
+    await DriveBackupService.upload(ref.read(databaseProvider));
+    _remoteBackupTime = await DriveBackupService.remoteBackupTime();
+  }, successMessage: 'Uploaded to Google Drive.');
+
+  Future<void> _download() => _run(_BackupBusy.download, () async {
+    final staged = await DriveBackupService.downloadToStaging();
+    if (!staged) throw 'No backup found on Google Drive yet.';
+  }, successMessage: 'Downloaded — restart the app to finish applying this backup.');
+
+  Future<void> _sync() => _run(_BackupBusy.sync, () async {
+    final result = await DriveBackupService.sync(ref.read(databaseProvider));
+    if (result.direction == 'uploaded') {
+      _remoteBackupTime = await DriveBackupService.remoteBackupTime();
+    }
+    _status = result.restartRequired
+        ? 'Synced (downloaded newer backup) — restart the app to finish applying it.'
+        : 'Synced (this device was already the newest copy — uploaded).';
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final account = DriveBackupService.signedInAccount;
+    final busy = _busy != _BackupBusy.none;
+
+    return SectionCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: [
+          const SectionHeader(title: 'Backup & Sync', trailing: 'Google Drive · app-private storage'),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(15, 10, 15, 13),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (kIsWeb)
+                  Text(
+                    'Not available on web — Drive backup works on the desktop and mobile app.',
+                    style: AppText.sans(size: 12.5, color: AppColors.mutedInk, height: 1.5),
+                  )
+                else if (account == null) ...[
+                  Text(
+                    'Sign in with the Google account this device should back up to and restore from.',
+                    style: AppText.sans(size: 12.5, color: AppColors.mutedInk, height: 1.5),
+                  ),
+                  const SizedBox(height: 10),
+                  SecondaryButton(
+                    label: _busy == _BackupBusy.signIn ? 'Signing in…' : 'Sign in with Google',
+                    onTap: busy ? null : _signIn,
+                  ),
+                ] else ...[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(account.email, style: AppText.sans(size: 12.5, weight: FontWeight.w500)),
+                      ),
+                      GestureDetector(
+                        onTap: busy ? null : _signOut,
+                        child: Text('Sign out', style: AppText.sans(size: 12, color: AppColors.mutedInk)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      PrimaryButton(label: _busy == _BackupBusy.sync ? 'Syncing…' : 'Sync', onTap: busy ? null : _sync),
+                      SecondaryButton(
+                        label: _busy == _BackupBusy.upload ? 'Uploading…' : 'Upload only',
+                        onTap: busy ? null : _upload,
+                      ),
+                      SecondaryButton(
+                        label: _busy == _BackupBusy.download ? 'Downloading…' : 'Download only',
+                        onTap: busy ? null : _download,
+                      ),
+                    ],
+                  ),
+                  if (_remoteBackupTime != null) ...[
+                    const SizedBox(height: 10),
+                    Text(
+                      'Last backup on Drive: ${DateFormat('d MMM yyyy, HH:mm').format(_remoteBackupTime!.toLocal())}',
+                      style: AppText.sans(size: 11.5, color: AppColors.mutedFaint),
+                    ),
+                  ],
+                ],
+                if (_status != null) ...[
+                  const SizedBox(height: 10),
+                  Text(_status!, style: AppText.sans(size: 12, color: AppColors.successText, height: 1.4)),
+                ],
+                if (_error != null) ...[
+                  const SizedBox(height: 10),
+                  Text(_error!, style: AppText.sans(size: 12, color: AppColors.danger, height: 1.4)),
+                ],
               ],
             ),
           ),
